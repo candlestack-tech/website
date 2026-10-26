@@ -6,7 +6,7 @@ when:
   - schema - the manifest does not have the right form, for example a missing field, a value of the wrong type or a list longer than allowed.
   - catalog - a block, or its version, does not exist, or it is used in the wrong step. unknown_blocks names the blocks that do not exist.
   - params - a parameter of a block has the wrong type or is out of its range.
-  - names - two features have the same name, or a feature is named ts.
+  - names - two features have the same name, or a feature is named ts or row_id.
   - signature - signature.input is not [window length, number of features], or signature.output is not [1].
   - example - the shapes of the example do not match the signature.
   - model - the signature does not match the input or the output of the uploaded model file.
