@@ -4,7 +4,7 @@ status: 422
 summary: The manifest did not pass its checks, so it was not kept and the model stays as it was.
 when:
   - schema - the manifest does not have the right form, for example a missing field, a value of the wrong type or a list longer than allowed.
-  - catalog - a block, or its version, does not exist, or it is used in the wrong step. unknown_blocks names the blocks that do not exist.
+  - 'catalog - a block, or its version, does not exist, or it does not fit where it is used: a block in the wrong step, session-last-candle@1 without the regular session, blesk-norm@1 on a feature it has no rule for, a feature that is not a column of the rows of the representation, or a window option last that does not fit the representation. unknown_blocks names the blocks that do not exist.'
   - params - a parameter of a block has the wrong type or is out of its range.
   - names - two features have the same name, or a feature is named ts or row_id.
   - signature - signature.input is not [window length, number of features], or signature.output is not [1].
