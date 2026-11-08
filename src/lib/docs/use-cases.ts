@@ -186,7 +186,8 @@ function chartMarkdown(chart: Chart) {
   return [`Chart: ${chart.title}`, lines.join('\n')].join('\n\n');
 }
 
-const cellText = (v: string | number) => String(v).replace(/\|/g, '\\|');
+// A table cell of Markdown: backslashes and pipes escaped, so neither ends the cell early
+const cellText = (v: string | number) => String(v).replace(/[\\|]/g, '\\$&');
 
 function tableMarkdown(table: Table) {
   const head = `| ${table.columns.map((c) => cellText(c.name)).join(' | ')} |`;
