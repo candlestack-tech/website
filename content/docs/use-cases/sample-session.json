@@ -1,0 +1,451 @@
+{
+  "title": "Sample session: compare three models on NVDA",
+  "nav": "Sample session",
+  "summary": "Made-up data to try the session player, not a recorded session. Three models read NVDA, the agent runs and compares them.",
+  "order": 1,
+  "draft": true,
+  "client": "Claude Code",
+  "recorded_at": "2026-11-08",
+  "duration_s": 171,
+  "prompt": "Compare my three NVDA models on 1h candles for the first half of 2025. Run each with my usual settings, then tell me which one is the most stable and why.",
+  "steps": [
+    {
+      "say": "I’ll find your models first and check which of them read 1h candles.",
+      "calls": [
+        {
+          "tool": "list_models",
+          "arguments": {},
+          "result": "4 models, 3 ready on 1h",
+          "answer": {
+            "models": [
+              {
+                "id": "mdl_r4n8ko21vb",
+                "name": "renko-lstm.keras",
+                "framework": "keras",
+                "state": "verified",
+                "timeframe": "1h",
+                "session": "regular",
+                "backtest_count": 6,
+                "best_sharpe": 1.21
+              },
+              {
+                "id": "mdl_w9q3tz58ke",
+                "name": "window-32.keras",
+                "framework": "keras",
+                "state": "verified",
+                "timeframe": "1h",
+                "session": "regular",
+                "backtest_count": 3,
+                "best_sharpe": 0.94
+              },
+              {
+                "id": "mdl_k7g2pa60xm",
+                "name": "kagi-tcn.onnx",
+                "framework": "onnx",
+                "state": "verified",
+                "timeframe": "1h",
+                "session": "regular",
+                "backtest_count": 2,
+                "best_sharpe": 0.47
+              },
+              {
+                "id": "mdl_g5d1hx93nc",
+                "name": "gru-draft.keras",
+                "framework": "keras",
+                "state": "needs_setup",
+                "timeframe": null,
+                "session": null,
+                "backtest_count": 0,
+                "best_sharpe": null
+              }
+            ],
+            "quota_bytes": 104857600,
+            "used_bytes": 9123412
+          }
+        }
+      ]
+    },
+    {
+      "say": "Three of the four read 1h candles in regular hours. gru-draft.keras has no manifest yet, so I’ll leave it out. I’ll check one setup before starting anything.",
+      "calls": [
+        {
+          "tool": "validate_backtest",
+          "arguments": {
+            "model": {
+              "id": "mdl_r4n8ko21vb"
+            },
+            "data": {
+              "instrument": {
+                "id": "stock:NVIDIA"
+              },
+              "period": {
+                "start": 1735776000,
+                "end": 1751328000
+              }
+            }
+          },
+          "result": "instrument-not-found",
+          "is_error": true,
+          "answer": {
+            "type": "https://candlestack.tech/problems/instrument-not-found",
+            "title": "Instrument not found",
+            "status": 404,
+            "detail": "No instrument stock:NVIDIA. Search the instruments and take the id from the result.",
+            "instrument": "stock:NVIDIA"
+          }
+        },
+        {
+          "tool": "validate_backtest",
+          "arguments": {
+            "model": {
+              "id": "mdl_r4n8ko21vb"
+            },
+            "data": {
+              "instrument": {
+                "id": "stock:NVDA"
+              },
+              "period": {
+                "start": 1735776000,
+                "end": 1751328000
+              }
+            }
+          },
+          "result": "starts now, 24 candles of warm-up",
+          "answer": {
+            "model": {
+              "id": "mdl_r4n8ko21vb",
+              "name": "renko-lstm.keras",
+              "framework": "keras"
+            },
+            "instrument": {
+              "id": "stock:NVDA",
+              "symbol": "NVDA",
+              "name": "NVIDIA Corporation",
+              "exchange": "NASDAQ",
+              "market": "stock"
+            },
+            "period": {
+              "start": 1735776000,
+              "end": 1751328000
+            },
+            "timeframe": "1h",
+            "session": "regular",
+            "warm_up": {
+              "candles": 24,
+              "kind": "exact",
+              "load_start": 1735569000
+            },
+            "benchmarks": [
+              {
+                "id": "bh",
+                "kind": "buy_and_hold",
+                "instrument": "stock:NVDA"
+              }
+            ],
+            "starts": "now",
+            "queue_position": null
+          }
+        }
+      ]
+    },
+    {
+      "say": "The symbol is NVDA, not NVIDIA. The setup is fine now. Starting all three with your defaults, they run one after another.",
+      "calls": [
+        {
+          "tool": "start_backtest",
+          "arguments": {
+            "model": {
+              "id": "mdl_r4n8ko21vb"
+            },
+            "data": {
+              "instrument": {
+                "id": "stock:NVDA"
+              },
+              "period": {
+                "start": 1735776000,
+                "end": 1751328000
+              }
+            }
+          },
+          "result": "Silent Orion, running",
+          "answer": {
+            "id": "bt_3hq8wz1m5c",
+            "number": 41,
+            "name": "Silent Orion",
+            "status": "running",
+            "queue_position": null,
+            "url": "https://app.candlestack.tech/backtests/bt_3hq8wz1m5c"
+          }
+        },
+        {
+          "tool": "start_backtest",
+          "arguments": {
+            "model": {
+              "id": "mdl_w9q3tz58ke"
+            },
+            "data": {
+              "instrument": {
+                "id": "stock:NVDA"
+              },
+              "period": {
+                "start": 1735776000,
+                "end": 1751328000
+              }
+            }
+          },
+          "result": "Bright Vega, queued 1",
+          "answer": {
+            "id": "bt_9vd2kr7p4x",
+            "number": 42,
+            "name": "Bright Vega",
+            "status": "queued",
+            "queue_position": 1,
+            "url": "https://app.candlestack.tech/backtests/bt_9vd2kr7p4x"
+          }
+        },
+        {
+          "tool": "start_backtest",
+          "arguments": {
+            "model": {
+              "id": "mdl_k7g2pa60xm"
+            },
+            "data": {
+              "instrument": {
+                "id": "stock:NVDA"
+              },
+              "period": {
+                "start": 1735776000,
+                "end": 1751328000
+              }
+            }
+          },
+          "result": "Quiet Lyra, queued 2",
+          "answer": {
+            "id": "bt_6tn4ya0e8j",
+            "number": 43,
+            "name": "Quiet Lyra",
+            "status": "queued",
+            "queue_position": 2,
+            "url": "https://app.candlestack.tech/backtests/bt_6tn4ya0e8j"
+          }
+        }
+      ]
+    },
+    {
+      "say": "Waiting for the last one in the queue. The other two finish before it.",
+      "calls": [
+        {
+          "tool": "wait_for_backtest",
+          "arguments": {
+            "backtest_id": "bt_6tn4ya0e8j",
+            "timeout_s": 50
+          },
+          "result": "queued, not ended",
+          "answer": {
+            "id": "bt_6tn4ya0e8j",
+            "name": "Quiet Lyra",
+            "status": "queued",
+            "ended": false,
+            "queue_position": 1,
+            "duration_s": null
+          }
+        },
+        {
+          "tool": "wait_for_backtest",
+          "arguments": {
+            "backtest_id": "bt_6tn4ya0e8j",
+            "timeout_s": 50
+          },
+          "result": "finished",
+          "answer": {
+            "id": "bt_6tn4ya0e8j",
+            "name": "Quiet Lyra",
+            "status": "finished",
+            "ended": true,
+            "queue_position": null,
+            "duration_s": 38,
+            "url": "https://app.candlestack.tech/backtests/bt_6tn4ya0e8j"
+          }
+        }
+      ]
+    },
+    {
+      "calls": [
+        {
+          "tool": "compare_backtests",
+          "arguments": {
+            "ids": ["bt_3hq8wz1m5c", "bt_9vd2kr7p4x", "bt_6tn4ya0e8j"]
+          },
+          "result": "Silent Orion best on Sharpe and drawdown",
+          "answer": {
+            "backtests": [
+              {
+                "id": "bt_3hq8wz1m5c",
+                "name": "Silent Orion",
+                "status": "finished"
+              },
+              {
+                "id": "bt_9vd2kr7p4x",
+                "name": "Bright Vega",
+                "status": "finished"
+              },
+              {
+                "id": "bt_6tn4ya0e8j",
+                "name": "Quiet Lyra",
+                "status": "finished"
+              }
+            ],
+            "metrics": [
+              {
+                "key": "total_return",
+                "label": "Total return",
+                "better": "higher",
+                "values": [0.184, 0.227, 0.062],
+                "marks": [null, "best", "worst"]
+              },
+              {
+                "key": "sharpe",
+                "label": "Sharpe ratio",
+                "better": "higher",
+                "values": [1.36, 0.88, 0.52],
+                "marks": ["best", null, "worst"]
+              },
+              {
+                "key": "max_drawdown",
+                "label": "Max drawdown",
+                "better": "higher",
+                "values": [-0.098, -0.241, -0.145],
+                "marks": ["best", "worst", null]
+              },
+              {
+                "key": "trades",
+                "label": "Trades",
+                "better": null,
+                "values": [41, 96, 33],
+                "marks": [null, null, null]
+              }
+            ],
+            "differs": ["model.id"]
+          }
+        }
+      ]
+    },
+    {
+      "say": "Silent Orion, the Renko model, is the most stable. It made 18.4 % with the smallest fall, 9.8 %, and the best Sharpe, 1.36. Bright Vega earned more, 22.7 %, but fell 24.1 % in April when NVDA dropped, so it followed the market more than it read it. Quiet Lyra traded least and made 6.2 %. Buy and hold made 14.1 % and fell 36.9 % on the way. Six months of one stock is a small sample, so I would run the same three on AMD and on 2024 before trusting this."
+    }
+  ],
+  "outcome": {
+    "text": "Silent Orion, the Renko model, had the best Sharpe and the smallest drawdown. Bright Vega made the most but fell hardest in April. The figures of this sample are made up.",
+    "chart": {
+      "title": "Equity, 2 Jan to 30 Jun 2025",
+      "labels": [
+        "2 Jan 2025",
+        "9 Jan 2025",
+        "16 Jan 2025",
+        "23 Jan 2025",
+        "30 Jan 2025",
+        "6 Feb 2025",
+        "13 Feb 2025",
+        "21 Feb 2025",
+        "28 Feb 2025",
+        "7 Mar 2025",
+        "14 Mar 2025",
+        "21 Mar 2025",
+        "28 Mar 2025",
+        "5 Apr 2025",
+        "12 Apr 2025",
+        "19 Apr 2025",
+        "26 Apr 2025",
+        "3 May 2025",
+        "10 May 2025",
+        "18 May 2025",
+        "25 May 2025",
+        "1 Jun 2025",
+        "8 Jun 2025",
+        "15 Jun 2025",
+        "22 Jun 2025",
+        "30 Jun 2025"
+      ],
+      "ticks": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      "base": 100,
+      "series": [
+        {
+          "name": "Silent Orion",
+          "values": [
+            100, 100.2, 101.5, 102.2, 103.1, 105, 105.6, 106.9, 107.9, 108.9, 109.5, 110.7, 108.7, 104.6, 101.7, 101.2,
+            103.6, 104.9, 106.7, 108.4, 111, 112.6, 114.1, 115.5, 116.6, 118.4
+          ]
+        },
+        {
+          "name": "Bright Vega",
+          "values": [
+            100, 101.4, 104.6, 101.1, 96.8, 98.9, 103.2, 105.4, 107.3, 107.7, 105.4, 104, 99.8, 95.3, 87.4, 82, 85.6,
+            92.3, 97, 101.3, 104.4, 107.9, 113.4, 117.4, 120.4, 122.7
+          ]
+        },
+        {
+          "name": "Quiet Lyra",
+          "values": [
+            100, 101.3, 102.1, 102.3, 103, 104, 104.5, 106.9, 107.5, 107.5, 106.2, 103, 102, 99.7, 95.9, 92.3, 94, 96.3,
+            97.4, 99.7, 101, 102, 103.6, 104.1, 104.9, 106.2
+          ]
+        },
+        {
+          "name": "Buy and hold NVDA",
+          "values": [
+            100, 99.5, 101.9, 100.7, 89.4, 90.5, 95.3, 98.7, 98.9, 93.1, 90.5, 86.7, 80.3, 72.2, 66.7, 63.1, 72.1, 78.1,
+            83.2, 88.3, 92.8, 99, 103.2, 106.6, 109.6, 114.1
+          ],
+          "benchmark": true
+        }
+      ]
+    },
+    "table": {
+      "columns": [
+        {
+          "name": "Backtest"
+        },
+        {
+          "name": "Return",
+          "better": "higher"
+        },
+        {
+          "name": "Sharpe",
+          "better": "higher"
+        },
+        {
+          "name": "Max drawdown",
+          "better": "higher"
+        },
+        {
+          "name": "Trades"
+        }
+      ],
+      "rows": [
+        {
+          "name": "Silent Orion",
+          "sub": "NVDA · Renko · 1h",
+          "values": ["+18.4 %", "1.36", "−9.8 %", 41]
+        },
+        {
+          "name": "Bright Vega",
+          "sub": "NVDA · Windows · 1h",
+          "values": ["+22.7 %", "0.88", "−24.1 %", 96]
+        },
+        {
+          "name": "Quiet Lyra",
+          "sub": "NVDA · Kagi · 1h",
+          "values": ["+6.2 %", "0.52", "−14.5 %", 33]
+        },
+        {
+          "name": "Buy and hold NVDA",
+          "sub": "Benchmark",
+          "values": ["+14.1 %", "0.41", "−36.9 %", "–"],
+          "benchmark": true
+        }
+      ]
+    },
+    "warning": "Six months of one stock is a small sample and past results do not predict future ones. Run the same models on other periods before you rely on them."
+  },
+  "try": "Connect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt with your own models and instrument. This session used `list_models`, `validate_backtest`, `start_backtest`, `wait_for_backtest` and `compare_backtests`, see [Tools](/docs/mcp/tools/)."
+}

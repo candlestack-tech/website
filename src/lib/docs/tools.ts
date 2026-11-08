@@ -57,6 +57,12 @@ function kind(tool: Tool): Kind {
   return tool.annotations.destructiveHint ? 'de' : 'rw';
 }
 
+// The kind of a tool by its name, for the calls of a use case; undefined for a tool the file lacks
+export function toolKind(name: string) {
+  const tool = tools.find((t) => t.name === name);
+  return tool && { kind: kind(tool), name: KINDS[kind(tool)][0] };
+}
+
 // The index groups tools by the part of the API they do the work of
 const GROUPS: [string, RegExp][] = [
   ['Account', /^\/api\/v1\/me\b/],

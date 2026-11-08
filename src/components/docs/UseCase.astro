@@ -1,0 +1,278 @@
+---
+import '../../styles/use-cases.css';
+import { formatDay } from '../../lib/format';
+import { highlightHtml } from '../../lib/docs/highlight';
+import { clientLogo, icon } from '../../lib/docs/icons';
+import { toolKind } from '../../lib/docs/tools';
+import {
+  argLine,
+  callCount,
+  chartGeometry,
+  duration,
+  inline,
+  isAnswer,
+  json,
+  num,
+  paragraphs,
+  plural,
+  seriesColors,
+  tableMarks,
+  type Session,
+} from '../../lib/docs/use-cases';
+
+// A use case from the approved docs design: the meta line, the prompt with Copy, the session
+// player and the outcome with a chart and a table. The HTML holds every step open, so the page
+// reads in full without JavaScript; use-case.ts turns it into the step by step player.
+
+interface Props {
+  session: Session;
+}
+
+const { session: s } = Astro.props;
+const { outcome } = s;
+const steps = s.steps.length;
+const calls = callCount(s);
+const chart = outcome.chart;
+const geo = chart && chartGeometry(chart);
+const colors = chart ? seriesColors(chart) : [];
+const colorOf = (name: string) => {
+  const i = chart?.series.findIndex((x) => x.name === name) ?? -1;
+  return i === -1 ? undefined : colors[i];
+};
+const table = outcome.table;
+const marks = table ? tableMarks(table) : [];
+const marked = table?.columns.some((c) => c.better);
+// The figures for the tooltip, as JSON that cannot end the element early
+const chartData =
+  chart &&
+  JSON.stringify({
+    labels: chart.labels,
+    series: chart.series.map((x, i) => ({ name: x.name, values: x.values, color: colors[i] })),
+  }).replace(/</g, '\\u003c');
+const copy = icon('copy', 'ic-copy') + icon('check', 'ic-done');
+---
+
+<div class="ucm">
+  <span>
+    <Fragment set:html={clientLogo(s.client)} />
+    {s.client}
+  </span>
+  <span>
+    <Fragment set:html={icon('steps')} />
+    {plural(steps, 'step')} · {plural(calls, 'tool call')}
+  </span>
+  {s.duration_s && (
+    <span>
+      <Fragment set:html={icon('clock')} />
+      {duration(s.duration_s)}
+    </span>
+  )}
+  <span>
+    <Fragment set:html={icon('cal')} />
+    Recorded {formatDay(s.recorded_at)}
+  </span>
+</div>
+
+<h2 id="prompt">
+  The prompt<a class="hlink" href="#prompt" aria-label="Link to this section"></a>
+</h2>
+<div class="prompt case-prompt">
+  <div class="cb-hd">
+    <span class="prompt-l">
+      <Fragment set:html={icon('term')} />
+      Prompt
+    </span>
+    <span class="cb-sp"></span>
+    <button type="button" class="btn xs ghost copy" data-copy>
+      <Fragment set:html={copy} />
+      <span>Copy</span>
+    </button>
+  </div>
+  <p>{s.prompt}</p>
+</div>
+
+<h2 id="session">
+  The session<a class="hlink" href="#session" aria-label="Link to this section"></a>
+</h2>
+<div class="player" data-player>
+  <div class="sbar">
+    <div class="seg" role="group" aria-label="Show the session">
+      <button type="button" class="on" data-mode="step" aria-pressed="true">
+        Step by step
+      </button>
+      <button type="button" data-mode="all" aria-pressed="false">
+        All steps
+      </button>
+    </div>
+    <span class="sp"></span>
+    <span class="pos all-only">
+      {plural(steps, 'step')} · {plural(calls, 'call')}
+    </span>
+    <button type="button" class="btn sm step-only" data-go="-1" aria-label="Previous step" disabled>
+      <Fragment set:html={icon('left')} />
+      <span class="hide-xs">Previous</span>
+    </button>
+    <span class="pos step-only" data-pos aria-live="polite">
+      Step 1 of {steps}
+    </span>
+    <button type="button" class="btn pri step-only" data-go="1" disabled={steps < 2}>
+      Next
+      <Fragment set:html={icon('right')} />
+    </button>
+    <div class="prog step-only" aria-hidden="true">
+      {s.steps.map((_, i) => (
+        <i class:list={{ on: i === 0 }} />
+      ))}
+    </div>
+  </div>
+  <ol class="ss">
+    {s.steps.map((step, i) => (
+      <li class:list={['st', { cur: i === 0, later: i > 0, fin: isAnswer(s, i) }]}>
+        <div class="st-n">{i + 1}</div>
+        <div class="st-b">
+          {step.say && (
+            <>
+              <div class="who">{isAnswer(s, i) ? 'Agent’s answer' : 'Agent'}</div>
+              <Fragment set:html={paragraphs(step.say, 'st-say')} />
+            </>
+          )}
+          {step.calls.map((c) => (
+            <details class:list={['tc', { err: c.is_error }]} open>
+              <summary class="tc-h">
+                <Fragment set:html={icon('chev', 'tc-ch')} />
+                <span class="tc-nm">{c.tool}</span>
+                <span class="tc-args">{argLine(c.arguments)}</span>
+                {c.result && <span class="tc-res">→ {c.result}</span>}
+              </summary>
+              <div class="tc-io">
+                <div class="tl">
+                  Call
+                  {toolKind(c.tool) && (
+                    <span class={`tag ${toolKind(c.tool)?.kind}`}>
+                      <span class="dot" />
+                      {toolKind(c.tool)?.name}
+                    </span>
+                  )}
+                </div>
+                <pre><code set:html={highlightHtml(json(c.arguments), 'json')} /></pre>
+                <div class="tl">{c.is_error ? 'Error' : 'Answer'}</div>
+                <pre><code set:html={highlightHtml(json(c.answer), 'json')} /></pre>
+              </div>
+            </details>
+          ))}
+        </div>
+      </li>
+    ))}
+  </ol>
+  {steps > 1 && (
+    <div class="st-more step-only">
+      <div class="st-n">
+        <Fragment set:html={icon('down')} />
+      </div>
+      <div class="t">
+        <span data-more>{plural(steps - 1, 'more step')}</span>
+        <button type="button" class="btn sm" data-mode="all">
+          Show all
+        </button>
+      </div>
+    </div>
+  )}
+</div>
+
+<h2 id="outcome">
+  The outcome<a class="hlink" href="#outcome" aria-label="Link to this section"></a>
+</h2>
+<Fragment set:html={paragraphs(outcome.text)} />
+{chart && geo && (
+  <figure class="chart">
+    <div class="chart-hd">
+      <h3>{chart.title}</h3>
+      <div class="chart-lg">
+        {chart.series.map((x, i) => (
+          <span>
+            <i class:list={[`c${colors[i]}`, { dash: x.benchmark }]} />
+            {x.name}
+          </span>
+        ))}
+      </div>
+    </div>
+    <div class="plot" data-chart={chartData}>
+      <svg viewBox="0 0 1000 100" preserveAspectRatio="none" role="img" aria-label={chart.title}>
+        {geo.ticks.map((t) => (
+          <line class={t.value === geo.base ? 'base' : 'gl'} x1="0" x2="1000" y1={t.top} y2={t.top} />
+        ))}
+        {geo.base !== undefined && !geo.ticks.some((t) => t.value === geo.base) && (
+          <line class="base" x1="0" x2="1000" y1={geo.y(geo.base)} y2={geo.y(geo.base)} />
+        )}
+        {geo.paths.map((d, i) => (
+          <path class:list={['ln', `c${colors[i]}`, { dash: chart.series[i].benchmark }]} d={d} />
+        ))}
+      </svg>
+      {geo.ticks.map((t) => (
+        <span class="yl" style={`top:${t.top.toFixed(2)}%`}>
+          {num(t.value)}
+        </span>
+      ))}
+      <div class="xh" hidden />
+      <div class="tip" hidden />
+    </div>
+    <div class="xl" aria-hidden="true">
+      {geo.xTicks.map((t) => (
+        <span>{t}</span>
+      ))}
+    </div>
+  </figure>
+)}
+{table && (
+  <div class="tw">
+    <table class="cmp">
+      <thead>
+        <tr>
+          {table.columns.map((c, i) => (
+            <th class:list={{ num: i > 0 }}>{c.name}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {table.rows.map((r, ri) => (
+          <tr class:list={{ bench: r.benchmark }}>
+            <td>
+              <div class="bn">
+                <b>
+                  {colorOf(r.name) !== undefined && <span class={`sw c${colorOf(r.name)}`} />}
+                  {r.name}
+                </b>
+                {r.sub && <span>{r.sub}</span>}
+              </div>
+            </td>
+            {r.values.map((v, ci) => (
+              <td class:list={['num', marks[ri][ci]]}>{v}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+{table && marked && <p class="small">Best value of each column in green, worst in red, as on the Compare page.</p>}
+{outcome.warning && (
+  <div class="co warn" role="note">
+    <Fragment set:html={icon('warn')} />
+    <div>
+      <p set:html={`<b>Warning</b> ${inline(outcome.warning)}`} />
+    </div>
+  </div>
+)}
+{s.try && (
+  <>
+    <h2 id="try">
+      Try it yourself
+      <a class="hlink" href="#try" aria-label="Link to this section" />
+    </h2>
+    <Fragment set:html={paragraphs(s.try)} />
+  </>
+)}
+
+<script>
+  import '../../scripts/use-case';
+</script>

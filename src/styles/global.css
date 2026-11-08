@@ -15,6 +15,12 @@
   /* Brand colors of the AI client logos in the docs, as their brand pages give them */
   --logo-openai: #000;
   --logo-cursor: #26251e;
+  /* Series colors of charts, as on the app's Compare page, and buy and hold in grey */
+  --s0: #1d5fd1;
+  --s1: #b86e00;
+  --s2: #7a4fd0;
+  --s3: #3a3a3a;
+  --bench: #8a8a8a;
   color-scheme: light;
 }
 
@@ -34,6 +40,11 @@
   --on-accent: #0d0f11;
   --logo-openai: #fff;
   --logo-cursor: #edecec;
+  --s0: #5b9cf6;
+  --s1: #f2a33c;
+  --s2: #b794f6;
+  --s3: #e8e8e8;
+  --bench: #7d848a;
   color-scheme: dark;
 }
 

@@ -62,3 +62,19 @@ export function highlight(code: string, language: string): Node[] {
   out.push(text(code.slice(last)));
   return out.filter((n) => n.type !== 'text' || n.value !== '');
 }
+
+export const escapeHtml = (value: string) =>
+  value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+// The same colors as an HTML string, for the pieces of a page built outside the Markdown transform
+export function highlightHtml(code: string, language: string) {
+  return highlight(code, language)
+    .map((n) => {
+      if (n.type === 'text') return escapeHtml(n.value);
+      if (n.type !== 'element') return '';
+      const cls = (n.properties.className as string[]).join(' ');
+      const inner = n.children.map((c) => (c.type === 'text' ? escapeHtml(c.value) : '')).join('');
+      return `<span class="${cls}">${inner}</span>`;
+    })
+    .join('');
+}

@@ -1,0 +1,700 @@
+/* Use cases (/docs/use-cases/): the meta line, the session player, the outcome's chart and table,
+   and the list on the section's first page. From the approved docs design. Colors only through
+   the variables of global.css. Without JavaScript every step is open and the controls are hidden. */
+
+/* The prompt keeps its line breaks */
+.md .case-prompt p {
+  white-space: pre-wrap;
+}
+
+/* Buttons of the player */
+.btn.sm {
+  height: 30px;
+  padding: 0 10px;
+  font-size: 13px;
+}
+
+.btn.pri {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.btn.pri:hover {
+  background: color-mix(in srgb, var(--accent) 86%, var(--ink));
+  color: var(--on-accent);
+}
+
+.btn:disabled,
+.btn:disabled:hover {
+  opacity: 0.45;
+  cursor: default;
+  background: var(--bg);
+}
+
+.btn.pri:disabled,
+.btn.pri:disabled:hover {
+  background: var(--accent);
+}
+
+/* Client, steps and calls, duration, date */
+.ucm {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font: 12.5px var(--font-mono);
+  color: var(--muted);
+}
+
+.ucm span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ucm .i,
+.ucm .cl-logo {
+  width: 14px;
+  height: 14px;
+}
+
+/* The bar: Step by step or All steps, Previous, where you are, Next and the progress */
+.sbar {
+  margin: 16px 0 0;
+  position: sticky;
+  top: calc(var(--hdr) + 8px);
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg);
+  box-shadow: 0 6px 20px var(--shadow);
+}
+
+.seg {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 7px;
+  background: var(--surface2);
+}
+
+.seg button {
+  appearance: none;
+  border: 0;
+  background: none;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 5px;
+  font: 500 13px var(--font-sans);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.seg button.on {
+  background: var(--bg);
+  color: var(--ink);
+  box-shadow: 0 1px 2px var(--shadow);
+}
+
+.sbar .sp {
+  flex: 1;
+}
+
+.sbar .pos {
+  font: 12.5px var(--font-mono);
+  color: var(--muted);
+  min-width: 84px;
+  text-align: center;
+}
+
+.prog {
+  display: flex;
+  gap: 3px;
+  width: 100%;
+  padding: 0 2px;
+}
+
+.prog i {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--surface2);
+}
+
+.prog i.on {
+  background: var(--accent);
+}
+
+/* The steps */
+.ss {
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.st {
+  position: relative;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 14px;
+  padding-bottom: 18px;
+  scroll-margin-top: calc(var(--hdr) + 110px);
+}
+
+.st::before {
+  content: '';
+  position: absolute;
+  left: 13.5px;
+  top: 30px;
+  bottom: 2px;
+  width: 1px;
+  background: var(--rule);
+}
+
+/* The rail stops at the last step */
+.st:not(:has(~ .st))::before {
+  display: none;
+}
+
+.st-n {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--bg);
+  display: grid;
+  place-items: center;
+  font: 500 12px var(--font-mono);
+  color: var(--muted);
+}
+
+.st-n .i {
+  width: 14px;
+  height: 14px;
+}
+
+.js .player:not(.all) .st.cur .st-n {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.st-b {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.who {
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.md .st-say {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.6;
+}
+
+.md .st.fin .st-say {
+  font-size: 16px;
+}
+
+.st.fin .st-b {
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--rule));
+  border-radius: 10px;
+  background: var(--accent-soft);
+}
+
+/* A tool call: its name, arguments and short result on one line, the call and the answer below */
+.tc {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--code);
+  overflow: hidden;
+}
+
+.tc-h {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font: 13px var(--font-mono);
+}
+
+.tc-h::-webkit-details-marker {
+  display: none;
+}
+
+.tc-h:hover {
+  background: var(--surface);
+}
+
+.tc-h .i {
+  width: 14px;
+  height: 14px;
+  color: var(--muted);
+}
+
+.tc-nm {
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.tc-args {
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
+}
+
+.tc-res {
+  color: var(--accent);
+  white-space: nowrap;
+  font-size: 12.5px;
+}
+
+.tc.err .tc-res {
+  color: var(--down);
+}
+
+.tc-ch {
+  transition: transform 0.15s;
+}
+
+.tc[open] .tc-ch {
+  transform: rotate(90deg);
+}
+
+.tc-io {
+  border-top: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.tc-io .tl {
+  padding: 8px 12px 0;
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tc-io .tl:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tc.err .tc-io .tl:last-of-type {
+  color: var(--down);
+}
+
+.tc-io pre {
+  margin: 0;
+  padding: 6px 12px 12px;
+  font: 12.5px/1.6 var(--font-mono);
+  overflow: auto;
+  max-height: 340px;
+  tab-size: 2;
+}
+
+.md .tc-io pre code {
+  font: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  overflow-wrap: normal;
+}
+
+.tc-io pre + .tl {
+  border-top: 1px dashed var(--rule);
+  padding-top: 10px;
+}
+
+/* "N more steps" under the current step */
+.st-more {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+}
+
+.st-more[hidden] {
+  display: none;
+}
+
+.st-more .st-n {
+  border-style: dashed;
+}
+
+.st-more .t {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* With JavaScript: one mode at a time, and in Step by step the steps after the current one wait */
+html:not(.js) .sbar,
+html:not(.js) .st-more,
+.js .player.all .step-only,
+.js .player:not(.all) .all-only,
+.js .player:not(.all) .st.later {
+  display: none;
+}
+
+/* Without JavaScript a call is a plain open block: the name and result, the call, the answer */
+html:not(.js) .tc-ch,
+html:not(.js) .tc-args {
+  display: none;
+}
+
+html:not(.js) .tc-h {
+  cursor: auto;
+}
+
+html:not(.js) .tc-res {
+  color: var(--muted);
+}
+
+/* The outcome: a chart of the series and a table of the figures */
+.chart {
+  margin: 16px 0 0;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg);
+  padding: 14px 16px 12px;
+}
+
+.chart-hd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 16px;
+}
+
+.md .chart-hd h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.chart-lg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.chart-lg span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chart-lg i {
+  width: 14px;
+  height: 0;
+  border-top: 2px solid var(--c);
+  display: inline-block;
+}
+
+.chart-lg i.dash {
+  border-top-style: dashed;
+}
+
+.c0 {
+  --c: var(--s0);
+}
+
+.c1 {
+  --c: var(--s1);
+}
+
+.c2 {
+  --c: var(--s2);
+}
+
+.c3 {
+  --c: var(--s3);
+}
+
+.c4 {
+  --c: var(--bench);
+}
+
+.plot {
+  position: relative;
+  height: 230px;
+  margin: 12px 0 0 38px;
+}
+
+.plot svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.plot .gl {
+  stroke: var(--rule);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.plot .base {
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.6;
+}
+
+.plot .ln {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.plot .ln.dash {
+  stroke-dasharray: 5 4;
+}
+
+.yl {
+  position: absolute;
+  left: -38px;
+  width: 32px;
+  text-align: right;
+  transform: translateY(-50%);
+  font: 11px var(--font-mono);
+  color: var(--muted);
+}
+
+.xl {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0 0 38px;
+  font: 11px var(--font-mono);
+  color: var(--muted);
+}
+
+.xh {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--muted);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.tip {
+  position: absolute;
+  top: 6px;
+  z-index: 3;
+  min-width: 168px;
+  padding: 8px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--bg);
+  box-shadow: 0 8px 24px var(--shadow);
+  font-size: 12.5px;
+  pointer-events: none;
+}
+
+.tip .d {
+  font: 11.5px var(--font-mono);
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.tip .r {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tip .r b {
+  margin-left: auto;
+  font: 500 12px var(--font-mono);
+  padding-left: 10px;
+}
+
+.tip .r i {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  display: inline-block;
+  background: var(--c);
+}
+
+.tw {
+  margin: 14px 0 0;
+  overflow-x: auto;
+}
+
+.md .tw table {
+  margin-top: 0;
+}
+
+.md td.num,
+.md th.num {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.md td.best {
+  color: var(--up);
+  font-weight: 600;
+}
+
+.md td.worst {
+  color: var(--down);
+  font-weight: 600;
+}
+
+.md tr.bench td {
+  color: var(--muted);
+}
+
+.bn {
+  display: flex;
+  flex-direction: column;
+}
+
+.bn b {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.bn span {
+  font: 11.5px var(--font-mono);
+  color: var(--muted);
+}
+
+.bn .sw {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 8px;
+  vertical-align: -1px;
+  background: var(--c);
+}
+
+.md p.small {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* The list of use cases on /docs/use-cases/ */
+.cases {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Above the docs' rule that underlines links in lists */
+.md ul.cases li a {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 0;
+  border-top: 1px solid var(--rule);
+  color: inherit;
+  text-decoration: none;
+}
+
+.cases-t {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.cases-s {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.cases a:hover .cases-t {
+  color: var(--accent);
+}
+
+.cases .ucm {
+  margin-top: 6px;
+}
+
+.md .cases-none {
+  color: var(--muted);
+  font-style: italic;
+}
+
+@media (max-width: 900px) {
+  .sbar {
+    top: 54px;
+  }
+
+  .sbar .pos {
+    min-width: 0;
+  }
+
+  .st {
+    scroll-margin-top: 150px;
+  }
+
+  .plot {
+    height: 190px;
+    margin-left: 34px;
+  }
+
+  .yl {
+    left: -34px;
+    width: 28px;
+  }
+
+  .xl {
+    margin-left: 34px;
+  }
+
+  .tc-args,
+  .hide-xs {
+    display: none;
+  }
+
+  .tc-res {
+    margin-left: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-ch {
+    transition: none;
+  }
+}

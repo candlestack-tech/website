@@ -1,0 +1,45 @@
+---
+import '../../styles/use-cases.css';
+import { formatDay } from '../../lib/format';
+import { clientLogo } from '../../lib/docs/icons';
+import { pagePath, type CasePage } from '../../lib/docs/pages';
+import { callCount, plural } from '../../lib/docs/use-cases';
+import { url } from '../../lib/url';
+
+// The use cases under the text of /docs/use-cases/, or the section's `soon` text while there are none
+
+interface Props {
+  cases: CasePage[];
+  empty?: string;
+}
+
+const { cases, empty } = Astro.props;
+---
+
+{cases.length ? (
+  <ul class="cases">
+    {cases.map((c) => {
+      const s = c.entry.data;
+      return (
+        <li>
+          <a href={url(pagePath(c))}>
+            <span class="cases-t">{s.title}</span>
+            <span class="cases-s">{s.summary}</span>
+            <span class="ucm">
+              <span>
+                <Fragment set:html={clientLogo(s.client)} />
+                {s.client}
+              </span>
+              <span>
+                {plural(s.steps.length, 'step')} · {plural(callCount(s), 'tool call')}
+              </span>
+              <span>Recorded {formatDay(s.recorded_at)}</span>
+            </span>
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+) : (
+  empty && <p class="cases-none">{empty}</p>
+)}

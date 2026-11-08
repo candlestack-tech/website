@@ -1,9 +1,13 @@
 ---
 import { render } from 'astro:content';
+import UseCase from '../../components/docs/UseCase.astro';
+import UseCaseList from '../../components/docs/UseCaseList.astro';
 import Docs from '../../layouts/Docs.astro';
-import { getDocsPages } from '../../lib/docs/pages';
+import { getDocsNav, getDocsPages, listedCases, USE_CASES } from '../../lib/docs/pages';
+import { caseHeadings } from '../../lib/docs/use-cases';
 
-// Every page of content/docs/ at /docs/<path>/, with the pages before and after it in the sidebar
+// Every page of content/docs/ at /docs/<path>/, with the pages before and after it in the sidebar.
+// A use case (content/docs/use-cases/<slug>.json) is at /docs/use-cases/<slug>/ with the player.
 export async function getStaticPaths() {
   const pages = await getDocsPages();
   return pages.map((page, i) => ({
@@ -13,9 +17,16 @@ export async function getStaticPaths() {
 }
 
 const { page, prev, next } = Astro.props;
-const { Content, headings } = await render(page);
+const rendered = page.kind === 'page' ? await render(page.entry) : undefined;
+const session = page.kind === 'case' ? page.entry.data : undefined;
+const headings = session ? caseHeadings(session) : (rendered?.headings ?? []);
+const lists = page.id === USE_CASES;
+const cases = await listedCases(page);
+const soon = lists ? (await getDocsNav()).sections.find((s) => s.id === USE_CASES)?.soon : undefined;
 ---
 
 <Docs page={page} headings={headings} prev={prev} next={next}>
-  <Content />
+  {rendered && <rendered.Content />}
+  {session && <UseCase session={session} />}
+  {lists && <UseCaseList cases={cases} empty={soon} />}
 </Docs>

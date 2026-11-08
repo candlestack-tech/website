@@ -41,6 +41,7 @@ never the code. See [`content/README.md`](content/README.md) for the rules.
 | `content/templates/meeting.md` | template for new meeting minutes |
 | `content/problems/<slug>.md` | one file per error type of the CandleStack API, see below |
 | `content/docs/` | the pages of the docs at `/docs/`, see below |
+| `content/docs/use-cases/<slug>.json` | one recorded session per use case at `/docs/use-cases/<slug>/` |
 | `content/docs-nav.md` | the sections of the docs sidebar |
 
 ### Add meeting minutes
@@ -66,6 +67,8 @@ page is a Markdown file in `content/docs/`, and its text is served three ways, a
 site: the page itself, the plain Markdown at `<page>.md` (`/docs/agents.md`), and `/llms.txt`
 (one line per page) and `/llms-full.txt` (every page in one file) for agents. See
 [`content/README.md`](content/README.md) to add a page and for the Markdown shapes the docs style.
+A use case is a recorded session in `content/docs/use-cases/<slug>.json`, played step by step on its
+page. `content/README.md` explains the format and how to remove secrets before committing one.
 
 The tool reference at `/docs/mcp/tools/` and the list of what stays in the web app on `/docs/mcp/`
 are built from `src/data/mcp-tools.json`, a copy of the MCP server's
@@ -98,14 +101,16 @@ src/
   layouts/Base.astro     page shell: header, navigation, theme
   layouts/Docs.astro     docs shell: sidebar, page, On this page, Menu drawer on phones
   components/            head, background, hero band, theme toggle, section heading, lock icon,
-                         the client logos of the docs
+                         the client logos of the docs, the use case page and the list of use cases
   lib/                   content loaders, date format, base-path links, background generator
   lib/docs/              docs pages and their Markdown versions, the Markdown transform that
-                         builds code blocks, tabs, callouts, rows, steps and cards, and the
-                         MCP tool reference built from data/mcp-tools.json
+                         builds code blocks, tabs, callouts, rows, steps and cards, the
+                         MCP tool reference built from data/mcp-tools.json, and use cases
   scripts/docs.ts        Copy, code and client tabs, the Menu drawer and On this page in the browser
+  scripts/use-case.ts    the session player and the chart's tooltip of a use case
   styles/global.css      colors for the light and dark theme, shared styles
   styles/docs.css        styles of the docs pages
+  styles/use-cases.css   styles of the use case pages
 ```
 
 ## Theme
