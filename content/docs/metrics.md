@@ -31,7 +31,7 @@ Sharpe and Sortino use one return per day, not per candle.
 - `r[d] = E[d] / E[d-1] - 1`. The first day's return is from the starting capital, 1.0.
 - Days without rows are skipped: weekends and holidays have no return for stocks. Crypto has a row every day.
 - A day with rows but no position has a return of 0, and it counts.
-- Once the equity has reached 0, there are no daily returns at all.
+- Once a day starts from an equity of 0 (after a [ruin](/docs/engine/#ruin)), there are no daily returns at all.
 
 ## The 12 metrics
 
@@ -41,8 +41,8 @@ In this order in `results.stats`:
 | --- | --- | --- | --- |
 | `total_return` | `equity[last] - 1` | fraction | the run has no rows |
 | `max_drawdown` | `min(equity[t] / peak[t] - 1)`, with `peak[t] = max(1.0, equity[0], ..., equity[t])` | fraction, 0 or below | the run has no rows |
-| `sharpe` | `mean(r) / std(r) * sqrt(periods_per_year)`, `std` the sample standard deviation (ddof 1) | per year | fewer than 2 days, `std(r)` is 0, or the equity reached 0 |
-| `sortino` | `mean(r) / sqrt(mean(min(r, 0) ** 2)) * sqrt(periods_per_year)` | per year | fewer than 2 days, no day with `r < 0`, or the equity reached 0 |
+| `sharpe` | `mean(r) / std(r) * sqrt(periods_per_year)`, `std` the sample standard deviation (ddof 1) | per year | fewer than 2 days, `std(r)` is 0, or a day starts from an equity of 0 |
+| `sortino` | `mean(r) / sqrt(mean(min(r, 0) ** 2)) * sqrt(periods_per_year)` | per year | fewer than 2 days, no day with `r < 0`, or a day starts from an equity of 0 |
 | `num_trades` | the trades, the `end` trade included | count | never |
 | `win_rate` | `count(return > 0) / num_trades` | fraction | no trades |
 | `avg_trade_return` | `mean(return)` | fraction | no trades |

@@ -85,7 +85,7 @@ equity = capital * (1 + f * side * (close / entry - 1) - f * fee)
 
 A backtest looks ahead when a decision or a fill uses a price that was not known yet. Here is what prevents it, and what does not.
 
-- **The model sees closed candles up to `t`.** Each sample is built from candles up to and including candle `t`, and its score goes to candle `t`. Every block of the [manifest](/docs/manifest/) uses only candles up to the one it computes: no centered windows, no statistics over the whole series. Normalization uses numbers from the manifest, never from the backtest's own data.
+- **The model sees closed candles up to `t`.** Each sample is built from candles up to and including candle `t`, and its score goes to candle `t`. Every block of the [manifest](/docs/manifest/) uses only candles up to the one it computes: no centered windows, no statistics over the whole series. Normalization is a fixed rule of its block, never a statistic of the backtest's own data.
 - **The decision steps use the past only.** Calibration and EMA use the scores up to `t`. Confirmation and minimum hold use the signal up to `t`. K-means fits on scores before the row it is used on, never on the row itself.
 - **The fill comes after the decision.** With `next_open` an order decided on candle `t` fills at the open of the next candle, before that candle's high, low and close are looked at.
 - **The engine reads one candle at a time.** On a candle it reads only that candle's prices and signal, and what it carries from earlier candles: the capital, the position, its entry price and stop level, the peak of the equity and an order.
@@ -98,12 +98,12 @@ What CandleStack cannot check:
 
 ## The data
 
-- **Stocks** US stocks and ETFs from Alpaca's consolidated feed (SIP), regular session only: 09:30 to 16:00 New York, 13:00 on early-close days, no session on holidays. Pre-market and after-hours trades are not in the candles. Bins start at the session open, and the last one can be shorter than the timeframe.
+- **Stocks** US stocks and ETFs from Alpaca's consolidated feed (SIP), regular session only: 09:30 to 16:00 New York, 13:00 on early-close days, no session on holidays. Pre-market and after-hours trades are not in the intraday candles. Bins start at the session open, and the last one can be shorter than the timeframe.
 - **Crypto** Binance spot pairs, 24 hours a day, every day. Bins are aligned to UTC.
 - **Nights, weekends and holidays** A stock position stays open over them. With `next_open`, a decision on the last candle of a session fills at the next session's first open. A price gap overnight can jump past a stop: then the position exits at the open (reason `gap`).
-- **Daily stock candles** A `1d` stock candle is the day as the exchanges report it: its open and close are the official opening and closing auction prices.
+- **Daily stock candles** A `1d` stock candle is the day as the exchanges report it: its open and close are the official opening and closing auction prices, and its volume includes pre-market and after-hours trades.
 - **Missing candles** A candle the source did not deliver is never filled in or interpolated. It is not a row: the engine goes from the candle before to the candle after, and an order waits for the next candle that exists. The model's input does not fill it either.
-- **A candle without its own prediction** repeats the previous prediction, so no new decision follows. `data.align.candles_without_prediction` in the [result](/docs/backtest-json/#data) counts them.
+- **A candle without its own prediction** repeats the previous prediction. With `threshold` or `hysteresis` alone that gives the same signal again, but calibration, EMA, k-means, confirm and minimum hold count it as one more row, so the signal can still change there. `data.align.candles_without_prediction` in the [result](/docs/backtest-json/#data) counts them.
 - **Splits and dividends** Stock prices are adjusted backwards for splits and dividends, so a dividend shows as a smaller drop in the price, not as a cash payment. When the source adjusts old prices again, the candles' fingerprint changes and the result says so (`data.changed`).
 - **The period** `[start, end)` in UTC epoch seconds. The engine runs on the candles of the period from the first that has a prediction to the last. Only closed candles exist, so a period that ends now stops at the last closed candle. Stock data is 15 minutes behind. A period plus its warm-up can have at most 50,000 candles ([too-many-candles](/problems/too-many-candles/)).
 - **Instrument and model** A model of `regular` session candles runs on stocks, a model of `24/7` candles on crypto ([instrument-not-for-model](/problems/instrument-not-for-model/)). The timeframe is always the model's.
@@ -251,7 +251,7 @@ A basis point (bps) is 0.01%: 10 bps is a factor of 0.001.
 ### Stop loss
 
 - **The level** comes from the entry price with slippage: `entry * (1 - side * stop_loss)`. Below the entry for a long, above it for a short.
-- **A gap** On a candle the position already held at its open: if the open is at or beyond the level, the position exits at that open, reason `gap`. That price is worse than the level.
+- **A gap** On a candle the position already held at its open: if the open is at or beyond the level, the position exits at that open, reason `gap`. That price can be worse than the level.
 - **A touch** Otherwise, if the candle's low (long) or high (short) reaches the level, the position exits at the level, reason `stop`. Touching counts.
 - **The entry candle** A `next_open` position opened at this candle's open can only exit by a touch on it, as its open is the entry. A `signal_close` position is first checked on the next candle.
 - **Inside a candle** The engine does not know whether the low or the high came first. It assumes the stop was hit whenever the low or high reached it.

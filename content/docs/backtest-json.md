@@ -233,7 +233,7 @@ How the predictions become a signal of -1 (short), 0 (flat) or +1 (long). Each s
 
 The rules:
 
-- `threshold` `{"name": "threshold", "limit": ...}`: long at a prediction of `limit` or more, short at `-limit` or less, else flat.
+- `threshold` `{"name": "threshold", "limit": ...}`: long at a prediction above 0 that is `limit` or more, short at one below 0 that is `-limit` or less, else flat. A prediction of exactly 0 is flat, even with `limit` 0.
 - `hysteresis` `{"name": "hysteresis", "enter": ..., "exit": ...}`: a position opens at `enter` and closes below `exit`, which is at most `enter`.
 - `kmeans` `{"name": "kmeans", "k": ..., "window": ..., "refit_every": ...}`: the `window` earlier predictions in `k` groups (2 to 5), long in the highest group, short in the lowest. `window` is at least `2 * k`, and a fit is used for `refit_every` rows.
 
