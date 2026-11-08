@@ -31,6 +31,7 @@ const LOGOS: Record<string, string> = {
   'claude.ai': 'claude',
   claude: 'claude',
   chatgpt: 'openai',
+  codex: 'openai',
   cursor: 'cursor',
   'vs code': 'vscode',
 };
