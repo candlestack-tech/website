@@ -17,21 +17,24 @@ Create a key with the scopes `read`, `backtests` and `models` in Settings, API a
 export CANDLESTACK_API_KEY='cs_...'
 ```
 
-The Python examples use [httpx](https://www.python-httpx.org), the JavaScript ones run in Node.js 18 or newer as an ES module. The curl examples that read a field use [jq](https://jqlang.org). Each language starts with a client that sends the key.
+The Python examples use [httpx](https://www.python-httpx.org) 0.25 or newer, the JavaScript ones run in Node.js 18 or newer as an ES module. The curl examples that read a field use [jq](https://jqlang.org). Each language starts with a client that sends the key and no cookies.
 
 ```bash tab="curl"
 # Every request sends the key in the Authorization header. This one checks that it works.
-curl -s https://app.candlestack.tech/api/v1/me   -H "Authorization: Bearer $CANDLESTACK_API_KEY" | jq -r .display_name
+curl -s https://app.candlestack.tech/api/v1/me \
+  -H "Authorization: Bearer $CANDLESTACK_API_KEY" | jq -r .display_name
 ```
 
 ```python tab="Python"
 import os
+from http.cookiejar import CookieJar, DefaultCookiePolicy
 
 import httpx
 
 api = httpx.Client(
     base_url="https://app.candlestack.tech",
     headers={"Authorization": f"Bearer {os.environ['CANDLESTACK_API_KEY']}"},
+    cookies=CookieJar(DefaultCookiePolicy(allowed_domains=[])),  # keeps no cookies
     timeout=60,
 )
 ```
@@ -145,6 +148,7 @@ A script can send a file in one request, `POST /api/v1/models?name=lstm.keras` w
    ```js tab="JavaScript"
    const upload = await fetch(link.url, { method: "PUT", body: await readFile(file) })
    const model = await upload.json()
+   if (!upload.ok) throw new Error(`${model.status} ${model.title}: ${model.detail}`)
    console.log(model.id, model.state)
    ```
 
@@ -171,7 +175,7 @@ A script can send a file in one request, `POST /api/v1/models?name=lstm.keras` w
 
    `status` is `waiting`, `checking`, `done` with the `model_id`, `failed` with the `problem` and the `error` in plain words, or `expired`. A used or expired link answers 410 [upload-link-gone](/problems/upload-link-gone/). Ask for a new one then.
 
-A new model needs its manifest before it can run: what it reads and how its output becomes a signal. Add it in the app, or with `PUT /api/v1/models/{model_id}/manifest`, see [the reference](https://app.candlestack.tech/api/v1/docs).
+A new model needs its manifest before it can run. The manifest says what the model reads and how its output becomes a signal. Add it in the app, or with `PUT /api/v1/models/{model_id}/manifest`, see [the reference](https://app.candlestack.tech/api/v1/docs).
 
 ## Start a backtest
 
@@ -227,8 +231,7 @@ while :; do
   status=$(curl -s https://app.candlestack.tech/api/v1/backtests/$id \
     -H "Authorization: Bearer $CANDLESTACK_API_KEY" | jq -r .backtest.status)
   echo "$status"
-  case $status in finished|failed) break ;; esac
-  sleep 5
+  case $status in queued|running) sleep 5 ;; *) break ;; esac
 done
 ```
 
@@ -254,11 +257,11 @@ while (true) {
 }
 ```
 
-A request every 5 seconds is 12 a minute, well inside the [rate limit](/docs/api/rate-limits/). A queued backtest can be cancelled with `POST /api/v1/backtests/{backtest_id}/cancel`, a running one cannot. A 21st waiting backtest answers 409 `queue-full`.
+A request every 5 seconds is 12 a minute, well inside the [rate limit](/docs/api/rate-limits/). A queued backtest can be cancelled with `POST /api/v1/backtests/{backtest_id}/cancel`, a running one cannot. A 21st waiting backtest answers 409 [queue-full](/problems/queue-full/).
 
 ## Read the results
 
-Once `finished`, the document holds `results`: the 12 statistics in `stats`, the equity series and the trades. Returns are fractions, so `0.084` is 8.4%. A failed backtest has no results and says why in `backtest.error`.
+Once `finished`, the document holds `results`. They are the 12 statistics in `stats`, the equity series and the trades. Returns are fractions, so `0.084` is 8.4%. A failed backtest has no results and says why in `backtest.error`.
 
 ```bash tab="curl"
 curl -s https://app.candlestack.tech/api/v1/backtests/bt_7f3k2m9qx4 \
@@ -270,8 +273,12 @@ if doc["results"] is None:
     print("Failed:", doc["backtest"]["error"])
 else:
     stats = doc["results"]["stats"]
-    print(f"Return {stats['total_return']:.1%}, buy and hold {stats['buy_and_hold_return']:.1%}")
-    print(f"Sharpe {stats['sharpe']}, max drawdown {stats['max_drawdown']:.1%}, trades {stats['num_trades']}")
+
+    def pct(value):
+        return "n/a" if value is None else f"{value:.1%}"
+
+    print(f"Return {pct(stats['total_return'])}, buy and hold {pct(stats['buy_and_hold_return'])}")
+    print(f"Sharpe {stats['sharpe']}, max drawdown {pct(stats['max_drawdown'])}, trades {stats['num_trades']}")
 ```
 
 ```js tab="JavaScript"
@@ -279,16 +286,17 @@ if (doc.results === null) {
   console.log("Failed:", doc.backtest.error)
 } else {
   const { stats } = doc.results
-  console.log(`Return ${stats.total_return}, buy and hold ${stats.buy_and_hold_return}`)
-  console.log(`Sharpe ${stats.sharpe}, max drawdown ${stats.max_drawdown}, trades ${stats.num_trades}`)
+  const pct = (value) => (value === null ? "n/a" : `${(value * 100).toFixed(1)}%`)
+  console.log(`Return ${pct(stats.total_return)}, buy and hold ${pct(stats.buy_and_hold_return)}`)
+  console.log(`Sharpe ${stats.sharpe}, max drawdown ${pct(stats.max_drawdown)}, trades ${stats.num_trades}`)
 }
 ```
 
-A statistic can be `null` when it has no meaning, like the win rate of a backtest without trades. A long backtest comes in a light view: one point a day in the series and the newest 10,000 trades. `GET /api/v1/backtests/{backtest_id}/download` returns every row and trade.
+A statistic can be `null` when it has no meaning, like the win rate of a backtest without trades. A long backtest comes in a light view, with one point a day in the series and the newest 10,000 trades. `GET /api/v1/backtests/{backtest_id}/download` returns every row and trade.
 
 ## Compare three
 
-`GET /api/v1/compare` puts 2 to 20 backtests side by side, as the Compare page of the app does: your own and others' published ones. Each statistic comes with the value of every backtest and the best and worst marked. It reads only what each backtest stored, so it is quick for many.
+`GET /api/v1/compare` puts up to 20 backtests side by side, as the Compare page of the app does. They can be your own or ones others published. Each statistic comes with the value of every backtest and the best and worst marked. It reads only what each backtest stored, so it is quick for many.
 
 ```bash tab="curl"
 curl -s -G https://app.candlestack.tech/api/v1/compare \
@@ -330,4 +338,4 @@ One statistic of the answer looks like this:
 }
 ```
 
-`differs` names the setup fields that are not the same in all three, like `period.start` or `decision.rule.limit`. `times` with `equity`, `drawdown` and `buy_and_hold` of each backtest draw the curves on one time axis. A running or failed backtest is listed with its status and no values. An ID you cannot see answers 404, and its `id` field names it.
+`differs` names the setup fields that are not the same in all three, like `period.start` or `decision.rule.limit`. `times` with `equity`, `drawdown` and `buy_and_hold` of each backtest draw the curves on one time axis. A backtest that has not finished is listed with its status and no values. An ID you cannot see answers 404, and its `id` field names it.

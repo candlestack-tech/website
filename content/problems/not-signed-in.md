@@ -9,5 +9,5 @@ when:
 todo:
   - Sign in again in the app, then send the request again.
   - Send requests from the browser that signed in, so the session cookie comes with them.
-  - From a script, send an API key in the Authorization header.
+  - From a script, send an API key in the Authorization header. Keys come with the next release.
 ---

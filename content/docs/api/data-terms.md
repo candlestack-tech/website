@@ -13,7 +13,7 @@ updated: 2026-11-08
 | US stocks and ETFs | Alpaca | trades of every US exchange (SIP), delayed by 15 minutes |
 | Crypto | Binance | spot pairs that are trading |
 
-The market data is for signed-in accounts on the beta list. A key reads it for your account, as the app does.
+The market data is for signed-in accounts on the beta list. From the next release, an API key reads it for your account, as the app does.
 
 ## What you may do
 

@@ -36,7 +36,7 @@ Every key can read. Add only the other scopes a script needs.
 
 | Scope | In the app | What the key may do |
 | --- | --- | --- |
-| `read` | Read | Every GET: market data, your models, backtests and their results, Experiments. Always on. |
+| `read` | Read | Every GET, like market data, your models, backtests and their results, and Experiments. Always on. |
 | `backtests` | Run backtests | Start, cancel, rename and star backtests. |
 | `models` | Manage models | Upload models, add their manifests, rename, star and delete them. |
 | `publish` | Publish | Publish backtests to Experiments and take them back. |
@@ -51,7 +51,7 @@ Settings shows when each key expires and when it was last used.
 
 ## Revoke a key
 
-In Settings, API and MCP, click Revoke next to the key. It stops working at once and cannot be turned back on.
+In Settings, API and MCP, click Revoke next to the key. It stops working at once and cannot be turned back on. An expired key shows Delete instead, to take it off the list.
 
 A key also stops working when your account leaves the beta list. Upload links it made keep working until they expire, 15 minutes at most.
 

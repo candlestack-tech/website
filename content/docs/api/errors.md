@@ -6,6 +6,9 @@ order: 4
 updated: 2026-11-08
 ---
 
+> [!NOTE]
+> **Available from the next release.** API keys, upload links, the backtest queue and the problems that come with them arrive on app.candlestack.tech with the next release.
+
 ## The shape of an error
 
 An error answers with a status of 400 or more and an `application/problem+json` body ([RFC 9457](https://www.rfc-editor.org/rfc/rfc9457)).
@@ -21,7 +24,7 @@ An error answers with a status of 400 or more and an `application/problem+json` 
 ```
 
 - `type` A link to the page of the problem. Its last part, the slug, is what your code should check.
-- `title` The problem in a few words, the same for every error of its type.
+- `title` The problem in a few words. Check the slug, not the title.
 - `status` The HTTP status.
 - `detail` What went wrong this time and what to do, in plain words.
 
@@ -29,15 +32,13 @@ Some problems add fields, like `scope` above or `errors` of a 422 [validation](/
 
 ## Sign-in and keys
 
-> [!NOTE]
-> **Available from the next release.** Keys and the problems that come with them arrive on app.candlestack.tech with the next release.
-
 | Status | Problem | What to do |
 | --- | --- | --- |
 | 401 | [not-signed-in](/problems/not-signed-in/) | No key came with the request. Send the `Authorization` header. |
 | 401 | [invalid-api-key](/problems/invalid-api-key/) | The key is wrong, revoked or expired, or your account left the beta list. Create a new key. |
 | 403 | [missing-scope](/problems/missing-scope/) | The key lacks the scope that `scope` names. Create a key with it. |
 | 403 | [session-required](/problems/session-required/) | Keys cannot do this. Do it in the app. |
+| 403 | [cross-origin-request](/problems/cross-origin-request/) | A change came with a key and a cookie. Send the key alone. |
 | 409 | [too-many-api-keys](/problems/too-many-api-keys/) | You have 10 working keys. Revoke one in Settings before you create another. |
 | 429 | [rate-limited](/problems/rate-limited/) | Too many requests. Wait the seconds in `Retry-After`, see [Rate limits](/docs/api/rate-limits/). |
 
@@ -60,8 +61,8 @@ The file of a link is checked as any upload, so it can also answer [model-too-la
 | --- | --- | --- |
 | 404 | [instrument-not-found](/problems/instrument-not-found/) | Check the ID with the instrument search. |
 | 409 | `model-needs-setup` | The model has no manifest yet. Add it first. |
-| 409 | `queue-full` | 20 of your backtests wait already. Wait for some to end or cancel one. |
-| 409 | `backtest-not-queued` | Only a queued backtest can be cancelled. |
+| 409 | [queue-full](/problems/queue-full/) | 20 of your backtests wait already. Wait until one has started, or cancel one. |
+| 409 | [backtest-not-queued](/problems/backtest-not-queued/) | Only a queued backtest can be cancelled. |
 | 422 | [period-out-of-range](/problems/period-out-of-range/) | The period is outside the data. Pick one inside it. |
 | 422 | [too-many-candles](/problems/too-many-candles/) | The period has too many candles for the model's timeframe. Pick a shorter one. |
 | 503 | [source-unavailable](/problems/source-unavailable/) | A data source cannot be reached. Wait `Retry-After` seconds when it is there. |

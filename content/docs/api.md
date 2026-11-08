@@ -12,12 +12,12 @@ updated: 2026-11-08
 
 ## What the API covers
 
-Almost everything you do in the app. A key works for your account on the beta list and sees what you see: your own models and backtests, and what others published to Experiments.
+Almost everything you do in the app. A key works for your account on the beta list and sees what you see. That is your own models and backtests, and what others published to Experiments.
 
 - **Market data** Search US stocks and crypto, read an instrument and its candles from 1m to 1d.
 - **Models** Upload Keras and ONNX files, read and set their manifests, rename, star and delete them.
 - **Backtests** Start them, wait in the queue, read the metrics and trades, rename, star and cancel them.
-- **Compare** Put 2 to 20 backtests side by side, with the best and worst value of each metric marked.
+- **Compare** Put up to 20 backtests side by side, with the best and worst value of each metric marked.
 - **Experiments** Read what others published, publish your own or take it back.
 
 Your keys, your profile and settings, deleting your account, sign-in methods and signing out stay in the app. No key can do them.
@@ -30,7 +30,7 @@ Every endpoint is under one address. Send JSON, get JSON back.
 https://app.candlestack.tech/api/v1
 ```
 
-Times in responses are UTC epoch seconds. Returns and other ratios are fractions, so `0.05` is 5%.
+Candle times and backtest periods are UTC epoch seconds. Timestamps like `created_at` are ISO 8601 dates in UTC. Returns and drawdowns in backtest results are fractions, so `0.05` is 5%.
 
 ## The reference
 

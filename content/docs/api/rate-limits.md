@@ -7,7 +7,7 @@ updated: 2026-11-08
 ---
 
 > [!NOTE]
-> **Available from the next release.** The limit per key comes with API keys in the next release.
+> **Available from the next release.** The limit per key, the backtest queue and upload links come to app.candlestack.tech with the next release.
 
 ## The limits
 
@@ -37,7 +37,8 @@ def get(path, params=None, tries=5):
         if response.status_code in (429, 503) and wait is not None:
             time.sleep(int(wait))
             continue
-        return response.raise_for_status().json()
+        response.raise_for_status()
+        return response.json()
     raise RuntimeError(f"Still limited after {tries} tries")
 ```
 
@@ -75,6 +76,6 @@ async function get(path, tries = 5) {
 | Models | 100 per account, 100 MB in all, 50 MB per file |
 | Uploads | one at a time per account |
 | Upload link | one file within 15 minutes |
-| Compare | 2 to 20 backtests |
+| Compare | 1 to 20 backtests |
 | Candles | up to 5000 per page, up to 50,000 for a period |
 | Instrument search | up to 100 items per page |
