@@ -1,7 +1,7 @@
 ---
 title: CandleStack for agents
 nav: Overview
-description: Everything you do in the app, an agent will be able to do for you. Connect Claude, ChatGPT or Cursor through MCP, or call the API from your own code.
+description: Almost everything you do in the app, an agent will be able to do for you. Connect Claude, ChatGPT or Cursor through MCP, or call the API from your own code.
 section: agents
 order: 0
 updated: 2026-11-08
@@ -34,7 +34,7 @@ Add one address to your AI client. The agent picks the tools, runs them and expl
 
 `Claude Code` `claude.ai` `ChatGPT` `Cursor` `VS Code`
 
-- Claude Code, Cursor and VS Code sign in with a key
+- Claude Code, Cursor and VS Code will sign in with a key
 - claude.ai and ChatGPT will sign in with your account
 - Asks before it deletes or publishes
 
@@ -82,7 +82,7 @@ Not sure? Start with MCP once it is live. You can script the same steps later.
 ## What works today
 
 - **Web app** Build, run and compare backtests in [the app](https://app.candlestack.tech) with an account on the beta list.
-- **API reference** Every endpoint with its fields in [the reference](https://app.candlestack.tech/api/v1/docs). Until keys arrive, a script signs in with the session cookie of your browser, as [the API guide](https://github.com/candlestack-tech/candlestack/blob/main/docs/api-guide.md) shows.
+- **API reference** Every endpoint with its fields in [the reference](https://app.candlestack.tech/api/v1/docs). Until keys arrive, a script signs in with the session cookie of your browser, as [the API guide](https://github.com/candlestack-tech/candlestack/blob/v0.10.0/docs/api-guide.md) shows.
 - **These docs** Every page as Markdown and all of them in one file, see [Docs for agents](/docs/agents/docs-for-agents/).
 
 ## What stays in the web app
