@@ -1,5 +1,5 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
-import { toolsMarkdown, webOnlyMarkdown } from './tools';
+import { promptsMarkdown, toolsMarkdown, webOnlyMarkdown } from './tools';
 import { useCaseMarkdown } from './use-cases';
 
 // The docs pages in sidebar order, their neighbours and their Markdown versions. A page is a
@@ -106,6 +106,7 @@ export async function listedCases(page: DocsPage) {
 // The parts built from the server's tool reference, in place of their markers (tools.ts)
 const GENERATED = new Map<string, () => string>([
   ['<!-- mcp-tools -->', toolsMarkdown],
+  ['<!-- mcp-prompts -->', promptsMarkdown],
   ['<!-- mcp-web-only -->', webOnlyMarkdown],
 ]);
 
