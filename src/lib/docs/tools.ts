@@ -46,7 +46,7 @@ type Kind = 'ro' | 'rw' | 'de';
 const KINDS: Record<Kind, [string, string]> = {
   ro: ['Read only', 'Reads, never changes anything'],
   rw: ['Changes data', 'Creates or edits your things'],
-  de: ['Destructive', 'Deletes or shows your things to others, your client asks first'],
+  de: ['Destructive', 'Deletes your things or shows them to others. Your client can ask you first'],
 };
 
 function kind(tool: Tool): Kind {

@@ -23,7 +23,7 @@ Open http://localhost:4321. Pages reload on every change.
 | `npm run check` | type-checks the code and validates the content |
 | `npm run lint` | lints the code (oxlint), checks its formatting (Prettier) and finds unused files and exports (knip) |
 | `npm run format` | formats the code with Prettier |
-| `npm run mcp-tools` | copies candlestack's `docs/mcp-tools.json`, the MCP tool reference, to `src/data/`; CI's `MCP tools` check fails when the copy is older |
+| `npm run mcp-tools` | copies candlestack's `docs/mcp-tools.json`, the MCP tool reference, to `src/data/`; CI's `MCP tools` check fails when the copy is out of date |
 | `uvx pre-commit install` | once per clone: the git hooks (`.pre-commit-config.yaml`) fix whitespace and stop secrets, typos, Markdown and workflow findings on every commit; `uvx pre-commit run --all-files` runs them on every file, as CI's `Pre-commit` job does |
 
 ## Editing content
@@ -70,8 +70,11 @@ site: the page itself, the plain Markdown at `<page>.md` (`/docs/agents.md`), an
 The tool reference at `/docs/mcp/tools/` and the list of what stays in the web app on `/docs/mcp/`
 are built from `src/data/mcp-tools.json`, a copy of the MCP server's
 [`docs/mcp-tools.json`](https://github.com/candlestack-tech/candlestack/blob/main/docs/mcp-tools.json).
-When the server gets new tools, run `npm run mcp-tools` and commit the file. The `MCP tools`
-workflow fails on every pull request, and once a day, while the copy is older.
+The copy follows candlestack's newest release, because prod runs releases. Until a release has
+the file it follows `main`, and the MCP pages say "Available from the next release". When the
+copy is out of date, run `npm run mcp-tools` and commit the file. The `MCP tools` workflow checks
+it once a day and on pull requests that touch the copy or the script. When the first release with
+the server ships, take the "next release" notes off the MCP pages in the same pull request.
 
 ### Update status or team
 

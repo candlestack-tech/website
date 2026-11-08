@@ -1,12 +1,17 @@
 name: MCP tools
 
 # The tool reference at /docs/mcp/tools/ is built from src/data/mcp-tools.json, a copy of
-# candlestack's docs/mcp-tools.json. This fails when the copy is older: run `npm run mcp-tools`
-# and commit the file. Every pull request checks it, and once a day for tools added to the
-# server since the last pull request.
+# candlestack's docs/mcp-tools.json from its newest release, or from main until a release has it
+# (scripts/mcp-tools.mjs). This fails when the copy is out of date: run `npm run mcp-tools` and
+# commit the file. It runs once a day, by hand, and on pull requests that touch the copy or the
+# script, so a tool added to candlestack never turns an unrelated pull request red.
 
 on:
   pull_request:
+    paths:
+      - src/data/mcp-tools.json
+      - scripts/mcp-tools.mjs
+      - .github/workflows/mcp-tools.yml
   schedule:
     - cron: "17 6 * * *"
   workflow_dispatch:
@@ -27,3 +32,5 @@ jobs:
         with:
           node-version: 24
       - run: node scripts/mcp-tools.mjs --check
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

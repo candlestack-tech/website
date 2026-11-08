@@ -68,8 +68,10 @@ So write it to read well as plain text. These shapes get the look of the docs:
 A list with blank lines between its items stops being rows and shows as a plain list. A `###` heading that starts with "Card" is left out of On this page, as card titles are.
 
 Other HTML than the markers in the table fails the build, and so does a link that does not start
-with `https://`, `http://`, `/`, `#` or `mailto:`. In a tab, the link to the page with `#` and the
-tab's name (`/docs/mcp/install/#cursor`) opens that tab.
+with `https://`, `http://`, `/` (not `//`), `#` or `mailto:`. In a tab, the link to the page
+with `#` and the tab's name in lowercase with dashes (`/docs/mcp/install/#cursor`,
+`#vs-code`, `#claude-ai`) opens that tab. A heading with the same name as a tab gets `-1` after
+its id. Code fences in `powershell` get the same colors as `bash`.
 
 In a card, a line of bold and italic text is the small label and its tag, a line of
 `` `Claude Code` `ChatGPT` `` shows client tags with their logos, a list gets ticks and a link on

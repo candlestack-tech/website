@@ -51,6 +51,7 @@ function isComment(line: string) {
 }
 
 const FENCE = /^\s*(```|~~~)/;
+const ADDRESS = /^(\s*(?:```|~~~))text address(?: .*)?$/;
 const ITEM = /^\s*[-*] /;
 // A row as lists.ts finds it: **Label**, `name` or [Page](/docs/x/), then the text
 const ROW = /^(\s*[-*] )(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)\s]+\))( \S.*)$/;
@@ -98,7 +99,8 @@ function plain(body: string, pages: Set<string>) {
     } else if (mark) {
       flush();
       fence = mark;
-      out.push(line);
+      // The address box is the page's look only: in plain text it is a text block
+      out.push(ADDRESS.test(line) ? line.replace(ADDRESS, '$1text') : line);
     } else if (!isComment(line)) {
       prose.push(line);
     }

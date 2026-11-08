@@ -159,13 +159,14 @@ function tabLabel(title: Element): Node[] {
   ];
 }
 
-function tabs(nodes: Node[]): Element {
+function tabs(nodes: Node[], slug: Slug): Element {
   const groups: { title: Element; body: Node[] }[] = [];
   for (const node of nodes) {
     if (isElement(node, 'h3')) groups.push({ title: node, body: [] });
     else groups[groups.length - 1]?.body.push(node);
   }
-  const ids = groups.map((g) => tabId(tabName(g.title)));
+  // Through the page's slugger, so a heading with the same name gets another id
+  const ids = groups.map((g) => slug(tabId(tabName(g.title))));
   const list = h(
     'div',
     { className: ['ctab-list'], role: 'tablist' },
@@ -230,7 +231,7 @@ function transform(nodes: Node[], slug: Slug): Node[] {
   const pieces = between(
     between(nodes, 'cards', (inner) => pick(inner, slug)),
     'tabs',
-    tabs,
+    (inner) => tabs(inner, slug),
   );
   return codeBlocks(pieces).map((n) => (isElement(n) && !n.data?.built ? element(n, slug) : n));
 }
@@ -247,8 +248,8 @@ function generated(nodes: Node[]): Node[] {
 }
 
 // Pages stay plain Markdown: raw HTML other than the markers above, and links that are not
-// http(s), a path, an anchor or mailto, fail the build with the file named
-const LINK = /^(https?:\/\/|\/|#|mailto:)/;
+// http(s), a path (not //host), an anchor or mailto, fail the build with the file named
+const LINK = /^(https?:\/\/|\/(?!\/)|#|mailto:)/;
 
 function check(node: Node, file: string) {
   if (node.type === 'raw' && !MARKERS.has(node.value.trim())) {

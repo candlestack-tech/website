@@ -34,8 +34,8 @@ Add one address to your AI client. The agent picks the tools, runs them and expl
 
 `Claude Code` `claude.ai` `ChatGPT` `Cursor` `VS Code`
 
-- Claude Code, Cursor and VS Code will sign in with a key
-- claude.ai and ChatGPT will sign in with your account
+- Claude Code, claude.ai, Cursor and VS Code will sign in with a key
+- ChatGPT will sign in with your account
 - Asks before it deletes or publishes
 
 [Install the server](/docs/mcp/install/)
@@ -65,7 +65,7 @@ Not sure? Start with MCP once it is live. You can script the same steps later.
 
 1. **Create a key**
 
-   In the settings of the app, create a key with the `read` and `backtests` scopes. On claude.ai and ChatGPT you will sign in with your account instead.
+   In the settings of the app, create a key with the `read` and `backtests` scopes. On ChatGPT you will sign in with your account instead.
 
 2. **Add the server**
 
