@@ -41,7 +41,6 @@ const where = crumbs.slice(1);
 const toc = headings.filter(
   (h) => h.depth === 2 || (h.depth === 3 && !h.slug.startsWith('card-') && !toolIds.has(h.slug)),
 );
-const editUrl = `${project.github}/website/edit/main/${page.filePath}`;
 const siteLinks = [
   { label: 'Status', href: url('/status/') },
   { label: 'Meetings', href: url('/meetings/') },
@@ -190,10 +189,6 @@ const linkOf = (href: string) => (href.startsWith('/') ? url(href) : href);
         )}
         <div class="pfoot">
           <span>Updated {formatDay(page.data.updated)}</span>
-          <a href={editUrl}>
-            <Fragment set:html={icon('edit')} />
-            Edit this page on GitHub
-          </a>
         </div>
       </main>
 
@@ -212,10 +207,6 @@ const linkOf = (href: string) => (href.startsWith('/') ? url(href) : href);
           <a href={url(markdownPath(page))}>
             <Fragment set:html={icon('md')} />
             View as Markdown
-          </a>
-          <a href={editUrl}>
-            <Fragment set:html={icon('edit')} />
-            Edit on GitHub
           </a>
         </div>
       </aside>
