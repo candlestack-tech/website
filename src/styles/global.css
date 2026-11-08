@@ -154,13 +154,13 @@ a.row:hover span {
 }
 
 /* Phones and tablets: the decoration sits behind the text (softened in Background.astro),
-   so secondary text gets a darker colour for contrast. */
+   so secondary text gets a darker colour for contrast. Docs pages have no decoration. */
 @media (max-width: 1100px) {
-  :root {
+  :root:has(.decor) {
     --muted: #4a4a4a;
   }
 
-  :root[data-theme='dark'] {
+  :root[data-theme='dark']:has(.decor) {
     --muted: #b8bec3;
   }
 }

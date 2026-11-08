@@ -37,10 +37,15 @@ export function isSectionPage(page: DocsPage) {
   return !page.id.includes('/');
 }
 
-// Links and the page as an agent reads them: plain Markdown, absolute addresses, no comments
+// A line that is only a comment, like the <!-- cards --> markers
+const isComment = (line: string) => /^\s*<!--.*-->\s*$/.test(line);
+
+// Links and the page as an agent reads them: plain Markdown, absolute addresses, no comment lines
 function plain(body: string) {
   return body
-    .replace(/<!--[\s\S]*?-->\n?/g, '')
+    .split('\n')
+    .filter((line) => !isComment(line))
+    .join('\n')
     .replace(/\]\(\//g, `](${SITE}/`)
     .replace(/\n{3,}/g, '\n\n')
     .trim();

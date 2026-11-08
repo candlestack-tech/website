@@ -42,7 +42,8 @@ export function codeInfo(node: Node): CodeInfo | undefined {
 // Copy is added by docs.ts on pages with JavaScript, the CSS hides it without
 const copyButton = () =>
   h('button', { type: 'button', className: ['btn', 'xs', 'ghost', 'copy'], dataCopy: '' }, [
-    raw(icon('copy')),
+    raw(icon('copy', 'ic-copy')),
+    raw(icon('check', 'ic-done')),
     h('span', {}, [text('Copy')]),
   ]);
 
