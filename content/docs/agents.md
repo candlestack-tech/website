@@ -1,7 +1,7 @@
 ---
 title: CandleStack for agents
 nav: Overview
-description: Almost everything you do in the app, an agent will be able to do for you. Connect Claude, ChatGPT or Cursor through MCP, or call the API from your own code.
+description: Almost everything you do in the app, an agent will be able to do for you. Connect Claude, ChatGPT, Codex or Cursor through MCP, or call the API from your own code.
 section: agents
 order: 0
 updated: 2026-11-08
@@ -32,10 +32,10 @@ Once the server is live, an agent works with the same things you do in the app. 
 
 Add one address to your AI client. The agent picks the tools, runs them and explains what it found.
 
-`Claude Code` `claude.ai` `ChatGPT` `Cursor` `VS Code`
+`Claude Code` `claude.ai` `ChatGPT` `Codex` `Cursor` `VS Code`
 
-- Claude Code, claude.ai, Cursor and VS Code will sign in with a key
-- ChatGPT will sign in with your account
+- claude.ai, ChatGPT, Claude Code and Codex will sign in with your account
+- Cursor and VS Code will sign in with a key
 - Asks before it deletes or publishes
 
 [Install the server](/docs/mcp/install/)
@@ -65,7 +65,7 @@ Not sure? Start with MCP once it is live. You can script the same steps later.
 
 1. **Create a key**
 
-   In the settings of the app, create a key with the `read` and `backtests` scopes. On ChatGPT you will sign in with your account instead.
+   In the settings of the app, create a key with the `read` and `backtests` scopes. On claude.ai, ChatGPT, Claude Code and Codex you can sign in with your account instead.
 
 2. **Add the server**
 
@@ -93,7 +93,7 @@ Deleting your account, your sign-in methods and signing out stay in the app. No 
 
 - [Docs for agents](/docs/agents/docs-for-agents/) Read these docs as Markdown, one page or all at once
 - [The MCP server](/docs/mcp/) The address, sign-in, scopes and what stays in the app
-- [Install](/docs/mcp/install/) Connect Claude Code, Cursor or VS Code
+- [Install](/docs/mcp/install/) Connect claude.ai, ChatGPT, Claude Code, Codex, Cursor or VS Code
 - [Tools](/docs/mcp/tools/) Every tool with its parameters and an example
 - [The API](/docs/api/) Keys, sign-in and examples for your own code
 - [Problem types](/problems/) Every error of the API and what to do about it

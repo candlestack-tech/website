@@ -8,19 +8,37 @@ updated: 2026-11-08
 ---
 
 > [!NOTE]
-> **Available from the next release.** The server and API keys are live on stage.candlestack.tech. These steps work on app.candlestack.tech once the next release brings them there.
+> **Available from the next release.** The server, API keys and OAuth sign-in are live on stage.candlestack.tech. These steps work on app.candlestack.tech once the next release brings them there.
 
 ```text address title="Server address"
 https://app.candlestack.tech/mcp
 ```
 
-Streamable HTTP. Claude Code, claude.ai, Cursor and VS Code sign in with an API key in a header. OAuth sign-in, with no key, is coming with [candlestack#408](https://github.com/candlestack-tech/candlestack/issues/408). ChatGPT needs it.
+Streamable HTTP. claude.ai, ChatGPT, Claude Code and Codex sign in with OAuth. You add the address, sign in to CandleStack and choose what the app may do, with no key to copy. Cursor, VS Code, scripts and other clients send an API key in a header. Claude Code and Codex can use a key too.
 
 ## Pick your client
 
 <!-- tabs -->
 
 ### Claude Code
+
+1. **Add the server**
+
+   ```bash title="Terminal"
+   claude mcp add --transport http candlestack https://app.candlestack.tech/mcp
+   ```
+
+   Add `--scope user` to use the server in every project, not only this one.
+
+2. **Sign in**
+
+   Run `claude mcp login candlestack`, or `/mcp` in a session, and follow the steps in your browser. A CandleStack page opens. Sign in, check that it returns to localhost, your own computer, pick what Claude Code may do and choose Allow.
+
+3. **Check it**
+
+   Run `claude mcp list`. The line for `candlestack` ends with ✔ Connected. Before you sign in it shows ! Needs authentication, and ✘ Failed to connect when the server cannot be reached or refuses the sign-in. In a session, `/mcp` lists it with its tools.
+
+To sign in with an API key instead, for scripts or a machine with no browser:
 
 1. **Create a key**
 
@@ -53,34 +71,77 @@ Streamable HTTP. Claude Code, claude.ai, Cursor and VS Code sign in with an API 
 
 ### claude.ai
 
-1. **Create a key**
-
-   In the app open Settings, then API and MCP, and create a key with the `read` scope. Add `backtests` if Claude should start backtests. The key is shown once.
-
-2. **Add the connector**
+1. **Add the connector**
 
    1. In claude.ai open Customize, then Connectors.
    2. Choose + Add, then Add custom connector.
    3. Name it `CandleStack`, paste the server address and choose Continue.
-   4. Under Authentication choose No sign in.
-   5. Under Request headers add `Authorization` with the value `Bearer cs_your_key`, then choose Add.
+   4. Check the authentication settings claude.ai found and choose Continue.
+   5. Under Authentication choose Sign in now. Under OAuth client keep Use Claude's published identity. Leave Request headers empty and choose Add.
 
-   On Team and Enterprise plans an owner adds it in Organization settings, then Connectors, then Add, Custom and Web, with the same steps. Members then choose Connect next to it under Customize, then Connectors.
+   On Team and Enterprise plans an owner adds it in Organization settings, then Connectors, then Add, Custom and Web, with the same steps. Members then choose Connect next to it under Customize, then Connectors. Each member signs in as themselves.
+
+2. **Sign in and allow**
+
+   A CandleStack page opens. Sign in with GitHub or Google, check the app it names and that it returns to claude.ai, pick what Claude may do and choose Allow. [Signing in with OAuth](#signing-in-with-oauth) says what the page shows.
 
 3. **Turn it on in a chat**
 
    Choose + at the lower left of the chat, then Connectors, and switch CandleStack on.
 
-OAuth sign-in is coming with [candlestack#408](https://github.com/candlestack-tech/candlestack/issues/408). Then you add the connector with only its address and sign in with GitHub or Google, with no key to paste.
+### ChatGPT
 
-> [!WARNING]
-> **One key for everyone.** On Team and Enterprise plans everyone who uses the connector shares the key it was added with. Give that key the fewest scopes your team needs. With OAuth sign-in ([candlestack#408](https://github.com/candlestack-tech/candlestack/issues/408)) each member will sign in as themselves instead.
+1. **Add the server**
 
-### ChatGPT *Soon*
+   1. In ChatGPT on the web open Plugins, choose +, then Add custom MCP server.
+   2. Name it `CandleStack`. Under Connection paste the server address as the Server URL.
+   3. Set the authentication to OAuth.
+   4. Read the risk warning. Tick I understand and want to continue, then choose Create as a plugin.
 
-ChatGPT adds remote servers as connectors in developer mode. They sign in through OAuth and have no field for an API key header. OAuth sign-in for CandleStack is coming with [candlestack#408](https://github.com/candlestack-tech/candlestack/issues/408). Then you create the connector with the server address, sign in with GitHub or Google and pick what ChatGPT may do.
+   Then install the plugin from your plugins, or from the workspace you created it in. In a workspace, its permissions decide who may add a server.
 
-Until then, connect Claude Code, claude.ai, Cursor or VS Code.
+2. **Sign in and allow**
+
+   When ChatGPT connects, a CandleStack page opens. Sign in with GitHub or Google, check the app it names and that it returns to chatgpt.com, pick what it may do and choose Allow. [Signing in with OAuth](#signing-in-with-oauth) says what the page shows.
+
+3. **Use it in a chat**
+
+   Type `@` in a new chat and pick CandleStack. ChatGPT usually asks you to confirm a tool that changes data before it runs.
+
+### Codex
+
+The Codex CLI and the Codex IDE extension share their settings in `~/.codex/config.toml`.
+
+1. **Add the server**
+
+   ```bash title="Terminal"
+   codex mcp add candlestack --url https://app.candlestack.tech/mcp
+   ```
+
+   This adds the server to `~/.codex/config.toml`. You can also write the entry yourself.
+
+   ```toml title="~/.codex/config.toml"
+   [mcp_servers.candlestack]
+   url = "https://app.candlestack.tech/mcp"
+   ```
+
+2. **Sign in**
+
+   Run `codex mcp login candlestack`. A CandleStack page opens in your browser. Sign in, check that it returns to 127.0.0.1, your own computer, pick what Codex may do and choose Allow. In the IDE extension choose Authenticate when it asks.
+
+   With no browser on the machine, run `codex mcp login candlestack --no-browser`. Open the address it prints in a browser, then paste the address you land on back into the terminal.
+
+3. **Check it**
+
+   Run `codex mcp list` to see `candlestack`. In a Codex session, `/mcp` shows the servers in use.
+
+To sign in with an API key instead, create a key in Settings, then API and MCP, and keep it in `CANDLESTACK_KEY` as for [Cursor](#cursor). Then name the variable in the entry. Codex sends the key with every request.
+
+```toml title="~/.codex/config.toml"
+[mcp_servers.candlestack]
+url = "https://app.candlestack.tech/mcp"
+bearer_token_env_var = "CANDLESTACK_KEY"
+```
 
 ### Cursor
 
@@ -165,28 +226,53 @@ Until then, connect Claude Code, claude.ai, Cursor or VS Code.
 
 <!-- /tabs -->
 
+## Signing in with OAuth
+
+claude.ai, ChatGPT, Claude Code and Codex send you to a CandleStack page to connect. Sign in there with GitHub or Google if you are not signed in yet. Your account must be on the beta list.
+
+- **Who asks** The page names the app and the address it sends you back to, such as claude.ai or chatgpt.com, or your own computer (localhost or 127.0.0.1) for Claude Code and Codex. Anyone can call an app Claude, so check the address.
+- **Which account** It shows the account you are signed in as. Not you? signs you out, so you can sign in with another.
+- **What it may do** You tick the scopes the app asked for. Read is always on.
+- **Allow or Cancel** Allow sends you back to the app, signed in. Cancel sends you back with no access.
+- **Never** No app can delete your account, change how you sign in or download your model files.
+
+The scopes, in the words of the page:
+
+- **Read** See your backtests, models and market data. Always on.
+- **Run backtests** Start, rename and star backtests. Ticked at the start.
+- **Manage models** Upload, rename and delete your models. Ticked at the start.
+- **Publish** Publish and unpublish backtests in Experiments. Unticked at the start.
+
+The page works once, for 10 minutes. If it says the request has expired, go back to the app and connect again. The app stays signed in while you use it. After 30 days without use it has to connect again.
+
+### Disconnect an app
+
+In the app open Settings, then API and MCP. Connected apps lists every app that signed in with your account, with its scopes, when it was connected and when it was last used. Choose Disconnect next to an app and confirm. It loses access at once. You can connect it again from the app any time.
+
 ## Check that it works
 
 Ask this in a new chat.
 
 ```text prompt
-Which CandleStack account are you connected to, and what may your key do?
+Which CandleStack account are you connected to, and what are you allowed to do?
 ```
 
-The agent calls `get_me` and answers with your name and the scopes of your key.
+The agent calls `get_me` and answers with your name and the scopes of your key or of the app.
 
 ## If it does not connect
 
 Clients show their own message, such as Failed to connect or Needs authentication. The server's answer, with what to do, is in the client's log.
 
 - **Claude Code** `claude mcp list` prints it after Failed to connect. `claude --debug` logs every request.
+- **Codex** `codex mcp list` and `/mcp` in a session.
 - **Cursor** The Output panel, then MCP Logs.
 - **VS Code** MCP: List Servers, then `candlestack`, then Show Output.
 
 What the server answers:
 
-- **Not signed in** The request had no key, so the client tried OAuth sign-in, which the server does not offer yet. Check the header in your client's config, and on Cursor that `CANDLESTACK_KEY` is set.
+- **Not signed in** The request had no key and no sign-in. Check the header in your client's config, and on Cursor that `CANDLESTACK_KEY` is set. With OAuth, connect again.
 - **Invalid API key** The key is wrong, expired or revoked, or your account is not on the beta list. Create a new key in Settings.
-- **Missing scope** A tool needs a scope the key lacks, and the agent tells you which. Create a key that has it.
-- **Too many requests** One key can make 120 requests a minute. Wait a minute and try again.
+- **Invalid access token** The app's sign-in ended or the app was disconnected, or your account is not on the beta list. Connect again from the app.
+- **Missing scope** A tool needs a scope the key or app lacks, and the agent tells you which. Create a key that has it, or disconnect the app and connect it again with that scope ticked.
+- **Too many requests** One key or connected app can make 120 requests a minute. Wait a minute and try again.
 - **Nothing changes** Restart the client after you edit its config file.

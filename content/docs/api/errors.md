@@ -42,6 +42,18 @@ Some problems add fields, like `scope` above or `errors` of a 422 [validation](/
 | 409 | [too-many-api-keys](/problems/too-many-api-keys/) | You have 10 working keys. Revoke one in Settings before you create another. |
 | 429 | [rate-limited](/problems/rate-limited/) | Too many requests. Wait the seconds in `Retry-After`, see [Rate limits](/docs/api/rate-limits/). |
 
+## Connecting an app with OAuth
+
+These come from the MCP server and the consent page when claude.ai, ChatGPT or another client connects with OAuth.
+
+| Status | Problem | What to do |
+| --- | --- | --- |
+| 401 | [invalid-access-token](/problems/invalid-access-token/) | The app's sign-in ended or it was disconnected. Connect it again from the app. |
+| 400 | [invalid-authorization-request](/problems/invalid-authorization-request/) | The app's request to connect is not valid, `error` says why. Connect again, or tell the app's maker. |
+| 404 | [authorization-request-not-found](/problems/authorization-request-not-found/) | The request was decided, expired after 10 minutes or started in another browser. Connect again from the app. |
+| 403 | [not-on-beta-list](/problems/not-on-beta-list/) | Your account is not on the beta list. Ask for an invite or use another account. |
+| 422 | [scope-not-requested](/problems/scope-not-requested/) | A scope the app did not ask for cannot be granted. |
+
 ## Upload links
 
 | Status | Problem | What to do |

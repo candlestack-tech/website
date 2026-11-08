@@ -1,14 +1,14 @@
 ---
 title: The MCP server
 nav: Overview
-description: Connect Claude Code, claude.ai, Cursor, VS Code or any MCP client to CandleStack. The agent works with your models and backtests through the same checks as the app.
+description: Connect claude.ai, ChatGPT, Claude Code, Codex, Cursor, VS Code or any MCP client to CandleStack. The agent works with your models and backtests through the same checks as the app.
 section: mcp
 order: 0
 updated: 2026-11-08
 ---
 
 > [!NOTE]
-> **Available from the next release.** The MCP server and API keys are live on stage.candlestack.tech and come to app.candlestack.tech with the next release. Until then, run your backtests in the app.
+> **Available from the next release.** The MCP server, API keys and OAuth sign-in are live on stage.candlestack.tech and come to app.candlestack.tech with the next release. Until then, run your backtests in the app.
 
 ## What the server does
 
@@ -28,34 +28,45 @@ The server speaks Streamable HTTP, the remote transport of MCP. [Install](/docs/
 
 ## Sign-in
 
-Today a client signs in with an API key that it sends in a header. Claude Code, claude.ai, Cursor and VS Code can do that.
+A client signs in in one of two ways. Either way it acts as you, with the scopes you gave it.
+
+- **OAuth** claude.ai, ChatGPT, Claude Code and Codex. You add the address, sign in to CandleStack with GitHub or Google and choose what the app may do, with no key to copy. Each person signs in as themselves. [Signing in with OAuth](/docs/mcp/install/#signing-in-with-oauth) shows the steps.
+- **API key** Cursor, VS Code, scripts and any client without OAuth. The client sends the key as `Authorization: Bearer cs_...` with every request.
+
+### OAuth
+
+- **Connected apps** In the app open Settings, then API and MCP. Every app that signed in is listed with its scopes, and Disconnect ends its access at once.
+- **How long** An app stays signed in while you use it. After 30 days without use it has to connect again.
+- **Limits** 120 requests a minute per connected app.
+- **Beta list** An app works while your account is on the beta list.
+
+For client developers: the server follows the MCP authorization spec. It is OAuth 2.1 with the authorization code and PKCE (S256), dynamic client registration and client ID metadata documents. Access tokens last an hour, refresh tokens 30 days and work once each. A token works only at `/mcp`, not on the HTTP API. The metadata is at `https://app.candlestack.tech/.well-known/oauth-protected-resource/mcp`.
+
+### API keys
 
 - **Create a key** In the app open Settings, then API and MCP. A key starts with `cs_` and is shown once.
-- **Send it** Your client sends it as `Authorization: Bearer cs_...` with every request.
 - **Limits** Up to 10 keys, each with its own scopes and an optional expiry of 1 to 365 days. 120 requests a minute per key.
 - **Beta list** A key works while your account is on the beta list.
 - **Revoke** Revoke a key in Settings and it stops working at once.
 
-OAuth sign-in is coming with [candlestack#408](https://github.com/candlestack-tech/candlestack/issues/408). Then you sign in with GitHub or Google and pick what the agent may do, with no key to copy. ChatGPT waits for it, because it cannot send a key. On claude.ai it lets each member of a team sign in as themselves instead of sharing one key.
-
 ## Scopes
 
-A key can do only what its scopes allow. Give it the fewest you need.
+A key or a connected app can do only what its scopes allow. Give it the fewest you need. On the consent page `read` is always on.
 
 - `read` Every tool that only reads, such as your account, market data, models, backtests and Experiments.
 - `backtests` Start, rename, star and cancel backtests.
 - `models` Upload models, set their manifests, rename, star and delete them.
 - `publish` Publish backtests to Experiments and take them back.
 
-A tool that needs a scope the key lacks answers `missing-scope`. `get_me` shows the scopes of the key.
+A tool that needs a scope the key or app lacks answers `missing-scope`. `get_me` shows the scopes of the key or app.
 
 ## What stays in the web app
 
-Some things need you, signed in to the app in your browser. No key and so no agent can manage keys, delete your account, change your name or sign-in methods, or sign out. The endpoints for monitoring and the app's own images have no tool either. This list comes from the server, with the reason for each endpoint.
+Some things need you, signed in to the app in your browser. No key, no connected app and so no agent can manage keys or connected apps, delete your account, change your name or sign-in methods, or sign out. The endpoints for monitoring and the app's own images have no tool either. This list comes from the server, with the reason for each endpoint.
 
 <!-- mcp-web-only -->
 
 ## Next
 
-- [Install](/docs/mcp/install/) Claude Code, claude.ai, Cursor and VS Code, and ChatGPT with OAuth
+- [Install](/docs/mcp/install/) claude.ai, ChatGPT, Claude Code and Codex with OAuth, Cursor and VS Code with a key
 - [Tools](/docs/mcp/tools/) Every tool with its parameters and an example

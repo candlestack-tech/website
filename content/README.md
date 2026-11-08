@@ -71,7 +71,7 @@ A list with blank lines between its items stops being rows and shows as a plain 
 Other HTML than the markers in the table fails the build, and so does a link that does not start
 with `https://`, `http://`, `/` (not `//`), `#` or `mailto:`. In a tab, the link to the page
 with `#` and the tab's name in lowercase with dashes (`/docs/mcp/install/#cursor`,
-`#vs-code`, `#claude-ai`) opens that tab. A heading with the same name as a tab gets `-1` after
+`#vs-code`, `#claude-ai`, `#codex`) opens that tab. A heading with the same name as a tab gets `-1` after
 its id. Code fences in `powershell` get the same colors as `bash`.
 
 In a card, a line of bold and italic text is the small label and its tag, a line of
@@ -96,7 +96,7 @@ for the player and stays a draft. Copy it as a start, then replace everything in
 | `nav` | a shorter name for the sidebar (optional) |
 | `summary` | the line under the title, also the page's line in `/llms.txt` |
 | `order` | the place in the Use cases section, `1` first (the list page is `0`) |
-| `client` | the client the session ran in, as it is called: `Claude Code`, `claude.ai`, `ChatGPT`, `Cursor`, `VS Code` (these get their logo) |
+| `client` | the client the session ran in, as it is called: `Claude Code`, `claude.ai`, `ChatGPT`, `Codex`, `Cursor`, `VS Code` (these get their logo) |
 | `recorded_at` | the day of the recording, `2026-11-20` |
 | `duration_s` | how long the session took, in seconds (optional) |
 | `updated` | the day of the last change, when it is not the recording day (optional) |
