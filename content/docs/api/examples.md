@@ -6,9 +6,6 @@ order: 3
 updated: 2026-11-08
 ---
 
-> [!NOTE]
-> **Available from the next release.** API keys, the upload link, the queue and the compare endpoint come to app.candlestack.tech with the next release. Until then these examples do not work there.
-
 ## Before you start
 
 Create a key with the scopes `read`, `backtests` and `models` in Settings, API and MCP, see [Keys](/docs/api/keys/). Then put it in the environment of your shell.

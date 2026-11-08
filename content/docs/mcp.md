@@ -7,9 +7,6 @@ order: 0
 updated: 2026-11-08
 ---
 
-> [!NOTE]
-> **Available from the next release.** The MCP server, API keys and OAuth sign-in are live on stage.candlestack.tech and come to app.candlestack.tech with the next release. Until then, run your backtests in the app.
-
 ## What the server does
 
 The server gives an AI client the tools of CandleStack. The agent picks a tool, CandleStack runs it as you and the agent reads the answer. Every tool does the same as an endpoint of the API, with the same checks and limits.
@@ -37,7 +34,7 @@ A client signs in in one of two ways. Either way it acts as you, with the scopes
 
 - **Connected apps** In the app open Settings, then API and MCP. Every app that signed in is listed with its scopes, and Disconnect ends its access at once.
 - **How long** An app stays signed in while you use it. After 30 days without use it has to connect again.
-- **Limits** 120 requests a minute per connected app.
+- **Limits** 120 requests a minute per connected app. All your keys and apps share 300 a minute, see [Rate limits](/docs/api/rate-limits/).
 - **Beta list** An app works while your account is on the beta list.
 
 For client developers: the server follows the MCP authorization spec. It is OAuth 2.1 with the authorization code and PKCE (S256), dynamic client registration and client ID metadata documents. Access tokens last an hour, refresh tokens 30 days and work once each. A token works only at `/mcp`, not on the HTTP API. The metadata is at `https://app.candlestack.tech/.well-known/oauth-protected-resource/mcp`.
@@ -45,7 +42,7 @@ For client developers: the server follows the MCP authorization spec. It is OAut
 ### API keys
 
 - **Create a key** In the app open Settings, then API and MCP. A key starts with `cs_` and is shown once.
-- **Limits** Up to 10 keys, each with its own scopes and an optional expiry of 1 to 365 days. 120 requests a minute per key.
+- **Limits** Up to 10 keys, each with its own scopes and an optional expiry of 1 to 365 days. 120 requests a minute per key, and 300 across all your keys and apps.
 - **Beta list** A key works while your account is on the beta list.
 - **Revoke** Revoke a key in Settings and it stops working at once.
 
@@ -54,7 +51,7 @@ For client developers: the server follows the MCP authorization spec. It is OAut
 A key or a connected app can do only what its scopes allow. Give it the fewest you need. On the consent page `read` is always on.
 
 - `read` Every tool that only reads, such as your account, market data, models, backtests and Experiments.
-- `backtests` Start, rename, star and cancel backtests.
+- `backtests` Start, rename, star, cancel and delete backtests, and run sweeps.
 - `models` Upload models, set their manifests, rename, star and delete them.
 - `publish` Publish backtests to Experiments and take them back.
 

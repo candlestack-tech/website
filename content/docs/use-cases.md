@@ -8,7 +8,7 @@ updated: 2026-11-08
 ---
 
 > [!NOTE]
-> **Recorded on the test server.** The MCP server comes to app.candlestack.tech with the next release. Each session here was recorded on the test server, and its page gives the date.
+> **Recorded on the test server.** Each session here was recorded on the test server, and its page gives the date. The backtest links in a session go to the test server and open only for the team.
 
 ## How to read one
 

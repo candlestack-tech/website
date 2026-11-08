@@ -6,9 +6,6 @@ order: 4
 updated: 2026-11-08
 ---
 
-> [!NOTE]
-> **Available from the next release.** API keys, upload links, the backtest queue and the problems that come with them arrive on app.candlestack.tech with the next release.
-
 ## The shape of an error
 
 An error answers with a status of 400 or more and an `application/problem+json` body ([RFC 9457](https://www.rfc-editor.org/rfc/rfc9457)).
@@ -40,7 +37,7 @@ Some problems add fields, like `scope` above or `errors` of a 422 [validation](/
 | 403 | [session-required](/problems/session-required/) | Keys cannot do this. Do it in the app. |
 | 403 | [cross-origin-request](/problems/cross-origin-request/) | A change came with a key and a cookie. Send the key alone. |
 | 409 | [too-many-api-keys](/problems/too-many-api-keys/) | You have 10 working keys. Revoke one in Settings before you create another. |
-| 429 | [rate-limited](/problems/rate-limited/) | Too many requests. Wait the seconds in `Retry-After`, see [Rate limits](/docs/api/rate-limits/). |
+| 429 | [rate-limited](/problems/rate-limited/) | Too many requests. Wait `retry_after_s` seconds, see [Rate limits](/docs/api/rate-limits/). |
 
 ## Connecting an app with OAuth
 
@@ -73,11 +70,23 @@ The file of a link is checked as any upload, so it can also answer [model-too-la
 | --- | --- | --- |
 | 404 | [instrument-not-found](/problems/instrument-not-found/) | Check the ID with the instrument search. |
 | 409 | `model-needs-setup` | The model has no manifest yet. Add it first. |
-| 409 | [queue-full](/problems/queue-full/) | 20 of your backtests wait already. Wait until one has started, or cancel one. |
+| 409 | [queue-full](/problems/queue-full/) | 20 of your backtests wait already. Try again in `retry_after_s` seconds, or cancel one. |
+| 409 | [backtest-limit](/problems/backtest-limit/) | Your account keeps 2,000 backtests at most. Delete old ones. |
+| 409 | [idempotency-key-in-use](/problems/idempotency-key-in-use/) | The first request with this `Idempotency-Key` is still being answered. Send it again in `retry_after_s` seconds. |
+| 422 | [idempotency-key-reused](/problems/idempotency-key-reused/) | The `Idempotency-Key` came with another request in the last 24 hours. Use a new key. |
 | 409 | [backtest-not-queued](/problems/backtest-not-queued/) | Only a queued backtest can be cancelled. |
 | 422 | [period-out-of-range](/problems/period-out-of-range/) | The period is outside the data. Pick one inside it. |
 | 422 | [too-many-candles](/problems/too-many-candles/) | The period has too many candles for the model's timeframe. Pick a shorter one. |
 | 503 | [source-unavailable](/problems/source-unavailable/) | A data source cannot be reached. Wait `Retry-After` seconds when it is there. |
+
+## MCP server
+
+The tools answer the problems of the endpoints they stand for. These two come from the MCP server alone.
+
+| Status | Problem | What to do |
+| --- | --- | --- |
+| 409 | [confirmation-mismatch](/problems/confirmation-mismatch/) | The name or count a delete tool was given to confirm does not match, so nothing was deleted. Check with the user and confirm again. |
+| 413 | [request-too-large](/problems/request-too-large/) | The request's body is larger than 2 MB. Send less in one call. |
 
 ## All problem types
 

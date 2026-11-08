@@ -7,9 +7,6 @@ order: 1
 updated: 2026-11-08
 ---
 
-> [!NOTE]
-> **Available from the next release.** The server, API keys and OAuth sign-in are live on stage.candlestack.tech. These steps work on app.candlestack.tech once the next release brings them there.
-
 ```text address title="Server address"
 https://app.candlestack.tech/mcp
 ```
@@ -274,5 +271,5 @@ What the server answers:
 - **Invalid API key** The key is wrong, expired or revoked, or your account is not on the beta list. Create a new key in Settings.
 - **Invalid access token** The app's sign-in ended or the app was disconnected, or your account is not on the beta list. Connect again from the app.
 - **Missing scope** A tool needs a scope the key or app lacks, and the agent tells you which. Create a key that has it, or disconnect the app and connect it again with that scope ticked.
-- **Too many requests** One key or connected app can make 120 requests a minute. Wait a minute and try again.
+- **Too many requests** One key or connected app can make 120 requests a minute, and all of yours together 300. The answer says how many seconds to wait in `retry_after_s`. See [Rate limits](/docs/api/rate-limits/).
 - **Nothing changes** Restart the client after you edit its config file.

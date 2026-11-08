@@ -925,5 +925,5 @@
     },
     "warning": "Return, Sharpe and drawdown come from runs with different stocks, periods and costs, so the rows are not a ranking of the models."
   },
-  "try": "Recorded on the test server. The MCP server comes to app.candlestack.tech with the next release. The backtest links on this page go to the test server and open only for the team.\n\nConnect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt. The session used `get_dashboard` and `list_backtests`, see [Tools](/docs/mcp/tools/)."
+  "try": "Recorded on the test server. The backtest links on this page go to the test server and open only for the team.\n\nConnect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt. The session used `get_dashboard` and `list_backtests`, see [Tools](/docs/mcp/tools/)."
 }

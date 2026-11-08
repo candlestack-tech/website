@@ -319,9 +319,6 @@ The API answers a failed manifest with `422` and the problem [manifest-check-fai
 - `detail` What is wrong, in one sentence, sometimes with a second that says what to do.
 - `allowed` The values that fit in `field` when the check knows them: the blocks of the step, the fields or parameters of the object, the options of a choice, the shape to give. Empty when nothing fits, `null` when the check does not say.
 
-> [!NOTE]
-> **Available from the next release.** `field` and `allowed`, and checking a manifest without keeping it with `POST /api/v1/models/{model_id}/manifest/check` or the MCP tool `validate_manifest`, come to app.candlestack.tech with the next release.
-
 A trial run that fails leaves the model `ready`, with its error.
 
 ## Next

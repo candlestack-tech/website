@@ -5,8 +5,7 @@
 //   npm run mcp-tools -- --check  fails when the site's copy differs from candlestack's (CI)
 //
 // The docs describe what app.candlestack.tech runs, and prod runs candlestack's releases. So the
-// file comes from the newest release tag (vX.Y.Z). Until a release has the file, it comes from
-// main, and the MCP pages say "Available from the next release".
+// file comes from the newest release tag (vX.Y.Z), and from main only when no release has it.
 
 import { readFile, writeFile } from 'node:fs/promises';
 

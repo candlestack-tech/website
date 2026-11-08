@@ -847,5 +847,5 @@
     },
     "warning": "One stock, one half-year, long only. The Kagi model reads 1h candles and is a 77-parameter smoke test. The top two are too close to call a winner."
   },
-  "try": "Recorded on the test server. The MCP server comes to app.candlestack.tech with the next release. The backtest links on this page go to the test server and open only for the team.\n\nConnect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt with your own models and instrument. The session used `list_models`, `get_model`, `get_backtest_defaults`, `validate_backtest`, `start_backtest`, `wait_for_backtest`, `compare_backtests` and `get_backtest`, see [Tools](/docs/mcp/tools/)."
+  "try": "Recorded on the test server. The backtest links on this page go to the test server and open only for the team.\n\nConnect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt with your own models and instrument. The session used `list_models`, `get_model`, `get_backtest_defaults`, `validate_backtest`, `start_backtest`, `wait_for_backtest`, `compare_backtests` and `get_backtest`, see [Tools](/docs/mcp/tools/)."
 }
