@@ -15,6 +15,8 @@ sections:
     links:
       - name: Reference
         url: https://app.candlestack.tech/api/v1/docs
+  - id: formats
+    name: Formats
   - id: concepts
     name: Concepts
     soon: Coming soon

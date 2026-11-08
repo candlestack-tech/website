@@ -96,5 +96,7 @@ Deleting your account, your sign-in methods and signing out stay in the app. No 
 - [Install](/docs/mcp/install/) Connect claude.ai, ChatGPT, Claude Code, Codex, Cursor or VS Code
 - [Tools](/docs/mcp/tools/) Every tool with its parameters and an example
 - [The API](/docs/api/) Keys, sign-in and examples for your own code
+- [Manifest](/docs/manifest/) The manifest.json a model needs: every field and block
+- [Backtest JSON](/docs/backtest-json/) Every field and metric of a backtest's result document
 - [Problem types](/problems/) Every error of the API and what to do about it
 - [Use cases](/docs/use-cases/) Real sessions of an agent with CandleStack, step by step
