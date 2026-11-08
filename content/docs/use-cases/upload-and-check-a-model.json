@@ -137,6 +137,34 @@
                   { "name": "volume", "id": "volume@1", "norm": { "id": "none@1" } }
                 ],
                 "window": { "length": 25, "last": "closed" }
+              },
+              "signature": {
+                "input": { "shape": [25, 5], "dtype": "float32" },
+                "output": { "shape": [1], "dtype": "float32", "meaning": "score" }
+              },
+              "example": {
+                "input": [
+                  [
+                    [99.900002, 100.199997, 99.699997, 100.0, 100000.0],
+                    [100.099998, 100.400604, 99.899597, 100.200203, 101000.0]
+                  ],
+                  [
+                    [99.900002, 100.199997, 99.699997, 100.0, 100000.0],
+                    [99.700401, 99.999802, 99.500801, 99.800201, 101000.0]
+                  ]
+                ],
+                "output": [[0.00138283], [0.00168982]]
+              },
+              "about": {
+                "issue": "candlestack-tech/candlestack#260",
+                "protocol": "v2",
+                "architecture": "gru",
+                "seed": "1",
+                "learning_rate": "0.00025",
+                "trained_on": "30 S&P 500 stocks of the #259 dataset (notes/259-dataset-protocol.md)",
+                "period": "train 2016-2022, early stopping on 2023",
+                "target": "ln(close[t+13] / close[t]), the log return one session ahead",
+                "note": "Window-relative scaling and a train-only Normalization are layers inside the model; the example input is synthetic, not market data"
               }
             }
           },
@@ -500,7 +528,7 @@
     }
   ],
   "outcome": {
-    "text": "The model is uploaded and `verified`. With the default threshold of 0.05 it made no trades, since its predictions are about 0.001. At threshold 0 it made +95.6 % on NVDA in the first half of 2024 with a Sharpe of 2.95, while buy and hold made +157.7 %.",
+    "text": "The model is uploaded and `verified`. With the default threshold of 0.05 it made no trades, since its predictions are about 0.0015. At threshold 0 it made +95.6 % on NVDA in the first half of 2024 with a Sharpe of 2.95, while buy and hold made +157.7 %.",
     "chart": {
       "title": "Equity, NVDA, 2 Jan to 1 Jul 2024",
       "labels": [

@@ -61,7 +61,7 @@
       ]
     },
     {
-      "say": "All three are made for US stocks in regular hours, so each can run on NVDA. `docs-demo-gru.keras` reads 30m candles. I’ll look at what the other two read.",
+      "say": "All three are made for US stocks in regular hours, so each can run on NVDA. `docs-demo-gru.keras` reads Windows, that is windows of plain 30m candles. I’ll look at what the other two read.",
       "calls": [
         {
           "tool": "get_model",
