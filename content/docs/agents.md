@@ -97,5 +97,4 @@ Deleting your account, your sign-in methods and signing out stay in the app. No 
 - [Tools](/docs/mcp/tools/) Every tool with its parameters and an example
 - [The API](/docs/api/) Keys, sign-in and examples for your own code
 - [Problem types](/problems/) Every error of the API and what to do about it
-
-The use cases come with the server.
+- [Use cases](/docs/use-cases/) Real sessions of an agent with CandleStack, step by step
