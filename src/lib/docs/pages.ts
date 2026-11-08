@@ -37,8 +37,11 @@ export function isSectionPage(page: DocsPage) {
   return !page.id.includes('/');
 }
 
-// A line that is only a comment, like the <!-- cards --> markers
-const isComment = (line: string) => /^\s*<!--.*-->\s*$/.test(line);
+// A line that is only a marker for the HTML page, like <!-- cards --> (the .md versions are plain text, never HTML)
+function isComment(line: string) {
+  const t = line.trim();
+  return t.startsWith('<!--') && t.endsWith('-->');
+}
 
 // Links and the page as an agent reads them: plain Markdown, absolute addresses, no comment lines
 function plain(body: string) {
