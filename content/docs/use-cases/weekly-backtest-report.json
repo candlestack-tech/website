@@ -1,0 +1,768 @@
+{
+  "title": "Weekly report of your backtests",
+  "nav": "Weekly report",
+  "summary": "The agent reads the dashboard and the list of backtests, picks out the week and writes a short report with links to each backtest’s page.",
+  "order": 4,
+  "client": "Claude Code",
+  "recorded_at": "2026-11-08T12:27:06Z",
+  "duration_s": 45,
+  "prompt": "Give me a weekly report of my backtests: what ran this week, what stood out, with links.",
+  "steps": [
+    {
+      "say": "I’ll start with your dashboard for the overview.",
+      "calls": [
+        {
+          "tool": "get_dashboard",
+          "arguments": {},
+          "result": "32 backtests, 1 starred, 2 failed, 2 published",
+          "answer": {
+            "counts": { "all": 32, "starred": 1, "failed": 2, "public": 2 },
+            "newest": [
+              {
+                "id": "bt_r7b4mlpxvw",
+                "number": 32,
+                "name": "Fleet Aldebaran",
+                "status": "finished",
+                "queue_position": null,
+                "error": null,
+                "model": "docs-demo-gru.keras",
+                "model_id": "mdl_vtdfxm2554",
+                "instruments": [{ "market": "stock", "symbol": "AAPL" }],
+                "representation": "windows",
+                "setup": {
+                  "timeframe": "30m",
+                  "period_start": "2023-07-01",
+                  "period_end": "2023-12-31",
+                  "direction": "long",
+                  "threshold": 0.0,
+                  "stop_loss_pct": 7,
+                  "fees_pct": 0.1,
+                  "slippage_pct": 0.02,
+                  "benchmark": "bh"
+                },
+                "total_return": -0.13301297692552627,
+                "buy_and_hold_return": 0.0004734101309766814,
+                "sharpe": -1.4283585070195914,
+                "max_drawdown": -0.20566533527917885,
+                "win_rate": 0.4025974025974026,
+                "num_trades": 77,
+                "starred": false,
+                "public": false,
+                "created_at": "2026-11-08T12:25:36.327400Z"
+              },
+              {
+                "id": "bt_5usmt72n77",
+                "number": 31,
+                "name": "Soft Sirius",
+                "status": "finished",
+                "queue_position": null,
+                "error": null,
+                "model": "docs-demo-gru.keras",
+                "model_id": "mdl_vtdfxm2554",
+                "instruments": [{ "market": "stock", "symbol": "AAPL" }],
+                "representation": "windows",
+                "setup": {
+                  "timeframe": "30m",
+                  "period_start": "2023-01-01",
+                  "period_end": "2023-06-30",
+                  "direction": "long",
+                  "threshold": 0.0,
+                  "stop_loss_pct": 7,
+                  "fees_pct": 0.1,
+                  "slippage_pct": 0.02,
+                  "benchmark": "bh"
+                },
+                "total_return": 0.2953652033059657,
+                "buy_and_hold_return": 0.531713575495149,
+                "sharpe": 2.6155089500057347,
+                "max_drawdown": -0.09919187742068192,
+                "win_rate": 0.4050632911392405,
+                "num_trades": 79,
+                "starred": false,
+                "public": false,
+                "created_at": "2026-11-08T12:25:36.327208Z"
+              }
+            ],
+            "best": {
+              "sharpe": [
+                {
+                  "id": "bt_5vwx4qnfza",
+                  "number": 23,
+                  "name": "Vast Galaxy",
+                  "status": "finished",
+                  "queue_position": null,
+                  "error": null,
+                  "model": "docs-demo-gru.keras",
+                  "model_id": "mdl_vtdfxm2554",
+                  "instruments": [{ "market": "stock", "symbol": "NVDA" }],
+                  "representation": "windows",
+                  "setup": {
+                    "timeframe": "30m",
+                    "period_start": "2024-01-02",
+                    "period_end": "2024-06-30",
+                    "direction": "long",
+                    "threshold": 0.0,
+                    "stop_loss_pct": 7,
+                    "fees_pct": 0.1,
+                    "slippage_pct": 0.02,
+                    "benchmark": "bh"
+                  },
+                  "total_return": 0.9561176568549286,
+                  "buy_and_hold_return": 1.5768425460636517,
+                  "sharpe": 2.9501281946098072,
+                  "max_drawdown": -0.22762650687213093,
+                  "win_rate": 0.39805825242718446,
+                  "num_trades": 103,
+                  "starred": false,
+                  "public": false,
+                  "created_at": "2026-11-08T12:23:15.515788Z"
+                }
+              ],
+              "total_return": [
+                {
+                  "id": "bt_os2inktwpu",
+                  "number": 15,
+                  "name": "Bold Aries",
+                  "status": "finished",
+                  "queue_position": null,
+                  "error": null,
+                  "model": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                  "model_id": "mdl_lea7chtsaw",
+                  "instruments": [{ "market": "stock", "symbol": "QQQ" }],
+                  "representation": "renko",
+                  "setup": {
+                    "timeframe": "30m",
+                    "period_start": "2021-01-04",
+                    "period_end": "2024-12-31",
+                    "direction": "both",
+                    "threshold": 0.0,
+                    "stop_loss_pct": 7,
+                    "fees_pct": 0.001,
+                    "slippage_pct": 0.02,
+                    "benchmark": "bh"
+                  },
+                  "total_return": 1.8038322308517167,
+                  "buy_and_hold_return": 0.6732134015514111,
+                  "sharpe": 1.3479770142087446,
+                  "max_drawdown": -0.17557630147489223,
+                  "win_rate": 0.5460674157303371,
+                  "num_trades": 1780,
+                  "starred": false,
+                  "public": false,
+                  "created_at": "2026-11-04T11:15:47.051351Z"
+                }
+              ],
+              "max_drawdown": [
+                {
+                  "id": "bt_6teiemwazy",
+                  "number": 22,
+                  "name": "Serene Apogee",
+                  "status": "finished",
+                  "queue_position": null,
+                  "error": null,
+                  "model": "docs-demo-gru.keras",
+                  "model_id": "mdl_vtdfxm2554",
+                  "instruments": [{ "market": "stock", "symbol": "NVDA" }],
+                  "representation": "windows",
+                  "setup": {
+                    "timeframe": "30m",
+                    "period_start": "2024-01-02",
+                    "period_end": "2024-06-30",
+                    "direction": "long",
+                    "threshold": 0.05,
+                    "stop_loss_pct": 7,
+                    "fees_pct": 0.1,
+                    "slippage_pct": 0.02,
+                    "benchmark": "bh"
+                  },
+                  "total_return": 0.0,
+                  "buy_and_hold_return": 1.5768425460636517,
+                  "sharpe": null,
+                  "max_drawdown": 0.0,
+                  "win_rate": null,
+                  "num_trades": 0,
+                  "starred": false,
+                  "public": false,
+                  "created_at": "2026-11-08T12:22:51.335326Z"
+                }
+              ],
+              "win_rate": [
+                {
+                  "id": "bt_5xdmisryru",
+                  "number": 4,
+                  "name": "Cloudy Fomalhaut",
+                  "status": "finished",
+                  "queue_position": null,
+                  "error": null,
+                  "model": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                  "model_id": "mdl_lea7chtsaw",
+                  "instruments": [{ "market": "stock", "symbol": "AAPL" }],
+                  "representation": "renko",
+                  "setup": {
+                    "timeframe": "30m",
+                    "period_start": "2026-01-07",
+                    "period_end": "2026-09-22",
+                    "direction": "both",
+                    "threshold": 0.05,
+                    "stop_loss_pct": 7,
+                    "fees_pct": 0.0,
+                    "slippage_pct": 0.0,
+                    "benchmark": "bh"
+                  },
+                  "total_return": 0.22342275478468654,
+                  "buy_and_hold_return": 0.3031953661436957,
+                  "sharpe": 1.270944708683349,
+                  "max_drawdown": -0.1577269887274646,
+                  "win_rate": 0.5968992248062015,
+                  "num_trades": 387,
+                  "starred": false,
+                  "public": false,
+                  "created_at": "2026-10-27T15:18:20.113335Z"
+                }
+              ]
+            },
+            "starred": [
+              {
+                "id": "bt_qdphsprbv6",
+                "number": 3,
+                "name": "Western Procyon",
+                "status": "finished",
+                "queue_position": null,
+                "error": null,
+                "model": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                "model_id": "mdl_lea7chtsaw",
+                "instruments": [{ "market": "stock", "symbol": "MSFT" }],
+                "representation": "renko",
+                "setup": {
+                  "timeframe": "30m",
+                  "period_start": "2016-02-21",
+                  "period_end": "2026-10-27",
+                  "direction": "long",
+                  "threshold": 0.05,
+                  "stop_loss_pct": 7,
+                  "fees_pct": 0.1,
+                  "slippage_pct": 0.02,
+                  "benchmark": "bh"
+                },
+                "total_return": -0.997382179222843,
+                "buy_and_hold_return": 10.506479481641469,
+                "sharpe": -2.5296796424924595,
+                "max_drawdown": -0.997393920987077,
+                "win_rate": 0.40214109250617625,
+                "num_trades": 3643,
+                "starred": true,
+                "public": false,
+                "created_at": "2026-10-27T11:56:48.764297Z"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "say": "The dashboard shows only the six newest, all from today. This week is Monday 2 to Sunday 8 November, so I’ll go through the list, newest first, ten a page, until it passes 2 November.",
+      "calls": [
+        {
+          "tool": "list_backtests",
+          "arguments": { "page": 1 },
+          "result": "#32 to #23, all from today",
+          "answer": {
+            "backtests": [
+              {
+                "id": "bt_r7b4mlpxvw",
+                "number": 32,
+                "name": "Fleet Aldebaran",
+                "status": "finished",
+                "queue_position": null,
+                "error": null,
+                "model": "docs-demo-gru.keras",
+                "model_id": "mdl_vtdfxm2554",
+                "instruments": [{ "market": "stock", "symbol": "AAPL" }],
+                "representation": "windows",
+                "setup": {
+                  "timeframe": "30m",
+                  "period_start": "2023-07-01",
+                  "period_end": "2023-12-31",
+                  "direction": "long",
+                  "threshold": 0.0,
+                  "stop_loss_pct": 7,
+                  "fees_pct": 0.1,
+                  "slippage_pct": 0.02,
+                  "benchmark": "bh"
+                },
+                "total_return": -0.13301297692552627,
+                "buy_and_hold_return": 0.0004734101309766814,
+                "sharpe": -1.4283585070195914,
+                "max_drawdown": -0.20566533527917885,
+                "win_rate": 0.4025974025974026,
+                "num_trades": 77,
+                "starred": false,
+                "public": false,
+                "created_at": "2026-11-08T12:25:36.327400Z"
+              },
+              {
+                "id": "bt_5usmt72n77",
+                "number": 31,
+                "name": "Soft Sirius",
+                "status": "finished",
+                "queue_position": null,
+                "error": null,
+                "model": "docs-demo-gru.keras",
+                "model_id": "mdl_vtdfxm2554",
+                "instruments": [{ "market": "stock", "symbol": "AAPL" }],
+                "representation": "windows",
+                "setup": {
+                  "timeframe": "30m",
+                  "period_start": "2023-01-01",
+                  "period_end": "2023-06-30",
+                  "direction": "long",
+                  "threshold": 0.0,
+                  "stop_loss_pct": 7,
+                  "fees_pct": 0.1,
+                  "slippage_pct": 0.02,
+                  "benchmark": "bh"
+                },
+                "total_return": 0.2953652033059657,
+                "buy_and_hold_return": 0.531713575495149,
+                "sharpe": 2.6155089500057347,
+                "max_drawdown": -0.09919187742068192,
+                "win_rate": 0.4050632911392405,
+                "num_trades": 79,
+                "starred": false,
+                "public": false,
+                "created_at": "2026-11-08T12:25:36.327208Z"
+              },
+              {
+                "id": "bt_pmkzny7t5j",
+                "number": 30,
+                "name": "Brave Rhea",
+                "status": "finished",
+                "queue_position": null,
+                "error": null,
+                "model": "kagi-trend-smoke.onnx",
+                "model_id": "mdl_yvp7hczd2m",
+                "instruments": [{ "market": "stock", "symbol": "AAPL" }],
+                "representation": "kagi",
+                "setup": {
+                  "timeframe": "1h",
+                  "period_start": "2023-07-01",
+                  "period_end": "2023-12-31",
+                  "direction": "long",
+                  "threshold": 0.0,
+                  "stop_loss_pct": 7,
+                  "fees_pct": 0.1,
+                  "slippage_pct": 0.02,
+                  "benchmark": "bh"
+                },
+                "total_return": -0.20025601077914212,
+                "buy_and_hold_return": 0.0006313131313129272,
+                "sharpe": -2.745347379408846,
+                "max_drawdown": -0.20431892607530655,
+                "win_rate": 0.2641509433962264,
+                "num_trades": 53,
+                "starred": false,
+                "public": false,
+                "created_at": "2026-11-08T12:25:36.326974Z"
+              }
+            ],
+            "total": 32,
+            "page": 1,
+            "pages": 4,
+            "counts": { "all": 32, "starred": 1, "failed": 2, "public": 2 },
+            "models": [
+              {
+                "name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                "framework": "keras",
+                "count": 22
+              },
+              { "name": "docs-demo-gru.keras", "framework": "keras", "count": 5 },
+              { "name": "kagi-trend-smoke.onnx", "framework": "onnx", "count": 5 }
+            ]
+          }
+        },
+        {
+          "tool": "list_backtests",
+          "arguments": { "page": 2 },
+          "result": "#22 to #13, 3 to 8 November",
+          "answer": {
+            "backtests": [
+              {
+                "id": "bt_6teiemwazy",
+                "number": 22,
+                "name": "Serene Apogee",
+                "status": "finished",
+                "queue_position": null,
+                "error": null,
+                "model": "docs-demo-gru.keras",
+                "model_id": "mdl_vtdfxm2554",
+                "instruments": [{ "market": "stock", "symbol": "NVDA" }],
+                "representation": "windows",
+                "setup": {
+                  "timeframe": "30m",
+                  "period_start": "2024-01-02",
+                  "period_end": "2024-06-30",
+                  "direction": "long",
+                  "threshold": 0.05,
+                  "stop_loss_pct": 7,
+                  "fees_pct": 0.1,
+                  "slippage_pct": 0.02,
+                  "benchmark": "bh"
+                },
+                "total_return": 0.0,
+                "buy_and_hold_return": 1.5768425460636517,
+                "sharpe": null,
+                "max_drawdown": 0.0,
+                "win_rate": null,
+                "num_trades": 0,
+                "starred": false,
+                "public": false,
+                "created_at": "2026-11-08T12:22:51.335326Z"
+              },
+              {
+                "id": "bt_ozvqxf6az5",
+                "number": 21,
+                "name": "Icy Gemini",
+                "status": "finished",
+                "queue_position": null,
+                "error": null,
+                "model": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                "model_id": "mdl_lea7chtsaw",
+                "instruments": [{ "market": "stock", "symbol": "SPY" }],
+                "representation": "renko",
+                "setup": {
+                  "timeframe": "30m",
+                  "period_start": "2025-01-01",
+                  "period_end": "2026-09-01",
+                  "direction": "both",
+                  "threshold": 0.0,
+                  "stop_loss_pct": 7,
+                  "fees_pct": 0.001,
+                  "slippage_pct": 0.02,
+                  "benchmark": "bh"
+                },
+                "total_return": 0.515319611115179,
+                "buy_and_hold_return": 0.31273217340221504,
+                "sharpe": 1.652770660194137,
+                "max_drawdown": -0.08737110607081977,
+                "win_rate": 0.5446735395189003,
+                "num_trades": 582,
+                "starred": false,
+                "public": false,
+                "created_at": "2026-11-08T02:44:10.055332Z"
+              },
+              {
+                "id": "bt_zlixd3g5yv",
+                "number": 20,
+                "name": "Noble Gemini",
+                "status": "finished",
+                "queue_position": null,
+                "error": null,
+                "model": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                "model_id": "mdl_lea7chtsaw",
+                "instruments": [{ "market": "stock", "symbol": "SPY" }],
+                "representation": "renko",
+                "setup": {
+                  "timeframe": "30m",
+                  "period_start": "2025-01-01",
+                  "period_end": "2026-09-01",
+                  "direction": "both",
+                  "threshold": 0.0,
+                  "stop_loss_pct": 7,
+                  "fees_pct": 0.001,
+                  "slippage_pct": 0.02,
+                  "benchmark": "bh"
+                },
+                "total_return": 0.515319611115179,
+                "buy_and_hold_return": 0.31273217340221504,
+                "sharpe": 1.652770660194137,
+                "max_drawdown": -0.08737110607081977,
+                "win_rate": 0.5446735395189003,
+                "num_trades": 582,
+                "starred": false,
+                "public": false,
+                "created_at": "2026-11-08T02:44:09.966387Z"
+              }
+            ],
+            "total": 32,
+            "page": 2,
+            "pages": 4,
+            "counts": { "all": 32, "starred": 1, "failed": 2, "public": 2 },
+            "models": [
+              {
+                "name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                "framework": "keras",
+                "count": 22
+              },
+              { "name": "docs-demo-gru.keras", "framework": "keras", "count": 5 },
+              { "name": "kagi-trend-smoke.onnx", "framework": "onnx", "count": 5 }
+            ]
+          }
+        },
+        {
+          "tool": "list_backtests",
+          "arguments": { "page": 3 },
+          "result": "#12 to #3, 2 November is #12",
+          "answer": {
+            "backtests": [
+              {
+                "id": "bt_6up676i7lz",
+                "number": 12,
+                "name": "Rustic Gemini",
+                "status": "finished",
+                "queue_position": null,
+                "error": null,
+                "model": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                "model_id": "mdl_lea7chtsaw",
+                "instruments": [{ "market": "stock", "symbol": "QQQ" }],
+                "representation": "renko",
+                "setup": {
+                  "timeframe": "30m",
+                  "period_start": "2021-01-04",
+                  "period_end": "2024-12-31",
+                  "direction": "long",
+                  "threshold": 0.05,
+                  "stop_loss_pct": 7,
+                  "fees_pct": 0.1,
+                  "slippage_pct": 0.02,
+                  "benchmark": "DIA"
+                },
+                "total_return": -0.8611093792721876,
+                "buy_and_hold_return": 0.6732134015514111,
+                "sharpe": -2.9251327246631638,
+                "max_drawdown": -0.8619591596076135,
+                "win_rate": 0.39375476009139376,
+                "num_trades": 1313,
+                "starred": false,
+                "public": false,
+                "created_at": "2026-11-02T16:42:15.280891Z"
+              },
+              {
+                "id": "bt_xtr4pckdqq",
+                "number": 11,
+                "name": "Jade Hadar",
+                "status": "finished",
+                "queue_position": null,
+                "error": null,
+                "model": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                "model_id": "mdl_lea7chtsaw",
+                "instruments": [{ "market": "stock", "symbol": "AAPL" }],
+                "representation": "renko",
+                "setup": {
+                  "timeframe": "30m",
+                  "period_start": "2025-01-01",
+                  "period_end": "2026-09-22",
+                  "direction": "long",
+                  "threshold": 50.0,
+                  "stop_loss_pct": 7,
+                  "fees_pct": 0.1,
+                  "slippage_pct": 0.02,
+                  "benchmark": "bh"
+                },
+                "total_return": 0.0,
+                "buy_and_hold_return": 0.3862569877994044,
+                "sharpe": null,
+                "max_drawdown": 0.0,
+                "win_rate": null,
+                "num_trades": 0,
+                "starred": false,
+                "public": false,
+                "created_at": "2026-11-01T13:57:19.676629Z"
+              },
+              {
+                "id": "bt_xoopwgqtvg",
+                "number": 10,
+                "name": "Hushed Asteroid",
+                "status": "finished",
+                "queue_position": null,
+                "error": null,
+                "model": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                "model_id": "mdl_lea7chtsaw",
+                "instruments": [{ "market": "stock", "symbol": "MSFT" }],
+                "representation": "renko",
+                "setup": {
+                  "timeframe": "30m",
+                  "period_start": "2026-01-07",
+                  "period_end": "2026-09-22",
+                  "direction": "long",
+                  "threshold": 0.1,
+                  "stop_loss_pct": 7,
+                  "fees_pct": 0.1,
+                  "slippage_pct": 0.02,
+                  "benchmark": "bh"
+                },
+                "total_return": -0.20742038195059198,
+                "buy_and_hold_return": 0.03614457831325302,
+                "sharpe": -3.7648493005885735,
+                "max_drawdown": -0.20742038195059198,
+                "win_rate": 0.3,
+                "num_trades": 40,
+                "starred": false,
+                "public": false,
+                "created_at": "2026-11-01T13:57:09.570584Z"
+              }
+            ],
+            "total": 32,
+            "page": 3,
+            "pages": 4,
+            "counts": { "all": 32, "starred": 1, "failed": 2, "public": 2 },
+            "models": [
+              {
+                "name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                "framework": "keras",
+                "count": 22
+              },
+              { "name": "docs-demo-gru.keras", "framework": "keras", "count": 5 },
+              { "name": "kagi-trend-smoke.onnx", "framework": "onnx", "count": 5 }
+            ]
+          }
+        },
+        {
+          "tool": "list_backtests",
+          "arguments": { "page": 4 },
+          "result": "#2 and #1, October, before this week",
+          "answer": {
+            "backtests": [
+              {
+                "id": "bt_rwb6mazoxx",
+                "number": 2,
+                "name": "Vivid Ariel",
+                "status": "finished",
+                "queue_position": null,
+                "error": null,
+                "model": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                "model_id": "mdl_lea7chtsaw",
+                "instruments": [{ "market": "stock", "symbol": "SPY" }],
+                "representation": "renko",
+                "setup": {
+                  "timeframe": "30m",
+                  "period_start": "2016-02-21",
+                  "period_end": "2026-10-27",
+                  "direction": "long",
+                  "threshold": 0.05,
+                  "stop_loss_pct": 7,
+                  "fees_pct": 0.1,
+                  "slippage_pct": 0.02,
+                  "benchmark": "bh"
+                },
+                "total_return": -0.9850281599660543,
+                "buy_and_hold_return": 3.6336279970937273,
+                "sharpe": -2.894287449980847,
+                "max_drawdown": -0.9851963929106251,
+                "win_rate": 0.3491305830207978,
+                "num_trades": 2933,
+                "starred": false,
+                "public": false,
+                "created_at": "2026-10-27T10:10:40.829977Z"
+              },
+              {
+                "id": "bt_odclk2mb7r",
+                "number": 1,
+                "name": "Solemn Halley",
+                "status": "failed",
+                "queue_position": null,
+                "error": "Our Alpaca request budget (100 per minute) is spent. Try again in 51 seconds.",
+                "model": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                "model_id": "mdl_lea7chtsaw",
+                "instruments": [{ "market": "stock", "symbol": "SPY" }],
+                "representation": "renko",
+                "setup": {
+                  "timeframe": "30m",
+                  "period_start": "2016-02-21",
+                  "period_end": "2026-10-26",
+                  "direction": "long",
+                  "threshold": 0.05,
+                  "stop_loss_pct": 7,
+                  "fees_pct": 0.1,
+                  "slippage_pct": 0.02,
+                  "benchmark": "bh"
+                },
+                "total_return": null,
+                "buy_and_hold_return": null,
+                "sharpe": null,
+                "max_drawdown": null,
+                "win_rate": null,
+                "num_trades": null,
+                "starred": false,
+                "public": false,
+                "created_at": "2026-10-26T21:34:47.810961Z"
+              }
+            ],
+            "total": 32,
+            "page": 4,
+            "pages": 4,
+            "counts": { "all": 32, "starred": 1, "failed": 2, "public": 2 },
+            "models": [
+              {
+                "name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                "framework": "keras",
+                "count": 22
+              },
+              { "name": "docs-demo-gru.keras", "framework": "keras", "count": 5 },
+              { "name": "kagi-trend-smoke.onnx", "framework": "onnx", "count": 5 }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "say": "**This week, 2 to 8 November: 21 backtests**, 20 finished and 1 cancelled. 16 ran today, the others on 2, 3 and 4 November. 11 of today’s, #22 to #32, come from the sessions recorded for these docs.\n\n**Best by Sharpe**: [#23 Vast Galaxy](https://stage.candlestack.tech/backtests/bt_5vwx4qnfza), `docs-demo-gru.keras` on NVDA in the first half of 2024, +95.6 % with a Sharpe of 2.95. Buy and hold made +157.7 % in the same months, so it did not beat holding NVDA. Next is [#31 Soft Sirius](https://stage.candlestack.tech/backtests/bt_5usmt72n77), the same model on AAPL in the first half of 2023, +29.5 % and 2.62.\n\n**Largest return**: [#15 Bold Aries](https://stage.candlestack.tech/backtests/bt_os2inktwpu), the BLESK model on QQQ from 2021 to 2024, long and short, +180.4 % with a Sharpe of 1.35 and a largest fall of 17.6 %. Its fees are set to 0.001 %, a hundredth of your default 0.1 %, so the figure is flattered. The same model on QQQ over the same years with your default settings, long only, [#12 Rustic Gemini](https://stage.candlestack.tech/backtests/bt_6up676i7lz), lost 86.1 %.\n\n**Repeated runs**: #16, #17, #19, #20 and #21 are one setup, the BLESK model on SPY from 2025 to September 2026 with fees of 0.001 %. All five gave +51.5 % and a Sharpe of 1.65, see [#21 Icy Gemini](https://stage.candlestack.tech/backtests/bt_ozvqxf6az5). The engine gives the same result each time, so one run is enough. [#18 Vivid Alnilam](https://stage.candlestack.tech/backtests/bt_y7d4mqwfdj) was cancelled before it ran.\n\n**Weak spots**: [#26 Midnight Nova](https://stage.candlestack.tech/backtests/bt_nkfzxfmtoq) lost 42.0 % on NVDA in the second half of 2024, and on AAPL in the second half of 2023 all three models lost ([#28 Wavy Umbriel](https://stage.candlestack.tech/backtests/bt_7c5leihleb), [#30 Brave Rhea](https://stage.candlestack.tech/backtests/bt_pmkzny7t5j), [#32 Fleet Aldebaran](https://stage.candlestack.tech/backtests/bt_r7b4mlpxvw)). [#22 Serene Apogee](https://stage.candlestack.tech/backtests/bt_6teiemwazy) made no trades at threshold 0.05.\n\n**Published**: [#13 Lilac Pluto](https://stage.candlestack.tech/backtests/bt_bomssyleb2) and [#14 Solemn Tethys](https://stage.candlestack.tech/backtests/bt_xrv5m7agvv), `kagi-trend-smoke.onnx` on AAPL and NVDA in 2025 without costs, +12.8 % and +32.9 %.\n\nThese are the figures the list stores. I did not open the trades of each run."
+    }
+  ],
+  "outcome": {
+    "text": "21 backtests ran from 2 to 8 November, 20 finished and 1 was cancelled. The best Sharpe was [#23 Vast Galaxy](https://stage.candlestack.tech/backtests/bt_5vwx4qnfza) at 2.95, the largest return [#15 Bold Aries](https://stage.candlestack.tech/backtests/bt_os2inktwpu) at +180.4 % with fees set a hundred times lower than the default. Five runs repeated one SPY setup with the same result.",
+    "table": {
+      "columns": [
+        { "name": "Backtest" },
+        { "name": "Return", "better": "higher" },
+        { "name": "Buy and hold" },
+        { "name": "Sharpe", "better": "higher" },
+        { "name": "Max drawdown", "better": "higher" },
+        { "name": "Trades" }
+      ],
+      "rows": [
+        {
+          "name": "#23 Vast Galaxy",
+          "sub": "docs-demo-gru · NVDA · H1 2024",
+          "values": ["+95.6 %", "+157.7 %", "2.95", "−22.8 %", 103]
+        },
+        {
+          "name": "#31 Soft Sirius",
+          "sub": "docs-demo-gru · AAPL · H1 2023",
+          "values": ["+29.5 %", "+53.2 %", "2.62", "−9.9 %", 79]
+        },
+        {
+          "name": "#15 Bold Aries",
+          "sub": "BLESK · QQQ · 2021 to 2024 · fees 0.001 %",
+          "values": ["+180.4 %", "+67.3 %", "1.35", "−17.6 %", 1780]
+        },
+        {
+          "name": "#21 Icy Gemini",
+          "sub": "BLESK · SPY · 2025 to Sep 2026 · 5 equal runs",
+          "values": ["+51.5 %", "+31.3 %", "1.65", "−8.7 %", 582]
+        },
+        {
+          "name": "#14 Solemn Tethys",
+          "sub": "kagi-trend-smoke · NVDA · 2025 · published",
+          "values": ["+32.9 %", "+36.2 %", "1.01", "−34.2 %", 150]
+        },
+        {
+          "name": "#13 Lilac Pluto",
+          "sub": "kagi-trend-smoke · AAPL · 2025 · published",
+          "values": ["+12.8 %", "+4.0 %", "0.66", "−23.2 %", 142]
+        },
+        {
+          "name": "#12 Rustic Gemini",
+          "sub": "BLESK · QQQ · 2021 to 2024 · long only",
+          "values": ["−86.1 %", "+67.3 %", "−2.93", "−86.2 %", 1313]
+        },
+        {
+          "name": "#26 Midnight Nova",
+          "sub": "docs-demo-gru · NVDA · H2 2024",
+          "values": ["−42.0 %", "+11.4 %", "−1.86", "−45.7 %", 112]
+        }
+      ]
+    },
+    "warning": "Return, Sharpe and drawdown come from runs with different stocks, periods and costs, so the rows are not a ranking of the models."
+  },
+  "try": "Connect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt. The session used `get_dashboard` and `list_backtests`, see [Tools](/docs/mcp/tools/)."
+}
