@@ -7,7 +7,7 @@ updated: 2026-11-08
 ---
 
 > [!NOTE]
-> **Available from the next release.** Tools for market data, models, backtests and Experiments are being added now. This page lists the tools the server has today and grows with it.
+> **Available from the next release.** The server and all its tools are live on stage.candlestack.tech and come to app.candlestack.tech with the next release.
 
 Each tool does the same as an endpoint of the API, with the same checks. Your client reads the same descriptions and schemas from the server when it connects.
 

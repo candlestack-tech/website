@@ -8,13 +8,13 @@ updated: 2026-11-08
 ---
 
 > [!NOTE]
-> **Available from the next release.** These steps work once the server is on app.candlestack.tech with the next release.
+> **Available from the next release.** The server and API keys are live on stage.candlestack.tech. These steps work on app.candlestack.tech once the next release brings them there.
 
 ```text address title="Server address"
 https://app.candlestack.tech/mcp
 ```
 
-Streamable HTTP. Claude Code, claude.ai, Cursor and VS Code sign in with an API key in a header. ChatGPT needs OAuth sign-in, which comes later.
+Streamable HTTP. Claude Code, claude.ai, Cursor and VS Code sign in with an API key in a header. OAuth sign-in, with no key, is coming with [candlestack#408](https://github.com/candlestack-tech/candlestack/issues/408). ChatGPT needs it.
 
 ## Pick your client
 
@@ -71,12 +71,14 @@ Streamable HTTP. Claude Code, claude.ai, Cursor and VS Code sign in with an API 
 
    Choose + at the lower left of the chat, then Connectors, and switch CandleStack on.
 
+OAuth sign-in is coming with [candlestack#408](https://github.com/candlestack-tech/candlestack/issues/408). Then you add the connector with only its address and sign in with GitHub or Google, with no key to paste.
+
 > [!WARNING]
 > **One key for everyone.** On Team and Enterprise plans everyone who uses the connector shares the key it was added with. Give that key the fewest scopes your team needs. With OAuth sign-in ([candlestack#408](https://github.com/candlestack-tech/candlestack/issues/408)) each member will sign in as themselves instead.
 
 ### ChatGPT *Soon*
 
-ChatGPT adds remote servers as connectors in developer mode. They sign in through OAuth and have no field for an API key header. CandleStack gets OAuth sign-in after the server is on app.candlestack.tech ([candlestack#408](https://github.com/candlestack-tech/candlestack/issues/408)). Then you create the connector with the server address, sign in with GitHub or Google and pick what ChatGPT may do.
+ChatGPT adds remote servers as connectors in developer mode. They sign in through OAuth and have no field for an API key header. OAuth sign-in for CandleStack is coming with [candlestack#408](https://github.com/candlestack-tech/candlestack/issues/408). Then you create the connector with the server address, sign in with GitHub or Google and pick what ChatGPT may do.
 
 Until then, connect Claude Code, claude.ai, Cursor or VS Code.
 

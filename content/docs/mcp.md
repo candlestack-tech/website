@@ -8,7 +8,7 @@ updated: 2026-11-08
 ---
 
 > [!NOTE]
-> **Available from the next release.** The MCP server is being tested now and comes to app.candlestack.tech with the next release. Until then, run your backtests in the app.
+> **Available from the next release.** The MCP server and API keys are live on stage.candlestack.tech and come to app.candlestack.tech with the next release. Until then, run your backtests in the app.
 
 ## What the server does
 
@@ -36,7 +36,7 @@ Today a client signs in with an API key that it sends in a header. Claude Code, 
 - **Beta list** A key works while your account is on the beta list.
 - **Revoke** Revoke a key in Settings and it stops working at once.
 
-OAuth sign-in comes later ([candlestack#408](https://github.com/candlestack-tech/candlestack/issues/408)). Then you sign in with GitHub or Google and pick what the agent may do, with no key to copy. ChatGPT waits for it, because it cannot send a key. On claude.ai it lets each member of a team sign in as themselves instead of sharing one key.
+OAuth sign-in is coming with [candlestack#408](https://github.com/candlestack-tech/candlestack/issues/408). Then you sign in with GitHub or Google and pick what the agent may do, with no key to copy. ChatGPT waits for it, because it cannot send a key. On claude.ai it lets each member of a team sign in as themselves instead of sharing one key.
 
 ## Scopes
 

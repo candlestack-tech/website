@@ -41,6 +41,9 @@ if (!parsed.success) {
 }
 const { tools, webOnly } = parsed.data;
 
+// The ids of the tool entries: On this page leaves them out, the index of the page lists them
+export const toolIds = new Set(tools.map((t) => t.name));
+
 // What a tool does to your data, from its annotations
 type Kind = 'ro' | 'rw' | 'de';
 const KINDS: Record<Kind, [string, string]> = {
@@ -60,7 +63,7 @@ const GROUPS: [string, RegExp][] = [
   ['Market data', /^\/api\/v1\/(data|preprocessing)\//],
   ['Models', /^\/api\/v1\/(models|uploads)\b/],
   ['Experiments', /^\/api\/v1\/experiments\b/],
-  ['Backtests', /^\/api\/v1\/(backtests|compare|dashboard)\b/],
+  ['Backtests', /^\/api\/v1\/(backtests|compare|dashboard|sweeps)\b/],
 ];
 
 function group(tool: Tool) {

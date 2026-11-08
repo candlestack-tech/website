@@ -8,7 +8,7 @@ updated: 2026-11-08
 ---
 
 > [!NOTE]
-> **Coming soon.** The MCP server and API keys are being built and are not live yet. This page says what they will do and what works today.
+> **Available from the next release.** The MCP server and API keys are live on stage.candlestack.tech and come to app.candlestack.tech with the next release. This page says what they will do and what works today.
 
 ## What an agent can do
 
@@ -61,7 +61,7 @@ Not sure? Start with MCP once it is live. You can script the same steps later.
 ## First backtest from a chat in 2 minutes
 
 > [!NOTE]
-> **Coming soon.** These steps work once the MCP server and API keys are live. Until then, run your backtests in the app.
+> **Available from the next release.** These steps work on app.candlestack.tech once the next release brings the MCP server and API keys there. Until then, run your backtests in the app.
 
 1. **Create a key**
 
@@ -95,6 +95,7 @@ Deleting your account, your sign-in methods and signing out stay in the app. No 
 - [The MCP server](/docs/mcp/) The address, sign-in, scopes and what stays in the app
 - [Install](/docs/mcp/install/) Connect Claude Code, Cursor or VS Code
 - [Tools](/docs/mcp/tools/) Every tool with its parameters and an example
+- [The API](/docs/api/) Keys, sign-in and examples for your own code
 - [Problem types](/problems/) Every error of the API and what to do about it
 
-The API guide and the use cases come with the server.
+The use cases come with the server.

@@ -62,7 +62,7 @@ So write it to read well as plain text. These shapes get the look of the docs:
 | `<!-- cards -->`, cards that start with `###`, then `<!-- /cards -->` | cards side by side, see `docs/agents.md` |
 | `<!-- tabs -->`, tabs that start with `###`, then `<!-- /tabs -->` | tabs with the client's logo, see `docs/mcp/install.md`, italic text in the `###` is a tag |
 | a code fence `text address title="Server address"` | the address of a server, large, with Copy |
-| `<!-- mcp-tools -->` on a line of its own | every tool of the MCP server, built from the server's tool reference |
+| `<!-- mcp-tools -->` on a line of its own | every tool of the MCP server, built from the server's tool reference. On this page shows its index, not each tool |
 | `<!-- mcp-web-only -->` on a line of its own | the API endpoints that stay in the web app, with the reason, from the same reference |
 
 A list with blank lines between its items stops being rows and shows as a plain list. A `###` heading that starts with "Card" is left out of On this page, as card titles are.
