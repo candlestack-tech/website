@@ -136,6 +136,9 @@ const count = tools.length === 1 ? '1 tool' : `${tools.length} tools`;
 
 // ---------- Markdown, for the .md versions, /llms-full.txt and Copy page ----------
 
+// Text in a table cell: a backslash or a | would change the table
+const cell = (value: string) => value.replace(/[\\|]/g, (c) => `\\${c}`);
+
 function toolMarkdown(tool: Tool) {
   const tags = [
     KINDS[kind(tool)][0],
@@ -147,9 +150,7 @@ function toolMarkdown(tool: Tool) {
     ? [
         '| Name | Type | Required | What it is |',
         '| --- | --- | --- | --- |',
-        ...list.map(
-          (p) => `| \`${p.name}\` | ${p.type} | ${p.required ? 'yes' : 'no'} | ${p.about.replace(/\|/g, '\\|')} |`,
-        ),
+        ...list.map((p) => `| \`${p.name}\` | ${p.type} | ${p.required ? 'yes' : 'no'} | ${cell(p.about)} |`),
       ].join('\n')
     : 'No parameters.';
   return [

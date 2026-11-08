@@ -39,8 +39,10 @@ export function isSectionPage(page: DocsPage) {
 }
 
 // The parts built from the server's tool reference, in place of their markers (tools.ts)
-const GENERATED: Record<string, () => string> = { 'mcp-tools': toolsMarkdown, 'mcp-web-only': webOnlyMarkdown };
-const MARKER = /^<!-- (\S+) -->$/;
+const GENERATED = new Map<string, () => string>([
+  ['<!-- mcp-tools -->', toolsMarkdown],
+  ['<!-- mcp-web-only -->', webOnlyMarkdown],
+]);
 
 // A line that is only a marker for the HTML page, like <!-- cards --> (the .md versions are plain text, never HTML)
 function isComment(line: string) {
@@ -80,9 +82,7 @@ function links(line: string, pages: Set<string>) {
 // The page as an agent reads it: plain Markdown with the generated parts filled in, no marker
 // lines, a colon after each row's label and links that work outside the site. Code stays as it is.
 function plain(body: string, pages: Set<string>) {
-  const lines = body
-    .split('\n')
-    .flatMap((line) => GENERATED[MARKER.exec(line.trim())?.[1] ?? '']?.().split('\n') ?? [line]);
+  const lines = body.split('\n').flatMap((line) => GENERATED.get(line.trim())?.().split('\n') ?? [line]);
   const out: string[] = [];
   let prose: string[] = [];
   let fence = '';

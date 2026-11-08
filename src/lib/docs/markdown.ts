@@ -235,15 +235,15 @@ function transform(nodes: Node[], slug: Slug): Node[] {
   return codeBlocks(pieces).map((n) => (isElement(n) && !n.data?.built ? element(n, slug) : n));
 }
 
-// The parts built from the server's tool reference (tools.ts)
-const GENERATED: Record<string, () => Node[]> = { 'mcp-tools': toolsHast, 'mcp-web-only': webOnlyHast };
-const MARKERS = new Set(['cards', '/cards', 'tabs', '/tabs', ...Object.keys(GENERATED)].map((m) => `<!-- ${m} -->`));
+// The parts built from the server's tool reference (tools.ts), by their marker
+const GENERATED = new Map<string, () => Node[]>([
+  ['<!-- mcp-tools -->', toolsHast],
+  ['<!-- mcp-web-only -->', webOnlyHast],
+]);
+const MARKERS = new Set(['<!-- cards -->', '<!-- /cards -->', '<!-- tabs -->', '<!-- /tabs -->', ...GENERATED.keys()]);
 
 function generated(nodes: Node[]): Node[] {
-  return nodes.flatMap((n) => {
-    const name = n.type === 'raw' ? /^<!-- (\S+) -->$/.exec(n.value.trim())?.[1] : undefined;
-    return name && GENERATED[name] ? GENERATED[name]() : [n];
-  });
+  return nodes.flatMap((n) => (n.type === 'raw' && GENERATED.get(n.value.trim())?.()) || [n]);
 }
 
 // Pages stay plain Markdown: raw HTML other than the markers above, and links that are not
