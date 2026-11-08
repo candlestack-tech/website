@@ -36,7 +36,7 @@ Streamable HTTP. claude.ai, ChatGPT, Claude Code and Codex sign in with OAuth. Y
 
 3. **Check it**
 
-   Run `claude mcp list`. The line for `candlestack` ends with ✔ Connected, or with ! Needs authentication before you sign in. In a session, `/mcp` lists it with its tools.
+   Run `claude mcp list`. The line for `candlestack` ends with ✔ Connected. Before you sign in it shows ! Needs authentication, and ✘ Failed to connect when the server cannot be reached or refuses the sign-in. In a session, `/mcp` lists it with its tools.
 
 To sign in with an API key instead, for scripts or a machine with no browser:
 
@@ -96,7 +96,7 @@ To sign in with an API key instead, for scripts or a machine with no browser:
    1. In ChatGPT on the web open Plugins, choose +, then Add custom MCP server.
    2. Name it `CandleStack`. Under Connection paste the server address as the Server URL.
    3. Set the authentication to OAuth.
-   4. Read the risk warning, choose I understand and want to continue, then Create as a plugin.
+   4. Read the risk warning. Tick I understand and want to continue, then choose Create as a plugin.
 
    Then install the plugin from your plugins, or from the workspace you created it in. In a workspace, its permissions decide who may add a server.
 
@@ -106,7 +106,7 @@ To sign in with an API key instead, for scripts or a machine with no browser:
 
 3. **Use it in a chat**
 
-   Type `@` in a new chat and pick CandleStack. ChatGPT asks you to confirm a tool that changes data before it runs.
+   Type `@` in a new chat and pick CandleStack. ChatGPT usually asks you to confirm a tool that changes data before it runs.
 
 ### Codex
 
