@@ -11,12 +11,9 @@ sections:
     name: MCP
   - id: api
     name: API
-    soon: More coming soon
     links:
       - name: Reference
         url: https://app.candlestack.tech/api/v1/docs
-      - name: Errors
-        url: /problems/
   - id: concepts
     name: Concepts
     soon: Coming soon
