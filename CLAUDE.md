@@ -13,6 +13,10 @@ Static project website for CandleStack (STU FEI team project), built with Astro 
 - Colors only through the CSS variables in `src/styles/global.css`; every change must work in both themes.
 - Keep the design minimal: one 640px column, no new sections or decorations without being asked.
   The docs at `/docs/` are the exception: their approved layout is `src/layouts/Docs.astro`.
+- `@astrojs/markdown-satteri` is pinned and bumped together with `astro`: the docs' Markdown
+  transform (`src/lib/docs/markdown.ts`) is a plugin of it and depends on the tree it hands over.
+- `src/data/mcp-tools.json` is candlestack's `docs/mcp-tools.json`, never edited by hand:
+  `npm run mcp-tools` copies the current one, and the `MCP tools` check fails when it is older.
 - Fonts go through the Astro Fonts API in `astro.config.mjs` (preload + metric-matched fallbacks), not CSS imports.
 - Lighthouse mobile must stay at 100 in every category with CLS 0; check `npm run build && npx astro preview`.
 - Everything in English.

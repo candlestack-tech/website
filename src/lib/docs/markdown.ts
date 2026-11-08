@@ -1,7 +1,8 @@
-import { codeBlocks } from './blocks';
+import { codeBlocks, resetTabIds } from './blocks';
 import { clone, elements, h, isBlank, isElement, raw, text, textOf, type Element, type Node, type Root } from './hast';
 import { clientLogo, icon } from './icons';
 import { rows, steps } from './lists';
+import { toolsHast, webOnlyHast } from './tools';
 
 // Turns the plain Markdown of content/docs/ into the pieces of the docs design. Pages stay plain
 // Markdown that reads well as it is (the .md versions are the source), the shapes below get their
@@ -120,19 +121,83 @@ function pick(nodes: Node[], slug: Slug): Element {
 
 const marker = (node: Node, name: string) => node.type === 'raw' && node.value.trim() === `<!-- ${name} -->`;
 
-function cards(nodes: Node[], slug: Slug): Node[] {
+// The nodes between <!-- name --> and <!-- /name --> become one piece
+function between(nodes: Node[], name: string, build: (inner: Node[]) => Element): Node[] {
   const out: Node[] = [];
   for (let i = 0; i < nodes.length; i++) {
-    if (!marker(nodes[i], 'cards')) {
+    if (!marker(nodes[i], name)) {
       out.push(nodes[i]);
       continue;
     }
-    const end = nodes.findIndex((n, j) => j > i && marker(n, '/cards'));
+    const end = nodes.findIndex((n, j) => j > i && marker(n, `/${name}`));
     const stop = end === -1 ? nodes.length : end;
-    out.push(pick(nodes.slice(i + 1, stop), slug));
+    out.push(build(nodes.slice(i + 1, stop)));
     i = stop;
   }
   return out;
+}
+
+// Tabs between <!-- tabs --> and <!-- /tabs -->: each ### starts a tab, its name is the heading's
+// text and italic text in it a tag. The pane's id is the name (claude.ai is #claude-ai), so a link
+// opens its tab. Without JavaScript every pane shows under its name.
+const tabId = (name: string) =>
+  name
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, '-')
+    .replace(/^-|-$/g, '');
+
+const tabName = (title: Element) =>
+  textOf({ ...title, children: title.children.filter((n) => !isElement(n, 'em')) }).trim();
+
+function tabLabel(title: Element): Node[] {
+  const name = tabName(title);
+  const tags = elements(title.children).filter((n) => isElement(n, 'em'));
+  return [
+    raw(clientLogo(name)),
+    h('span', {}, [text(name)]),
+    ...tags.map((t) => h('span', { className: ['tag', 'soon'] }, t.children)),
+  ];
+}
+
+function tabs(nodes: Node[]): Element {
+  const groups: { title: Element; body: Node[] }[] = [];
+  for (const node of nodes) {
+    if (isElement(node, 'h3')) groups.push({ title: node, body: [] });
+    else groups[groups.length - 1]?.body.push(node);
+  }
+  const ids = groups.map((g) => tabId(tabName(g.title)));
+  const list = h(
+    'div',
+    { className: ['ctab-list'], role: 'tablist' },
+    groups.map((g, i) =>
+      h(
+        'button',
+        {
+          type: 'button',
+          role: 'tab',
+          id: `tab-${ids[i]}`,
+          className: i ? ['ctab'] : ['ctab', 'on'],
+          ariaSelected: String(!i),
+          ariaControls: ids[i],
+          tabIndex: i ? -1 : 0,
+        },
+        tabLabel(g.title),
+      ),
+    ),
+  );
+  const panes = groups.map((g, i) =>
+    h(
+      'div',
+      {
+        className: i ? ['ctab-pane'] : ['ctab-pane', 'on'],
+        role: 'tabpanel',
+        id: ids[i],
+        ariaLabelledby: `tab-${ids[i]}`,
+      },
+      [h('div', { className: ['ctab-l'] }, tabLabel(g.title)), ...g.body],
+    ),
+  );
+  return h('div', { className: ['ctabs'] }, [list, ...panes]);
 }
 
 // ## and ### get an id and a # link that shows on hover; the link has no text, so headings stay clean
@@ -162,10 +227,42 @@ function element(node: Element, slug: Slug): Node {
 }
 
 function transform(nodes: Node[], slug: Slug): Node[] {
-  return codeBlocks(cards(nodes, slug)).map((n) => (isElement(n) && !n.data?.built ? element(n, slug) : n));
+  const pieces = between(
+    between(nodes, 'cards', (inner) => pick(inner, slug)),
+    'tabs',
+    tabs,
+  );
+  return codeBlocks(pieces).map((n) => (isElement(n) && !n.data?.built ? element(n, slug) : n));
+}
+
+// The parts built from the server's tool reference (tools.ts)
+const GENERATED: Record<string, () => Node[]> = { 'mcp-tools': toolsHast, 'mcp-web-only': webOnlyHast };
+const MARKERS = new Set(['cards', '/cards', 'tabs', '/tabs', ...Object.keys(GENERATED)].map((m) => `<!-- ${m} -->`));
+
+function generated(nodes: Node[]): Node[] {
+  return nodes.flatMap((n) => {
+    const name = n.type === 'raw' ? /^<!-- (\S+) -->$/.exec(n.value.trim())?.[1] : undefined;
+    return name && GENERATED[name] ? GENERATED[name]() : [n];
+  });
+}
+
+// Pages stay plain Markdown: raw HTML other than the markers above, and links that are not
+// http(s), a path, an anchor or mailto, fail the build with the file named
+const LINK = /^(https?:\/\/|\/|#|mailto:)/;
+
+function check(node: Node, file: string) {
+  if (node.type === 'raw' && !MARKERS.has(node.value.trim())) {
+    throw new Error(`${file}: raw HTML is not allowed in the docs, write Markdown instead: ${node.value.trim()}`);
+  }
+  if (isElement(node, 'a')) {
+    const href = typeof node.properties.href === 'string' ? node.properties.href : '';
+    if (!LINK.test(href)) throw new Error(`${file}: the link "${href}" must start with https://, /, # or mailto:`);
+  }
+  if ('children' in node) for (const child of node.children) check(child, file);
 }
 
 interface PluginContext {
+  readonly fileURL: URL | undefined;
   replaceNode(node: unknown, replacement: unknown): void;
 }
 
@@ -174,7 +271,9 @@ export const docsMarkdown = {
   name: 'candlestack-docs',
   after(root: unknown, ctx: PluginContext) {
     const tree = clone(root as Root) as Root;
-    tree.children = transform(tree.children, slugger());
+    check(tree, ctx.fileURL ? decodeURI(ctx.fileURL.pathname).replace(/^.*\/(?=content\/)/, '') : 'A docs page');
+    resetTabIds();
+    tree.children = transform(generated(tree.children), slugger());
     ctx.replaceNode(root, tree);
   },
 };

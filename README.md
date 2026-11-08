@@ -23,6 +23,7 @@ Open http://localhost:4321. Pages reload on every change.
 | `npm run check` | type-checks the code and validates the content |
 | `npm run lint` | lints the code (oxlint), checks its formatting (Prettier) and finds unused files and exports (knip) |
 | `npm run format` | formats the code with Prettier |
+| `npm run mcp-tools` | copies candlestack's `docs/mcp-tools.json`, the MCP tool reference, to `src/data/`; CI's `MCP tools` check fails when the copy is older |
 | `uvx pre-commit install` | once per clone: the git hooks (`.pre-commit-config.yaml`) fix whitespace and stop secrets, typos, Markdown and workflow findings on every commit; `uvx pre-commit run --all-files` runs them on every file, as CI's `Pre-commit` job does |
 
 ## Editing content
@@ -66,6 +67,12 @@ site: the page itself, the plain Markdown at `<page>.md` (`/docs/agents.md`), an
 (one line per page) and `/llms-full.txt` (every page in one file) for agents. See
 [`content/README.md`](content/README.md) to add a page and for the Markdown shapes the docs style.
 
+The tool reference at `/docs/mcp/tools/` and the list of what stays in the web app on `/docs/mcp/`
+are built from `src/data/mcp-tools.json`, a copy of the MCP server's
+[`docs/mcp-tools.json`](https://github.com/candlestack-tech/candlestack/blob/main/docs/mcp-tools.json).
+When the server gets new tools, run `npm run mcp-tools` and commit the file. The `MCP tools`
+workflow fails on every pull request, and once a day, while the copy is older.
+
 ### Update status or team
 
 Edit `content/status.md` or `content/team.md`. In `status.md`, also change `updated` to today's date.
@@ -78,7 +85,9 @@ with the file and field named, so a mistake never reaches the live site.
 ```text
 content/                 texts: site, status, team, links, meetings, templates, problems, docs
 public/                  static files (favicon)
+scripts/mcp-tools.mjs    copies or checks the vendored MCP tool reference
 src/
+  data/mcp-tools.json    the MCP server's tool reference, vendored from candlestack
   content.config.ts      schemas that validate everything in content/
   pages/                 one file per page; meetings/[slug].astro and problems/[slug].astro
                          render each meeting and problem type, docs/ each docs page and its .md,
@@ -89,8 +98,9 @@ src/
                          the client logos of the docs
   lib/                   content loaders, date format, base-path links, background generator
   lib/docs/              docs pages and their Markdown versions, the Markdown transform that
-                         builds code blocks, tabs, callouts, rows, steps and cards
-  scripts/docs.ts        Copy, tabs, the Menu drawer and On this page in the browser
+                         builds code blocks, tabs, callouts, rows, steps and cards, and the
+                         MCP tool reference built from data/mcp-tools.json
+  scripts/docs.ts        Copy, code and client tabs, the Menu drawer and On this page in the browser
   styles/global.css      colors for the light and dark theme, shared styles
   styles/docs.css        styles of the docs pages
 ```

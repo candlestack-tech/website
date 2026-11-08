@@ -38,7 +38,7 @@ Add one address to your AI client. The agent picks the tools, runs them and expl
 - claude.ai and ChatGPT will sign in with your account
 - Asks before it deletes or publishes
 
-The install steps come with the server.
+[Install the server](/docs/mcp/install/)
 
 ### For scripts and your own code
 
@@ -69,7 +69,7 @@ Not sure? Start with MCP once it is live. You can script the same steps later.
 
 2. **Add the server**
 
-   Add the address of the CandleStack server to your AI client. The address and the steps for each client come with the server.
+   Add the address of the CandleStack server to your AI client, as [Install](/docs/mcp/install/) shows for each client.
 
 3. **Ask**
 
@@ -92,6 +92,9 @@ Deleting your account, your sign-in methods and signing out stay in the app. No 
 ## Next
 
 - [Docs for agents](/docs/agents/docs-for-agents/) Read these docs as Markdown, one page or all at once
+- [The MCP server](/docs/mcp/) The address, sign-in, scopes and what stays in the app
+- [Install](/docs/mcp/install/) Connect Claude Code, Cursor or VS Code
+- [Tools](/docs/mcp/tools/) Every tool with its parameters and an example
 - [Problem types](/problems/) Every error of the API and what to do about it
 
-The install steps, the tool reference, the API guide and the use cases come with the server.
+The API guide and the use cases come with the server.

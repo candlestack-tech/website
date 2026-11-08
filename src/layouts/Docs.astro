@@ -45,7 +45,7 @@ const siteLinks = [
   { label: 'Team', href: url('/team/') },
 ];
 // The Markdown of the page for Copy page, as JSON that cannot end the script element early
-const markdown = JSON.stringify(toMarkdown(page)).replace(/</g, '\\u003c');
+const markdown = JSON.stringify(await toMarkdown(page)).replace(/</g, '\\u003c');
 const linkOf = (href: string) => (href.startsWith('/') ? url(href) : href);
 ---
 
