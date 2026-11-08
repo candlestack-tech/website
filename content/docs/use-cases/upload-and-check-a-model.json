@@ -117,7 +117,7 @@
       ]
     },
     {
-      "say": "Every check passed. I’ll set it and look at the model.",
+      "say": "Every check passed. I’ll set the same manifest and look at the model.",
       "calls": [
         {
           "tool": "set_manifest",
@@ -137,34 +137,6 @@
                   { "name": "volume", "id": "volume@1", "norm": { "id": "none@1" } }
                 ],
                 "window": { "length": 25, "last": "closed" }
-              },
-              "signature": {
-                "input": { "shape": [25, 5], "dtype": "float32" },
-                "output": { "shape": [1], "dtype": "float32", "meaning": "score" }
-              },
-              "example": {
-                "input": [
-                  [
-                    [99.900002, 100.199997, 99.699997, 100.0, 100000.0],
-                    [100.099998, 100.400604, 99.899597, 100.200203, 101000.0]
-                  ],
-                  [
-                    [99.900002, 100.199997, 99.699997, 100.0, 100000.0],
-                    [99.700401, 99.999802, 99.500801, 99.800201, 101000.0]
-                  ]
-                ],
-                "output": [[0.00138283], [0.00168982]]
-              },
-              "about": {
-                "issue": "candlestack-tech/candlestack#260",
-                "protocol": "v2",
-                "architecture": "gru",
-                "seed": "1",
-                "learning_rate": "0.00025",
-                "trained_on": "30 S&P 500 stocks of the #259 dataset (notes/259-dataset-protocol.md)",
-                "period": "train 2016-2022, early stopping on 2023",
-                "target": "ln(close[t+13] / close[t]), the log return one session ahead",
-                "note": "Window-relative scaling and a train-only Normalization are layers inside the model; the example input is synthetic, not market data"
               }
             }
           },
@@ -201,23 +173,7 @@
           "answer": {
             "id": "mdl_vtdfxm2554",
             "name": "docs-demo-gru.keras",
-            "framework": "keras",
-            "size_bytes": 165717,
-            "parameters": 32801,
-            "input_shape": [25, 5],
-            "output_shape": [1],
-            "starred": false,
-            "backtest_count": 0,
-            "best_sharpe": null,
-            "created_at": "2026-11-08T12:22:18.417687Z",
             "state": "ready",
-            "manifest_summary": {
-              "representation": { "id": "candles@1", "params": {} },
-              "timeframe": "30m",
-              "session": "regular",
-              "input_shape": [25, 5],
-              "warm_up": { "candles": 24, "kind": "exact" }
-            },
             "checked_at": null,
             "check_failed": null,
             "check_error": null
@@ -251,23 +207,7 @@
           "answer": {
             "id": "mdl_vtdfxm2554",
             "name": "docs-demo-gru.keras",
-            "framework": "keras",
-            "size_bytes": 165717,
-            "parameters": 32801,
-            "input_shape": [25, 5],
-            "output_shape": [1],
-            "starred": false,
-            "backtest_count": 0,
-            "best_sharpe": null,
-            "created_at": "2026-11-08T12:22:18.417687Z",
             "state": "verified",
-            "manifest_summary": {
-              "representation": { "id": "candles@1", "params": {} },
-              "timeframe": "30m",
-              "session": "regular",
-              "input_shape": [25, 5],
-              "warm_up": { "candles": 24, "kind": "exact" }
-            },
             "checked_at": "2026-11-08T12:22:36.588212Z",
             "check_failed": null,
             "check_error": null
@@ -337,38 +277,10 @@
             "finished_at": null,
             "duration_s": null,
             "steps": [
-              {
-                "id": "candles",
-                "state": "pending",
-                "duration_s": null,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              },
-              {
-                "id": "queue",
-                "state": "pending",
-                "duration_s": null,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              },
-              {
-                "id": "model",
-                "state": "pending",
-                "duration_s": null,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              },
-              {
-                "id": "trades",
-                "state": "pending",
-                "duration_s": null,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              }
+              { "id": "candles", "state": "pending", "duration_s": null },
+              { "id": "queue", "state": "pending", "duration_s": null },
+              { "id": "model", "state": "pending", "duration_s": null },
+              { "id": "trades", "state": "pending", "duration_s": null }
             ],
             "url": "https://stage.candlestack.tech/backtests/bt_6teiemwazy"
           }
@@ -390,31 +302,10 @@
             "finished_at": "2026-11-08T12:23:00.016331Z",
             "duration_s": 8.668171,
             "steps": [
-              { "id": "candles", "state": "done", "duration_s": 1.259, "loaded": 7, "total": 7, "waiting_until": null },
-              {
-                "id": "queue",
-                "state": "done",
-                "duration_s": 0.48,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              },
-              {
-                "id": "model",
-                "state": "done",
-                "duration_s": 6.834,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              },
-              {
-                "id": "trades",
-                "state": "done",
-                "duration_s": 0.116,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              }
+              { "id": "candles", "state": "done", "duration_s": 1.259 },
+              { "id": "queue", "state": "done", "duration_s": 0.48 },
+              { "id": "model", "state": "done", "duration_s": 6.834 },
+              { "id": "trades", "state": "done", "duration_s": 0.116 }
             ],
             "url": "https://stage.candlestack.tech/backtests/bt_6teiemwazy"
           }
@@ -438,32 +329,6 @@
               "duration_s": 8.668171,
               "url": "https://stage.candlestack.tech/backtests/bt_6teiemwazy"
             },
-            "setup": {
-              "model": { "id": "mdl_vtdfxm2554", "name": "docs-demo-gru.keras", "framework": "keras" },
-              "data": {
-                "instrument": { "id": "stock:NVDA", "name": "NVIDIA Corporation Common Stock", "currency": "USD" },
-                "period": { "start": 1704153600, "end": 1719792000 },
-                "timeframe": "30m",
-                "session": "regular"
-              },
-              "decision": {
-                "calibrate": null,
-                "ema": null,
-                "rule": { "name": "threshold", "limit": 0.05 },
-                "long_only": true,
-                "confirm": null,
-                "min_hold": null
-              },
-              "execution": {
-                "fill": "next_open",
-                "stop_loss": 0.07,
-                "drawdown_stop": null,
-                "position_size": 1.0,
-                "fee_bps": 10.0,
-                "slippage_bps": 2.0
-              },
-              "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }]
-            },
             "candles": 1612,
             "data_changed": false,
             "metrics": {
@@ -482,15 +347,7 @@
             },
             "benchmark_returns": { "bh": 1.5768425460636517 },
             "trades": { "page": 1, "per_page": 5, "pages": 0, "count": 0, "total": 0, "complete": true, "items": [] },
-            "equity": {
-              "points": 199,
-              "rows": 1612,
-              "resolution": "candle",
-              "ts": [1704205800, 1704220200, 1704297600],
-              "equity": [1.0, 1.0, 1.0],
-              "drawdown": [0.0, 0.0, 0.0],
-              "benchmarks": { "bh": [1.0, 1.005653, 0.996859] }
-            }
+            "equity": { "points": 199, "rows": 1612, "resolution": "candle" }
           }
         }
       ]
@@ -521,38 +378,10 @@
             "finished_at": null,
             "duration_s": null,
             "steps": [
-              {
-                "id": "candles",
-                "state": "pending",
-                "duration_s": null,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              },
-              {
-                "id": "queue",
-                "state": "pending",
-                "duration_s": null,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              },
-              {
-                "id": "model",
-                "state": "pending",
-                "duration_s": null,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              },
-              {
-                "id": "trades",
-                "state": "pending",
-                "duration_s": null,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              }
+              { "id": "candles", "state": "pending", "duration_s": null },
+              { "id": "queue", "state": "pending", "duration_s": null },
+              { "id": "model", "state": "pending", "duration_s": null },
+              { "id": "trades", "state": "pending", "duration_s": null }
             ],
             "url": "https://stage.candlestack.tech/backtests/bt_5vwx4qnfza"
           }
@@ -574,31 +403,10 @@
             "finished_at": "2026-11-08T12:23:22.403496Z",
             "duration_s": 6.881373,
             "steps": [
-              { "id": "candles", "state": "done", "duration_s": 0.021, "loaded": 7, "total": 7, "waiting_until": null },
-              {
-                "id": "queue",
-                "state": "done",
-                "duration_s": 0.37,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              },
-              {
-                "id": "model",
-                "state": "done",
-                "duration_s": 6.441,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              },
-              {
-                "id": "trades",
-                "state": "done",
-                "duration_s": 0.026,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              }
+              { "id": "candles", "state": "done", "duration_s": 0.021 },
+              { "id": "queue", "state": "done", "duration_s": 0.37 },
+              { "id": "model", "state": "done", "duration_s": 6.441 },
+              { "id": "trades", "state": "done", "duration_s": 0.026 }
             ],
             "url": "https://stage.candlestack.tech/backtests/bt_5vwx4qnfza"
           }
@@ -621,32 +429,6 @@
               "finished_at": "2026-11-08T12:23:22.403496Z",
               "duration_s": 6.881373,
               "url": "https://stage.candlestack.tech/backtests/bt_5vwx4qnfza"
-            },
-            "setup": {
-              "model": { "id": "mdl_vtdfxm2554", "name": "docs-demo-gru.keras", "framework": "keras" },
-              "data": {
-                "instrument": { "id": "stock:NVDA", "name": "NVIDIA Corporation Common Stock", "currency": "USD" },
-                "period": { "start": 1704153600, "end": 1719792000 },
-                "timeframe": "30m",
-                "session": "regular"
-              },
-              "decision": {
-                "calibrate": null,
-                "ema": null,
-                "rule": { "name": "threshold", "limit": 0.0 },
-                "long_only": true,
-                "confirm": null,
-                "min_hold": null
-              },
-              "execution": {
-                "fill": "next_open",
-                "stop_loss": 0.07,
-                "drawdown_stop": null,
-                "position_size": 1.0,
-                "fee_bps": 10.0,
-                "slippage_bps": 2.0
-              },
-              "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }]
             },
             "candles": 1612,
             "data_changed": false,
@@ -708,15 +490,7 @@
                 }
               ]
             },
-            "equity": {
-              "points": 199,
-              "rows": 1612,
-              "resolution": "candle",
-              "ts": [1704205800, 1704220200, 1704297600],
-              "equity": [1.0, 1.007526, 0.999235],
-              "drawdown": [0.0, -0.003021, -0.011226],
-              "benchmarks": { "bh": [1.0, 1.005653, 0.996859] }
-            }
+            "equity": { "points": 199, "rows": 1612, "resolution": "candle" }
           }
         }
       ]
@@ -822,5 +596,5 @@
     },
     "warning": "One stock in one rising half-year. The model was long 91 % of the time, so this run mostly shows NVDA’s rise, not the model’s skill."
   },
-  "try": "Connect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt with your own file and manifest. The session used `create_model_upload`, `get_model_upload`, `validate_manifest`, `set_manifest`, `get_model`, `get_backtest_defaults`, `validate_backtest`, `start_backtest`, `wait_for_backtest` and `get_backtest`, see [Tools](/docs/mcp/tools/). The fields of a manifest are in its [JSON Schema](https://raw.githubusercontent.com/candlestack-tech/candlestack/main/docs/manifest.schema.json)."
+  "try": "Recorded on the test server. The MCP server comes to app.candlestack.tech with the next release. The backtest links on this page go to the test server and open only for the team.\n\nConnect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt with your own file and manifest. The session used `get_me`, `create_model_upload`, `get_model_upload`, `validate_manifest`, `set_manifest`, `get_model`, `get_backtest_defaults`, `validate_backtest`, `start_backtest`, `wait_for_backtest` and `get_backtest`, see [Tools](/docs/mcp/tools/). The fields of a manifest are in its [JSON Schema](https://raw.githubusercontent.com/candlestack-tech/candlestack/main/docs/manifest.schema.json)."
 }

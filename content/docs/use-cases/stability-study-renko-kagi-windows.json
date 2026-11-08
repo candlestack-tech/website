@@ -1,5 +1,5 @@
 {
-  "title": "Stability study: Renko vs Kagi vs windows",
+  "title": "Stability study: Renko vs Kagi vs Windows",
   "nav": "Stability study",
   "summary": "The agent runs one sweep of three models, one per representation, over two half-years of AAPL, ranks them by Sharpe and drawdown and says what the result can and cannot show.",
   "order": 3,
@@ -9,7 +9,7 @@
   "prompt": "Run a stability study of Renko vs Kagi vs windows on AAPL: the same setup over the two halves of 2023, ranked by Sharpe and by drawdown. Which representation holds up, and how sure can we be?",
   "steps": [
     {
-      "say": "A model fixes its representation in its manifest, so one model cannot switch between Renko, Kagi and windows. I’ll see which of your models read which, and what the catalog offers.",
+      "say": "A model fixes its representation in its manifest, so one model cannot switch between Renko, Kagi and Windows. I’ll see which of your models read which, and what the catalog offers.",
       "calls": [
         {
           "tool": "list_models",
@@ -107,36 +107,36 @@
                 ]
               },
               {
-                "id": "renko-triples@2",
+                "id": "kagi@1",
                 "step": "representation",
-                "description": "Rows of three Renko bricks on the close, each brick atr_multiple TA-Lib ATRs high at the candle that starts it, the first on the candle first_brick: one row per candle from the third brick on",
-                "warm_up": "max(first_brick, atr_window) + ceil(2 * (1 + 2 * atr_multiple))",
+                "description": "A Kagi line on the close that reverses after amount ATRs (or percent): one row per candle, the current segment",
+                "warm_up": "15 * atr_window - 1 + ceil(4 + 4 * amount + 5 * amount ** 2) if reversal == 'atr' else ceil(4 + 8 * amount + 20 * amount ** 2)",
                 "params": [
                   {
-                    "name": "atr_multiple",
-                    "type": "number",
-                    "description": "The height of a brick in ATRs",
+                    "name": "reversal",
+                    "type": "string",
+                    "description": "How the reversal amount is measured: in ATRs of the candle that starts a segment, or in percent of the segment's extreme",
                     "required": false,
-                    "default": 0.6,
+                    "default": "atr",
+                    "options": ["atr", "percent"]
+                  },
+                  {
+                    "name": "amount",
+                    "type": "number",
+                    "description": "The reversal amount, in ATRs or in percent",
+                    "required": false,
+                    "default": 1.0,
                     "maximum": 10,
                     "exclusive_minimum": 0
                   },
                   {
                     "name": "atr_window",
                     "type": "integer",
-                    "description": "Candles in the ATR",
+                    "description": "Candles in the ATR, for atr",
                     "required": false,
                     "default": 14,
                     "minimum": 2,
                     "maximum": 1000
-                  },
-                  {
-                    "name": "atr_at",
-                    "type": "string",
-                    "description": "The candle whose ATR sizes a brick: the one that starts it",
-                    "required": false,
-                    "default": "brick_start",
-                    "options": ["brick_start"]
                   }
                 ]
               }
@@ -146,7 +146,7 @@
       ]
     },
     {
-      "say": "Each representation has exactly one of your models: the BLESK model reads Renko bricks on 30m candles, `kagi-trend-smoke.onnx` reads Kagi lines on 1h candles and `docs-demo-gru.keras` reads windows of plain 30m candles. So this study compares three models, and their representations come with them. The sweep varies the three models over two periods, the first and the second half of 2023 (H1 and H2) on AAPL, with the same settings for all: long only, threshold 0, stop loss 7 %, fees 10 and slippage 2 basis points. Checking the grid first.",
+      "say": "Each representation has exactly one of your models: the BLESK model reads Renko bricks on 30m candles, `kagi-trend-smoke.onnx` reads Kagi lines on 1h candles and `docs-demo-gru.keras` reads Windows, that is windows of plain 30m candles. So this study compares three models, and their representations come with them. The sweep varies the three models over two periods, the first and the second half of 2023 (H1 and H2) on AAPL, with the same settings for all: long only, threshold 0, stop loss 7 %, fees 10 and slippage 2 basis points. Checking the grid first.",
       "calls": [
         {
           "tool": "validate_sweep",
@@ -188,15 +188,6 @@
                 "timeframe": "30m",
                 "instrument": "stock:AAPL",
                 "period": { "start": 1688169600, "end": 1704067200 },
-                "rule": { "name": "threshold", "limit": 0.0 }
-              },
-              {
-                "model": "mdl_yvp7hczd2m",
-                "model_name": "kagi-trend-smoke.onnx",
-                "representation": "kagi",
-                "timeframe": "1h",
-                "instrument": "stock:AAPL",
-                "period": { "start": 1672531200, "end": 1688169600 },
                 "rule": { "name": "threshold", "limit": 0.0 }
               }
             ]
@@ -241,16 +232,7 @@
                 "name": "Quick Perseus",
                 "status": "running",
                 "queue_position": null,
-                "error": null,
-                "setup": {
-                  "model": "mdl_lea7chtsaw",
-                  "model_name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
-                  "representation": "renko",
-                  "timeframe": "30m",
-                  "instrument": "stock:AAPL",
-                  "period": { "start": 1672531200, "end": 1688169600 },
-                  "rule": { "name": "threshold", "limit": 0.0 }
-                }
+                "error": null
               },
               {
                 "id": "bt_7c5leihleb",
@@ -258,16 +240,7 @@
                 "name": "Wavy Umbriel",
                 "status": "queued",
                 "queue_position": 1,
-                "error": null,
-                "setup": {
-                  "model": "mdl_lea7chtsaw",
-                  "model_name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
-                  "representation": "renko",
-                  "timeframe": "30m",
-                  "instrument": "stock:AAPL",
-                  "period": { "start": 1688169600, "end": 1704067200 },
-                  "rule": { "name": "threshold", "limit": 0.0 }
-                }
+                "error": null
               }
             ],
             "ranking": null
@@ -291,16 +264,7 @@
                 "name": "Quick Perseus",
                 "status": "finished",
                 "queue_position": null,
-                "error": null,
-                "setup": {
-                  "model": "mdl_lea7chtsaw",
-                  "model_name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
-                  "representation": "renko",
-                  "timeframe": "30m",
-                  "instrument": "stock:AAPL",
-                  "period": { "start": 1672531200, "end": 1688169600 },
-                  "rule": { "name": "threshold", "limit": 0.0 }
-                }
+                "error": null
               },
               {
                 "id": "bt_7c5leihleb",
@@ -308,16 +272,7 @@
                 "name": "Wavy Umbriel",
                 "status": "running",
                 "queue_position": null,
-                "error": null,
-                "setup": {
-                  "model": "mdl_lea7chtsaw",
-                  "model_name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
-                  "representation": "renko",
-                  "timeframe": "30m",
-                  "instrument": "stock:AAPL",
-                  "period": { "start": 1688169600, "end": 1704067200 },
-                  "rule": { "name": "threshold", "limit": 0.0 }
-                }
+                "error": null
               }
             ],
             "ranking": null
@@ -345,31 +300,10 @@
             "finished_at": "2026-11-08T12:26:06.688651Z",
             "duration_s": 7.611005,
             "steps": [
-              { "id": "candles", "state": "done", "duration_s": 0.02, "loaded": 7, "total": 7, "waiting_until": null },
-              {
-                "id": "queue",
-                "state": "done",
-                "duration_s": 0.422,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              },
-              {
-                "id": "model",
-                "state": "done",
-                "duration_s": 7.133,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              },
-              {
-                "id": "trades",
-                "state": "done",
-                "duration_s": 0.023,
-                "loaded": null,
-                "total": null,
-                "waiting_until": null
-              }
+              { "id": "candles", "state": "done", "duration_s": 0.02 },
+              { "id": "queue", "state": "done", "duration_s": 0.422 },
+              { "id": "model", "state": "done", "duration_s": 7.133 },
+              { "id": "trades", "state": "done", "duration_s": 0.023 }
             ],
             "url": "https://stage.candlestack.tech/backtests/bt_r7b4mlpxvw"
           }
@@ -392,16 +326,7 @@
                 "name": "Quick Perseus",
                 "status": "finished",
                 "queue_position": null,
-                "error": null,
-                "setup": {
-                  "model": "mdl_lea7chtsaw",
-                  "model_name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
-                  "representation": "renko",
-                  "timeframe": "30m",
-                  "instrument": "stock:AAPL",
-                  "period": { "start": 1672531200, "end": 1688169600 },
-                  "rule": { "name": "threshold", "limit": 0.0 }
-                }
+                "error": null
               },
               {
                 "id": "bt_7c5leihleb",
@@ -409,16 +334,39 @@
                 "name": "Wavy Umbriel",
                 "status": "finished",
                 "queue_position": null,
-                "error": null,
-                "setup": {
-                  "model": "mdl_lea7chtsaw",
-                  "model_name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
-                  "representation": "renko",
-                  "timeframe": "30m",
-                  "instrument": "stock:AAPL",
-                  "period": { "start": 1688169600, "end": 1704067200 },
-                  "rule": { "name": "threshold", "limit": 0.0 }
-                }
+                "error": null
+              },
+              {
+                "id": "bt_ykv7l2bpyu",
+                "number": 29,
+                "name": "Wise Ariel",
+                "status": "finished",
+                "queue_position": null,
+                "error": null
+              },
+              {
+                "id": "bt_pmkzny7t5j",
+                "number": 30,
+                "name": "Brave Rhea",
+                "status": "finished",
+                "queue_position": null,
+                "error": null
+              },
+              {
+                "id": "bt_5usmt72n77",
+                "number": 31,
+                "name": "Soft Sirius",
+                "status": "finished",
+                "queue_position": null,
+                "error": null
+              },
+              {
+                "id": "bt_r7b4mlpxvw",
+                "number": 32,
+                "name": "Fleet Aldebaran",
+                "status": "finished",
+                "queue_position": null,
+                "error": null
               }
             ],
             "ranking": {
@@ -501,16 +449,7 @@
                 "name": "Quick Perseus",
                 "status": "finished",
                 "queue_position": null,
-                "error": null,
-                "setup": {
-                  "model": "mdl_lea7chtsaw",
-                  "model_name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
-                  "representation": "renko",
-                  "timeframe": "30m",
-                  "instrument": "stock:AAPL",
-                  "period": { "start": 1672531200, "end": 1688169600 },
-                  "rule": { "name": "threshold", "limit": 0.0 }
-                }
+                "error": null
               },
               {
                 "id": "bt_7c5leihleb",
@@ -518,16 +457,39 @@
                 "name": "Wavy Umbriel",
                 "status": "finished",
                 "queue_position": null,
-                "error": null,
-                "setup": {
-                  "model": "mdl_lea7chtsaw",
-                  "model_name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
-                  "representation": "renko",
-                  "timeframe": "30m",
-                  "instrument": "stock:AAPL",
-                  "period": { "start": 1688169600, "end": 1704067200 },
-                  "rule": { "name": "threshold", "limit": 0.0 }
-                }
+                "error": null
+              },
+              {
+                "id": "bt_ykv7l2bpyu",
+                "number": 29,
+                "name": "Wise Ariel",
+                "status": "finished",
+                "queue_position": null,
+                "error": null
+              },
+              {
+                "id": "bt_pmkzny7t5j",
+                "number": 30,
+                "name": "Brave Rhea",
+                "status": "finished",
+                "queue_position": null,
+                "error": null
+              },
+              {
+                "id": "bt_5usmt72n77",
+                "number": 31,
+                "name": "Soft Sirius",
+                "status": "finished",
+                "queue_position": null,
+                "error": null
+              },
+              {
+                "id": "bt_r7b4mlpxvw",
+                "number": 32,
+                "name": "Fleet Aldebaran",
+                "status": "finished",
+                "queue_position": null,
+                "error": null
               }
             ],
             "ranking": {
@@ -606,8 +568,6 @@
                 "id": "bt_2osrcfq5se",
                 "number": 27,
                 "name": "Quick Perseus",
-                "author": { "id": "usr_4w63b3f3vi", "name": "you", "mine": true },
-                "public": false,
                 "status": "finished",
                 "error": null,
                 "setup": {
@@ -616,36 +576,14 @@
                   "reads": "renko-triples@1",
                   "input": [25, 23],
                   "timeframe": "30m",
-                  "period": { "start": 1672531200, "end": 1688169600 },
-                  "decision": {
-                    "calibrate": null,
-                    "ema": null,
-                    "rule": { "name": "threshold", "limit": 0.0 },
-                    "long_only": true,
-                    "confirm": null,
-                    "min_hold": null
-                  },
-                  "execution": {
-                    "fill": "next_open",
-                    "stop_loss": 0.07,
-                    "drawdown_stop": null,
-                    "position_size": 1.0,
-                    "fee_bps": 10.0,
-                    "slippage_bps": 2.0
-                  },
-                  "benchmarks": ["stock:AAPL"]
+                  "period": { "start": 1672531200, "end": 1688169600 }
                 },
-                "candles": 1611,
-                "equity": [null, 0.0, 0.001],
-                "drawdown": [null, -0.0, -0.019],
-                "buy_and_hold": [null, 0.0, 0.007]
+                "candles": 1611
               },
               {
                 "id": "bt_7c5leihleb",
                 "number": 28,
                 "name": "Wavy Umbriel",
-                "author": { "id": "usr_4w63b3f3vi", "name": "you", "mine": true },
-                "public": false,
                 "status": "finished",
                 "error": null,
                 "setup": {
@@ -654,36 +592,14 @@
                   "reads": "renko-triples@1",
                   "input": [25, 23],
                   "timeframe": "30m",
-                  "period": { "start": 1688169600, "end": 1704067200 },
-                  "decision": {
-                    "calibrate": null,
-                    "ema": null,
-                    "rule": { "name": "threshold", "limit": 0.0 },
-                    "long_only": true,
-                    "confirm": null,
-                    "min_hold": null
-                  },
-                  "execution": {
-                    "fill": "next_open",
-                    "stop_loss": 0.07,
-                    "drawdown_stop": null,
-                    "position_size": 1.0,
-                    "fee_bps": 10.0,
-                    "slippage_bps": 2.0
-                  },
-                  "benchmarks": ["stock:AAPL"]
+                  "period": { "start": 1688169600, "end": 1704067200 }
                 },
-                "candles": 1626,
-                "equity": [null, null, null],
-                "drawdown": [null, null, null],
-                "buy_and_hold": [null, null, null]
+                "candles": 1626
               },
               {
                 "id": "bt_ykv7l2bpyu",
                 "number": 29,
                 "name": "Wise Ariel",
-                "author": { "id": "usr_4w63b3f3vi", "name": "you", "mine": true },
-                "public": false,
                 "status": "finished",
                 "error": null,
                 "setup": {
@@ -692,29 +608,57 @@
                   "reads": "kagi@1",
                   "input": [25, 3],
                   "timeframe": "1h",
-                  "period": { "start": 1672531200, "end": 1688169600 },
-                  "decision": {
-                    "calibrate": null,
-                    "ema": null,
-                    "rule": { "name": "threshold", "limit": 0.0 },
-                    "long_only": true,
-                    "confirm": null,
-                    "min_hold": null
-                  },
-                  "execution": {
-                    "fill": "next_open",
-                    "stop_loss": 0.07,
-                    "drawdown_stop": null,
-                    "position_size": 1.0,
-                    "fee_bps": 10.0,
-                    "slippage_bps": 2.0
-                  },
-                  "benchmarks": ["stock:AAPL"]
+                  "period": { "start": 1672531200, "end": 1688169600 }
                 },
-                "candles": 868,
-                "equity": [0.0, 0.0, -0.015],
-                "drawdown": [-0.0, -0.0, -0.019],
-                "buy_and_hold": [0.0, 0.0, 0.007]
+                "candles": 868
+              },
+              {
+                "id": "bt_pmkzny7t5j",
+                "number": 30,
+                "name": "Brave Rhea",
+                "status": "finished",
+                "error": null,
+                "setup": {
+                  "instrument": "stock:AAPL",
+                  "model": "kagi-trend-smoke.onnx",
+                  "reads": "kagi@1",
+                  "input": [25, 3],
+                  "timeframe": "1h",
+                  "period": { "start": 1688169600, "end": 1704067200 }
+                },
+                "candles": 876
+              },
+              {
+                "id": "bt_5usmt72n77",
+                "number": 31,
+                "name": "Soft Sirius",
+                "status": "finished",
+                "error": null,
+                "setup": {
+                  "instrument": "stock:AAPL",
+                  "model": "docs-demo-gru.keras",
+                  "reads": "candles@1",
+                  "input": [25, 5],
+                  "timeframe": "30m",
+                  "period": { "start": 1672531200, "end": 1688169600 }
+                },
+                "candles": 1612
+              },
+              {
+                "id": "bt_r7b4mlpxvw",
+                "number": 32,
+                "name": "Fleet Aldebaran",
+                "status": "finished",
+                "error": null,
+                "setup": {
+                  "instrument": "stock:AAPL",
+                  "model": "docs-demo-gru.keras",
+                  "reads": "candles@1",
+                  "input": [25, 5],
+                  "timeframe": "30m",
+                  "period": { "start": 1688169600, "end": 1704067200 }
+                },
+                "candles": 1626
               }
             ],
             "metrics": [
@@ -722,36 +666,131 @@
                 "key": "total_return",
                 "label": "Total return",
                 "better": "higher",
-                "values": [-0.06671426168629646, -0.2865626738685876, 0.14021236171963247],
-                "marks": [null, "worst", null]
+                "values": [
+                  -0.06671426168629646, -0.2865626738685876, 0.14021236171963247, -0.20025601077914212,
+                  0.2953652033059657, -0.13301297692552627
+                ],
+                "marks": [null, "worst", null, null, "best", null]
               },
               {
                 "key": "max_drawdown",
                 "label": "Max drawdown",
                 "better": "lower",
-                "values": [-0.14813041643060432, -0.2911104752143553, -0.0866149563197336],
-                "marks": [null, "worst", "best"]
+                "values": [
+                  -0.14813041643060432, -0.2911104752143553, -0.0866149563197336, -0.20431892607530655,
+                  -0.09919187742068192, -0.20566533527917885
+                ],
+                "marks": [null, "worst", "best", null, null, null]
               },
               {
                 "key": "sharpe",
                 "label": "Sharpe",
                 "better": "higher",
-                "values": [-0.7339174236184784, -4.037883842494838, 1.5508164326591631],
-                "marks": [null, "worst", null]
+                "values": [
+                  -0.7339174236184784, -4.037883842494838, 1.5508164326591631, -2.745347379408846, 2.6155089500057347,
+                  -1.4283585070195914
+                ],
+                "marks": [null, "worst", null, null, "best", null]
+              },
+              {
+                "key": "sortino",
+                "label": "Sortino",
+                "better": "higher",
+                "values": [
+                  -1.1247966362924893, -4.479798109799254, 2.8045840906859882, -3.430698009964143, 4.685694324199976,
+                  -1.786782687314334
+                ],
+                "marks": [null, "worst", null, null, "best", null]
+              },
+              {
+                "key": "win_rate",
+                "label": "Win rate",
+                "better": "higher",
+                "values": [
+                  0.41216216216216217, 0.38405797101449274, 0.37735849056603776, 0.2641509433962264, 0.4050632911392405,
+                  0.4025974025974026
+                ],
+                "marks": ["best", null, null, "worst", null, null]
+              },
+              {
+                "key": "avg_trade_return",
+                "label": "Avg. trade",
+                "better": "higher",
+                "values": [
+                  -0.0004260688013763817, -0.0023913298612364214, 0.0026539924980351196, -0.004114756287184292,
+                  0.003433424313011721, -0.001700128486267657
+                ],
+                "marks": [null, null, null, "worst", "best", null]
+              },
+              {
+                "key": "best_trade_return",
+                "label": "Best trade",
+                "better": "higher",
+                "values": [
+                  0.0429709244550969, 0.024656289891225293, 0.06276303744706378, 0.03352914353838087,
+                  0.06323913955683307, 0.052378438759419874
+                ],
+                "marks": [null, "worst", "best", null, "best", null]
+              },
+              {
+                "key": "worst_trade_return",
+                "label": "Worst trade",
+                "better": "higher",
+                "values": [
+                  -0.023342700168206755, -0.05743804988420095, -0.022054600031434297, -0.03663755229301751,
+                  -0.02592628639310199, -0.07245035799984
+                ],
+                "marks": [null, null, "best", null, null, "worst"]
+              },
+              {
+                "key": "fees_paid",
+                "label": "Fees paid",
+                "better": "lower",
+                "values": [
+                  0.2962331749923887, 0.27594594242157094, 0.10624690851090678, 0.10588780572250175,
+                  0.15842967019091878, 0.15402311321977716
+                ],
+                "marks": ["worst", null, "best", "best", null, null]
+              },
+              {
+                "key": "num_trades",
+                "label": "Trades",
+                "better": "none",
+                "values": [148.0, 138.0, 53.0, 53.0, 79.0, 77.0],
+                "marks": [null, null, null, null, null, null]
+              },
+              {
+                "key": "exposure",
+                "label": "Time in market",
+                "better": "none",
+                "values": [
+                  0.8081936685288641, 0.8136531365313653, 0.6094470046082949, 0.5787671232876712, 0.9435483870967742,
+                  0.8856088560885609
+                ],
+                "marks": [null, null, null, null, null, null]
+              },
+              {
+                "key": "buy_and_hold_return",
+                "label": "Buy and hold",
+                "better": "none",
+                "values": [
+                  0.5497322732435503, 0.0004734101309766814, 0.5497322732435503, 0.0006313131313129272,
+                  0.531713575495149, 0.0004734101309766814
+                ],
+                "marks": [null, null, null, null, null, null]
               }
             ],
-            "differs": ["model", "reads", "input"],
-            "times": [1672756200, 1672758000, 1672915004]
+            "differs": ["model", "reads", "input", "timeframe", "period.start", "period.end"]
           }
         }
       ]
     },
     {
-      "say": "**None of the three is stable across the two halves.** All three did best in the first half, when AAPL rose about 55 %, and all three lost in the second, when AAPL ended flat.\n\nBy Sharpe: Windows, H1 2.62 > Kagi, H1 1.55 > Renko, H1 −0.73 > Windows, H2 −1.43 > Kagi, H2 −2.75 > Renko, H2 −4.04. By drawdown Kagi fell least in both halves, 8.7 % and 20.4 %, with windows close behind, 9.9 % and 20.6 %.\n\n**Windows** (`docs-demo-gru.keras`) had the best Sharpe in both halves, 2.62 then −1.43, and returned +29.5 % then −13.3 % ([#31 Soft Sirius](https://stage.candlestack.tech/backtests/bt_5usmt72n77), [#32 Fleet Aldebaran](https://stage.candlestack.tech/backtests/bt_r7b4mlpxvw)). **Kagi** (`kagi-trend-smoke.onnx`) came second on Sharpe, 1.55 then −2.75, with +14.0 % then −20.0 % ([#29 Wise Ariel](https://stage.candlestack.tech/backtests/bt_ykv7l2bpyu), [#30 Brave Rhea](https://stage.candlestack.tech/backtests/bt_pmkzny7t5j)). **Renko** (the BLESK model) was last on both measures in both halves, −0.73 then −4.04, with −6.7 % then −28.7 % ([#27 Quick Perseus](https://stage.candlestack.tech/backtests/bt_2osrcfq5se), [#28 Wavy Umbriel](https://stage.candlestack.tech/backtests/bt_7c5leihleb)).\n\nNo run beat buy and hold in the first half. The models were long 58 to 94 % of the time, so their results mostly follow AAPL, and what they add on top of it is small or negative. Buy and hold reads +55.0 % in some runs of the first half and +53.2 % in the windows run, because the runs do not start on the same candle.\n\nLimits: this compares three models, not three representations. Each differs in its architecture and training too, and the Kagi model also in its timeframe, 1h. It is one stock, two half-years and one cost setting, six runs in all, and the Kagi model is a 77-parameter smoke test. To study the representations themselves, train the same network on each of them and run them over more stocks and periods."
+      "say": "**None of the three is stable across the two halves.** All three did best in the first half, when AAPL rose about 55 %, and all three lost in the second, when AAPL ended flat.\n\nBy Sharpe: Windows, H1 2.62 > Kagi, H1 1.55 > Renko, H1 −0.73 > Windows, H2 −1.43 > Kagi, H2 −2.75 > Renko, H2 −4.04. By drawdown Kagi fell least in both halves, 8.7 % and 20.4 %, with Windows close behind, 9.9 % and 20.6 %.\n\n**Windows** (`docs-demo-gru.keras`) had the best Sharpe in both halves, 2.62 then −1.43, and returned +29.5 % then −13.3 % ([#31 Soft Sirius](https://stage.candlestack.tech/backtests/bt_5usmt72n77), [#32 Fleet Aldebaran](https://stage.candlestack.tech/backtests/bt_r7b4mlpxvw)). **Kagi** (`kagi-trend-smoke.onnx`) came second on Sharpe, 1.55 then −2.75, with +14.0 % then −20.0 % ([#29 Wise Ariel](https://stage.candlestack.tech/backtests/bt_ykv7l2bpyu), [#30 Brave Rhea](https://stage.candlestack.tech/backtests/bt_pmkzny7t5j)). **Renko** (the BLESK model) was last on both measures in both halves, −0.73 then −4.04, with −6.7 % then −28.7 % ([#27 Quick Perseus](https://stage.candlestack.tech/backtests/bt_2osrcfq5se), [#28 Wavy Umbriel](https://stage.candlestack.tech/backtests/bt_7c5leihleb)).\n\nNo run beat buy and hold in the first half. The models were long 58 to 94 % of the time, so their results mostly follow AAPL, and what they add on top of it is small or negative. Buy and hold reads +55.0 % in some runs of the first half and +53.2 % in the Windows run, because the runs do not start on the same candle.\n\nLimits: this compares three models, not three representations. Each differs in its architecture and training too, and the Kagi model also in its timeframe, 1h. It is one stock, two half-years and one cost setting, six runs in all, and the Kagi model is a 77-parameter smoke test. To study the representations themselves, train the same network on each of them and run them over more stocks and periods."
     }
   ],
   "outcome": {
-    "text": "None of the three holds up. All made money in the rising first half of 2023 and lost in the flat second half. Windows had the best Sharpe in both halves (2.62, then −1.43), Kagi the smallest drawdowns and Renko was last on both. The sweep compares three models, one per representation, so it cannot separate the representation from the model.",
+    "text": "None of the three holds up. In the rising first half of 2023 Windows and Kagi made money while Renko lost 6.7 %. In the flat second half all three lost. Windows had the best Sharpe in both halves (2.62, then −1.43), Kagi the smallest drawdowns and Renko was last on both. The sweep compares three models, one per representation, so it cannot separate the representation from the model.",
     "chart": {
       "title": "Equity in the second half of 2023, AAPL",
       "labels": [
@@ -860,5 +899,5 @@
     },
     "warning": "Six runs, one stock, one cost setting. Each representation has one model, which differs in its network and training too, and the Kagi model is a 77-parameter smoke test on 1h candles."
   },
-  "try": "Connect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt with your own models, stock and periods. The session used `list_models`, `preprocessing_catalog`, `validate_sweep`, `run_sweep`, `get_sweep`, `wait_for_backtest` and `compare_backtests`, see [Tools](/docs/mcp/tools/)."
+  "try": "Recorded on the test server. The MCP server comes to app.candlestack.tech with the next release. The backtest links on this page go to the test server and open only for the team.\n\nConnect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt with your own models, stock and periods. The session used `list_models`, `preprocessing_catalog`, `validate_sweep`, `run_sweep`, `get_sweep`, `wait_for_backtest` and `compare_backtests`, see [Tools](/docs/mcp/tools/)."
 }
