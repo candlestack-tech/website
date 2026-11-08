@@ -4,7 +4,7 @@ nav: Overview
 description: Almost everything you do in the app, an agent can do for you. Connect Claude, ChatGPT, Codex or Cursor through MCP, or call the API from your own code.
 section: agents
 order: 0
-updated: 2026-11-08
+updated: 2026-11-09
 ---
 
 ## What an agent can do
@@ -87,5 +87,8 @@ Deleting your account, your sign-in methods and signing out stay in the app. No 
 - [The API](/docs/api/) Keys, sign-in and examples for your own code
 - [Manifest](/docs/manifest/) The manifest.json a model needs: every field and block
 - [Backtest JSON](/docs/backtest-json/) Every field and metric of a backtest's result document
+- [How a backtest runs](/docs/engine/) The engine's exact rules: fills, stops, costs and what is not modelled
+- [Metrics](/docs/metrics/) The formula of every metric, its edge cases and how to read it
+- [Sweeps and comparing](/docs/sweeps/) Grids of backtests, their ranking and how to read them
 - [Problem types](/problems/) Every error of the API and what to do about it
 - [Use cases](/docs/use-cases/) Real sessions of an agent with CandleStack, step by step

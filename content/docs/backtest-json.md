@@ -4,7 +4,7 @@ nav: Backtest JSON
 description: What each field of a backtest's result document means, in which unit, and how every metric is computed.
 section: formats
 order: 1
-updated: 2026-11-08
+updated: 2026-11-09
 ---
 
 ## What the result document is
@@ -233,7 +233,7 @@ How the predictions become a signal of -1 (short), 0 (flat) or +1 (long). Each s
 
 The rules:
 
-- `threshold` `{"name": "threshold", "limit": ...}`: long at a prediction of `limit` or more, short at `-limit` or less, else flat.
+- `threshold` `{"name": "threshold", "limit": ...}`: long at a prediction above 0 that is `limit` or more, short at one below 0 that is `-limit` or less, else flat. A prediction of exactly 0 is flat, even with `limit` 0.
 - `hysteresis` `{"name": "hysteresis", "enter": ..., "exit": ...}`: a position opens at `enter` and closes below `exit`, which is at most `enter`.
 - `kmeans` `{"name": "kmeans", "k": ..., "window": ..., "refit_every": ...}`: the `window` earlier predictions in `k` groups (2 to 5), long in the highest group, short in the lowest. `window` is at least `2 * k`, and a fit is used for `refit_every` rows.
 
@@ -324,7 +324,7 @@ The trades: `count`, `total`, `complete` and the `columns`, one value per trade 
 
 ## Metrics
 
-`results.stats` has these 12 names, always in this order. Returns are fractions.
+`results.stats` has these 12 names, always in this order. Returns are fractions. [Metrics](/docs/metrics/) explains how to read each, and [How a backtest runs](/docs/engine/) the rules behind the trades and the equity.
 
 Sharpe and Sortino use daily returns `r`. The day of a row is the UTC date of its `ts`, `E[d]` is the equity of the last row of day `d`, and `r[d] = E[d] / E[d-1] - 1`, the first day's from the starting capital 1.0. Days without rows are skipped, and the risk-free rate is 0. For US stocks the UTC date is the New York date of the session, because a regular session lies within one UTC day.
 
@@ -375,6 +375,8 @@ Not in version 1: benchmarks other than buy and hold, returns per month, the can
 
 ## Next
 
+- [How a backtest runs](/docs/engine/) The engine's rules, candle by candle, and every setting
+- [Metrics](/docs/metrics/) How each metric is computed and how to read it
 - [Manifest](/docs/manifest/) The manifest a model runs with, copied into `model.manifest`
 - [Errors](/docs/api/errors/) Every error of the API and what to do
 - [Tools](/docs/mcp/tools/) The MCP tools that run backtests and read their results
