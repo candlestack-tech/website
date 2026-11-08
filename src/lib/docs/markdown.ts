@@ -94,7 +94,9 @@ function card(nodes: Node[], slug: Slug): Element {
       return;
     }
     for (const part of elements(inner)) {
-      const cls = part.tagName === 'strong' ? ['k'] : ['tag', 'soon'];
+      // A tag that says Live is green, any other is the amber of what is still to come
+      const live = textOf(part).trim() === 'Live';
+      const cls = part.tagName === 'strong' ? ['k'] : ['tag', live ? 'live' : 'soon'];
       top.push(h('span', { className: cls }, part.children));
     }
   });

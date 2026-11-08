@@ -737,6 +737,12 @@ html:not(.js) .cb.tabbed .cb-hd {
   border-color: transparent;
 }
 
+.tag.live {
+  color: color-mix(in srgb, var(--up) 85%, var(--ink));
+  background: var(--up-soft);
+  border-color: transparent;
+}
+
 /* What a tool does to your data: read only, changes data, destructive */
 .tag .dot {
   width: 6px;

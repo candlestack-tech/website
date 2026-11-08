@@ -13,7 +13,7 @@ fields:
   - name: limit
     description: The most backtests that can wait in your queue.
   - name: retry_after_s
-    description: Seconds until a waiting backtest of yours has likely started, from how long your last runs took.
+    description: Seconds until a waiting backtest of yours has likely started, from how long your last runs took. For a sweep, until enough have started for the whole sweep to fit.
   - name: Retry-After
     description: Header with the same seconds.
   - name: count

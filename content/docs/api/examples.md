@@ -220,7 +220,7 @@ The answer is the backtest's document, `running`, or `queued` with its place in 
 
 ## Wait for it
 
-Your backtests run one at a time, and up to 20 more wait in your queue. The oldest starts when the running one ends. A backtest goes from `queued` to `running` to `finished`, or to `failed` with an `error`. Ask every few seconds until it ends.
+Your backtests run one at a time, and up to 20 more wait in your queue. The oldest starts when the running one ends and one of the run slots that all accounts share is free. A backtest goes from `queued` to `running` to `finished`, or to `failed` with an `error`. Ask every few seconds until it ends.
 
 ```bash tab="curl"
 id=bt_7f3k2m9qx4
