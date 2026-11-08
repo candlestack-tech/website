@@ -126,6 +126,8 @@ The Codex CLI and the Codex IDE extension share their settings in `~/.codex/conf
 
    Run `codex mcp login candlestack`. A CandleStack page opens in your browser. Sign in, check that it returns to 127.0.0.1, your own computer, pick what Codex may do and choose Allow. In the IDE extension choose Authenticate when it asks.
 
+   Signing in needs Codex 0.147 or later: 0.143 to 0.146 lose part of the answer CandleStack sends back and stop with `Authorization server response missing required issuer`. Run `codex --version`, and update Codex if it is older.
+
    With no browser on the machine, run `codex mcp login candlestack --no-browser`. Open the address it prints in a browser, then paste the address you land on back into the terminal.
 
 3. **Check it**
