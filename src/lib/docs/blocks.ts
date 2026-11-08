@@ -6,6 +6,7 @@ import { icon } from './icons';
 //   ```bash title="Terminal"       a label in the block's top bar
 //   ```text prompt                 a prompt to paste into a chat
 //   ```json out                    output, in muted text
+//   ```text address                the address of a server, large, with Copy
 //   ```python tab="Python"         fences with `tab` in a row become one block with tabs
 
 interface CodeInfo {
@@ -16,6 +17,7 @@ interface CodeInfo {
   tab?: string;
   prompt: boolean;
   out: boolean;
+  address: boolean;
 }
 
 export function codeInfo(node: Node): CodeInfo | undefined {
@@ -36,6 +38,7 @@ export function codeInfo(node: Node): CodeInfo | undefined {
     tab: attr('tab'),
     prompt: flags.includes('prompt'),
     out: flags.includes('out'),
+    address: flags.includes('address'),
   };
 }
 
@@ -60,8 +63,18 @@ function prompt(info: CodeInfo) {
   ]);
 }
 
+// The server address box: its label, the address and Copy
+function address(info: CodeInfo) {
+  return h('div', { className: ['srv'] }, [
+    h('span', { className: ['srv-k'] }, [text(info.title ?? 'Address')]),
+    h('span', { className: ['srv-v'] }, [text(info.code)]),
+    copyButton(),
+  ]);
+}
+
 export function codeBlock(info: CodeInfo): Element {
   if (info.prompt) return prompt(info);
+  if (info.address) return address(info);
   const label = info.title ?? (info.lang && info.lang !== 'text' ? info.lang : '');
   return h('div', { className: info.out ? ['cb', 'out'] : ['cb'] }, [
     bar([h('span', { className: ['cb-lbl'] }, [text(label)])]),
@@ -69,8 +82,15 @@ export function codeBlock(info: CodeInfo): Element {
   ]);
 }
 
+// Ids of the tabs and panes, unique on a page: markdown.ts starts them again for each page
+let tabSets = 0;
+export function resetTabIds() {
+  tabSets = 0;
+}
+
 // Without JavaScript every pane shows, each under its own label
 function tabs(infos: CodeInfo[]): Element {
+  const set = ++tabSets;
   const names = infos.map((info) => info.tab ?? '');
   const buttons = names.map((name, i) =>
     h(
@@ -78,18 +98,28 @@ function tabs(infos: CodeInfo[]): Element {
       {
         type: 'button',
         role: 'tab',
+        id: `cb${set}-tab${i}`,
         className: i ? ['cb-tab'] : ['cb-tab', 'on'],
         ariaSelected: String(!i),
+        ariaControls: `cb${set}-pane${i}`,
+        tabIndex: i ? -1 : 0,
         dataTab: name,
       },
       [text(name)],
     ),
   );
   const panes = infos.map((info, i) =>
-    h('div', { className: i ? ['cb-pane'] : ['cb-pane', 'on'], role: 'tabpanel', dataTab: names[i] }, [
-      h('div', { className: ['cb-pl'] }, [text(names[i])]),
-      pre(info),
-    ]),
+    h(
+      'div',
+      {
+        className: i ? ['cb-pane'] : ['cb-pane', 'on'],
+        role: 'tabpanel',
+        id: `cb${set}-pane${i}`,
+        ariaLabelledby: `cb${set}-tab${i}`,
+        dataTab: names[i],
+      },
+      [h('div', { className: ['cb-pl'] }, [text(names[i])]), pre(info)],
+    ),
   );
   return h('div', { className: ['cb', 'tabbed'] }, [
     bar([h('div', { className: ['cb-tabs'], role: 'tablist' }, buttons)]),

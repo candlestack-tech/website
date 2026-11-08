@@ -447,5 +447,5 @@
     },
     "warning": "Six months of one stock is a small sample and past results do not predict future ones. Run the same models on other periods before you rely on them."
   },
-  "try": "Connect CandleStack to your client, then paste the prompt with your own models and instrument. This session used `list_models`, `validate_backtest`, `start_backtest`, `wait_for_backtest` and `compare_backtests`. See [CandleStack for agents](/docs/agents/) for what an agent can do."
+  "try": "Connect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt with your own models and instrument. This session used `list_models`, `validate_backtest`, `start_backtest`, `wait_for_backtest` and `compare_backtests`, see [Tools](/docs/mcp/tools/)."
 }

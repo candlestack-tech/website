@@ -12,7 +12,8 @@
     "astro": "astro",
     "check": "astro check",
     "format": "prettier --write .",
-    "lint": "oxlint --type-aware && prettier --check . && knip"
+    "lint": "oxlint --type-aware && prettier --check . && knip",
+    "mcp-tools": "node scripts/mcp-tools.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "0.4.5",

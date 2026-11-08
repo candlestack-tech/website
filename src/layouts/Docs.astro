@@ -7,6 +7,7 @@ import ThemeToggle from '../components/ThemeToggle.astro';
 import ClientLogos from '../components/docs/ClientLogos.astro';
 import { getSite } from '../lib/content';
 import { icon } from '../lib/docs/icons';
+import { toolIds } from '../lib/docs/tools';
 import { formatDay } from '../lib/format';
 import {
   getDocsNav,
@@ -36,8 +37,10 @@ const [project, nav, pages] = await Promise.all([getSite(), getDocsNav(), getDoc
 const section = nav.sections.find((s) => s.id === page.data.section);
 const crumbs = ['Docs', section?.name ?? '', ...(isSectionPage(page) ? [] : [navLabel(page)])];
 const where = crumbs.slice(1);
-// Card titles are not sections of the page
-const toc = headings.filter((h) => h.depth === 2 || (h.depth === 3 && !h.slug.startsWith('card-')));
+// Card titles are not sections of the page, and the tool reference has its own index of the tools
+const toc = headings.filter(
+  (h) => h.depth === 2 || (h.depth === 3 && !h.slug.startsWith('card-') && !toolIds.has(h.slug)),
+);
 const editUrl = `${project.github}/website/edit/main/${page.filePath}`;
 const siteLinks = [
   { label: 'Status', href: url('/status/') },

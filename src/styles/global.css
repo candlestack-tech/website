@@ -55,6 +55,7 @@
   --code: color-mix(in srgb, var(--ink) 3%, var(--bg));
   --accent-soft: color-mix(in srgb, var(--accent) 11%, var(--bg));
   --warn-soft: color-mix(in srgb, var(--warn) 11%, var(--bg));
+  --down-soft: color-mix(in srgb, var(--down) 11%, var(--bg));
 }
 
 *,

@@ -234,28 +234,3 @@ export function caseHeadings(s: Session) {
     ...(s.try ? [h('try', 'Try it yourself')] : []),
   ];
 }
-
-// ---- The kind of a tool: Read only, Changes data or Destructive ----
-
-interface ToolList {
-  tools: { name: string; annotations?: { readOnlyHint?: boolean; destructiveHint?: boolean } }[];
-}
-
-// The server's tool list, once the site has a copy of it (src/data/mcp-tools.json, from
-// candlestack's docs/mcp-tools.json). Without it the calls show no kind.
-const toolLists = import.meta.glob<ToolList>('../../data/mcp-tools.json', { eager: true, import: 'default' });
-const KINDS = new Map(
-  Object.values(toolLists)
-    .flatMap((list) => list.tools)
-    .map((t) => {
-      const a = t.annotations ?? {};
-      const kind = a.readOnlyHint ? 'ro' : a.destructiveHint ? 'de' : 'rw';
-      return [t.name, kind] as const;
-    }),
-);
-const KIND_NAMES = { ro: 'Read only', rw: 'Changes data', de: 'Destructive' };
-
-export function toolKind(name: string) {
-  const kind = KINDS.get(name);
-  return kind && { kind, name: KIND_NAMES[kind] };
-}

@@ -1,4 +1,5 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import { toolsMarkdown, webOnlyMarkdown } from './tools';
 import { useCaseMarkdown } from './use-cases';
 
 // The docs pages in sidebar order, their neighbours and their Markdown versions. A page is a
@@ -101,37 +102,104 @@ export async function listedCases(page: DocsPage) {
   return pages.filter((p): p is CasePage => p.kind === 'case');
 }
 
+// The parts built from the server's tool reference, in place of their markers (tools.ts)
+const GENERATED = new Map<string, () => string>([
+  ['<!-- mcp-tools -->', toolsMarkdown],
+  ['<!-- mcp-web-only -->', webOnlyMarkdown],
+]);
+
 // A line that is only a marker for the HTML page, like <!-- cards --> (the .md versions are plain text, never HTML)
 function isComment(line: string) {
   const t = line.trim();
   return t.startsWith('<!--') && t.endsWith('-->');
 }
 
-// Links and the page as an agent reads them: plain Markdown, absolute addresses, no comment lines
-function plain(body: string) {
-  return body
-    .split('\n')
-    .filter((line) => !isComment(line))
+// A fence of three or more backticks or tildes, closed by a fence of the same kind at least as long
+const FENCE = /^\s*(`{3,}|~{3,})/;
+const ADDRESS = /^(\s*(?:```|~~~))text address(?: .*)?$/;
+const ITEM = /^\s*[-*] /;
+// A row as lists.ts finds it: **Label**, `name` or [Page](/docs/x/), then the text
+const ROW = /^(\s*[-*] )(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)\s]+\))( \S.*)$/;
+
+// Rows read as one run-on line in plain text ("**Find data** Search..."): a colon after each label
+// tells the label from the text. Only in lists whose items are all rows, as on the page.
+function rowColons(lines: string[]) {
+  const out = [...lines];
+  let i = 0;
+  while (i < out.length) {
+    let j = i;
+    while (j < out.length && ITEM.test(out[j])) j++;
+    if (j > i && out.slice(i, j).every((line) => ROW.test(line))) {
+      for (let k = i; k < j; k++) out[k] = out[k].replace(ROW, '$1$2:$3');
+    }
+    i = Math.max(j, i + 1);
+  }
+  return out;
+}
+
+// Links as an agent follows them: other docs pages to their .md versions, every path absolute
+function links(line: string, pages: Set<string>) {
+  return line.replace(/\]\((\/[^)\s#]*)(#[^)\s]*)?\)/g, (_, path: string, hash = '') => {
+    const id = /^\/docs\/(.+?)\/?$/.exec(path)?.[1];
+    return id && pages.has(id) ? `](${SITE}/docs/${id}.md${hash})` : `](${SITE}${path}${hash})`;
+  });
+}
+
+// A line that ends the open fence: only the same mark, at least as long as the opening one
+function closes(line: string, fence: string) {
+  const mark = FENCE.exec(line)?.[1];
+  return !!mark && mark[0] === fence[0] && mark.length >= fence.length && line.trim() === mark;
+}
+
+// The page as an agent reads it: plain Markdown with the generated parts filled in, no marker
+// lines, a colon after each row's label and links that work outside the site. Code stays as it is.
+function plain(body: string, pages: Set<string>) {
+  const lines = body.split('\n').flatMap((line) => GENERATED.get(line.trim())?.().split('\n') ?? [line]);
+  const out: string[] = [];
+  let prose: string[] = [];
+  let fence = '';
+  const flush = () => {
+    out.push(...rowColons(prose).map((line) => links(line, pages)));
+    prose = [];
+  };
+  for (const line of lines) {
+    const mark = FENCE.exec(line)?.[1];
+    if (fence) {
+      out.push(line);
+      if (closes(line, fence)) fence = '';
+    } else if (mark) {
+      flush();
+      fence = mark;
+      // The address box is the page's look only: in plain text it is a text block
+      out.push(ADDRESS.test(line) ? line.replace(ADDRESS, '$1text') : line);
+    } else if (!isComment(line)) {
+      prose.push(line);
+    }
+  }
+  flush();
+  return out
     .join('\n')
-    .replace(/\]\(\//g, `](${SITE}/`)
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
 
-// The use cases under the text of the Use cases page, one line each, or the section's `soon` text
+// The use cases under the text of the Use cases page, one line each, or the section's `soon` text.
+// The links are relative, so plain() points them at the .md versions like every other docs link.
 function caseList(cases: DocsPage[], soon: string | undefined) {
   if (!cases.length) return soon ?? '';
-  return cases.map((c) => `- [${c.data.title}](${SITE}${pagePath(c)}) ${c.data.description}`).join('\n');
+  return cases.map((c) => `- [${c.data.title}](${pagePath(c)}) ${c.data.description}`).join('\n');
 }
 
 export async function toMarkdown(page: DocsPage) {
+  const pages = new Set((await getDocsPages()).map((p) => p.id));
   const head = `# ${page.data.title}\n\n${page.data.description}\n\n`;
-  if (page.kind === 'case') return `${head}${plain(useCaseMarkdown(page.entry.data))}\n`;
-  const body = plain(page.entry.body ?? '');
-  if (page.id !== USE_CASES) return `${head}${body}\n`;
-  const nav = await getDocsNav();
-  const soon = nav.sections.find((s) => s.id === USE_CASES)?.soon;
-  return `${head}${[body, caseList(await listedCases(page), soon)].filter(Boolean).join('\n\n')}\n`;
+  if (page.kind === 'case') return `${head}${plain(useCaseMarkdown(page.entry.data), pages)}\n`;
+  let body = page.entry.body ?? '';
+  if (page.id === USE_CASES) {
+    const soon = (await getDocsNav()).sections.find((s) => s.id === USE_CASES)?.soon;
+    body = [body.trim(), caseList(await listedCases(page), soon)].filter(Boolean).join('\n\n');
+  }
+  return `${head}${plain(body, pages)}\n`;
 }
 
 // /llms.txt (llmstxt.org): the title, a summary and one line per page, grouped by section

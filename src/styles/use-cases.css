@@ -302,33 +302,6 @@
   align-items: center;
 }
 
-/* The kind of the tool next to Call */
-.tc-io .tag {
-  border-color: transparent;
-}
-
-.tc-io .tag .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: currentColor;
-}
-
-.tc-io .tag.ro {
-  color: var(--accent);
-  background: var(--accent-soft);
-}
-
-.tc-io .tag.rw {
-  color: var(--warn);
-  background: var(--warn-soft);
-}
-
-.tc-io .tag.de {
-  color: var(--down);
-  background: color-mix(in srgb, var(--down) 11%, var(--bg));
-}
-
 .tc.err .tc-io .tl:last-of-type {
   color: var(--down);
 }
