@@ -7,16 +7,13 @@ order: 0
 updated: 2026-11-08
 ---
 
-> [!NOTE]
-> **Available from the next release.** API keys, the upload link, the backtest queue and the compare endpoint come to app.candlestack.tech with the next release. Until then the examples on these pages do not work there, and the app is the way to run backtests.
-
 ## What the API covers
 
 Almost everything you do in the app. A key works for your account on the beta list and sees what you see. That is your own models and backtests, and what others published to Experiments.
 
 - **Market data** Search US stocks and crypto, read an instrument and its candles from 1m to 1d.
 - **Models** Upload Keras and ONNX files, read and set their manifests, rename, star and delete them.
-- **Backtests** Start them, wait in the queue, read the metrics and trades, rename, star and cancel them.
+- **Backtests** Start them alone or in a sweep, wait in the queue, read the metrics and trades, rename, star, cancel and delete them.
 - **Compare** Put up to 20 backtests side by side, with the best and worst value of each metric marked.
 - **Experiments** Read what others published, publish your own or take it back.
 

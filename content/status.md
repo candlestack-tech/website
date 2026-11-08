@@ -1,6 +1,6 @@
 ---
 # Project status. Change the date whenever you update this file.
-updated: 2026-11-02
+updated: 2026-11-08
 
 # Phases of the project, in order. state: done, active or planned.
 phases:
@@ -24,7 +24,7 @@ phases:
     state: planned
   - name: Sharing
     description: Public experiments, API keys and an MCP server
-    state: planned
+    state: done
 
 done:
   - GitHub organization, website and the domain candlestack.tech
@@ -37,6 +37,9 @@ done:
   - 'Post-processing: calibration, thresholds, smoothing, k-means, minimum holding, position size, stop loss'
   - Backtest builder and result page with metrics and charts
   - Compare backtests side by side
+  - More benchmarks (SPY, QQQ, DIA)
+  - Public catalog of published experiments
+  - API keys and an MCP server
 
 inProgress:
   - Comparison of time-series architectures (layer 2)
@@ -45,7 +48,4 @@ inProgress:
 planned:
   - Stability of each combination across market conditions
   - Kagi representation and segmentation
-  - Public catalog of published experiments
-  - API keys and an MCP server
-  - More benchmarks (SPY, QQQ, DIA)
 ---

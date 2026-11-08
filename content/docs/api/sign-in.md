@@ -6,9 +6,6 @@ order: 2
 updated: 2026-11-08
 ---
 
-> [!NOTE]
-> **Available from the next release.** Sign-in with a key comes to app.candlestack.tech with the next release.
-
 ## The header
 
 Every request carries the key as a bearer token.

@@ -931,5 +931,5 @@
     },
     "warning": "Six runs, one stock, one cost setting. Each representation has one model, which differs in its network and training too, and the Kagi model is a 77-parameter smoke test on 1h candles."
   },
-  "try": "Recorded on the test server. The MCP server comes to app.candlestack.tech with the next release. The backtest links on this page go to the test server and open only for the team.\n\nConnect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt with your own models, stock and periods. The session used `list_models`, `preprocessing_catalog`, `validate_sweep`, `run_sweep`, `get_sweep`, `wait_for_backtest` and `compare_backtests`, see [Tools](/docs/mcp/tools/)."
+  "try": "Recorded on the test server. The backtest links on this page go to the test server and open only for the team.\n\nConnect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt with your own models, stock and periods. The session used `list_models`, `preprocessing_catalog`, `validate_sweep`, `run_sweep`, `get_sweep`, `wait_for_backtest` and `compare_backtests`, see [Tools](/docs/mcp/tools/)."
 }

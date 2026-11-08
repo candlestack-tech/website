@@ -73,11 +73,9 @@ page. `content/README.md` explains the format and how to remove secrets before c
 The tool reference at `/docs/mcp/tools/` and the list of what stays in the web app on `/docs/mcp/`
 are built from `src/data/mcp-tools.json`, a copy of the MCP server's
 [`docs/mcp-tools.json`](https://github.com/candlestack-tech/candlestack/blob/main/docs/mcp-tools.json).
-The copy follows candlestack's newest release, because prod runs releases. Until a release has
-the file it follows `main`, and the MCP pages say "Available from the next release". When the
-copy is out of date, run `npm run mcp-tools` and commit the file. The `MCP tools` workflow checks
-it once a day and on pull requests that touch the copy or the script. When the first release with
-the server ships, take the "next release" notes off the MCP pages in the same pull request.
+The copy follows candlestack's newest release, because prod runs releases. When the copy is out
+of date, run `npm run mcp-tools` and commit the file. The `MCP tools` workflow checks it once a
+day and on pull requests that touch the copy or the script.
 
 ### Update status or team
 

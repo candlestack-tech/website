@@ -152,8 +152,8 @@ Until a backtest finished, its document has the setup only. `results` is `null`,
 | `author.mine` | `true` when it is the signed-in user's own backtest. Another account's backtest is shown only while it is published, read only. |
 | `public` | Published in Experiments. |
 | `published_at` | When it was published. `null` while it is not. |
-| `status` | `queued` (it waits for the user's running backtest to end), `running`, `finished` (it has results) or `failed` (it has an error, also when it was cancelled before it ran). |
-| `queue_position` | Where a queued backtest is in its author's queue: 1 starts next, when the running one ends. `null` for any other status. |
+| `status` | `queued` (it waits its turn, see `queue_position`), `running`, `finished` (it has results) or `failed` (it has an error, also when it was cancelled before it ran). |
+| `queue_position` | Where a queued backtest is in its author's queue: 1 starts next. A user's backtests run one at a time, and all accounts share a few run slots, so the one at 1 may still wait for a free slot. `null` for any other status. |
 | `sweep_id` | The sweep it was started in. `null` for a backtest started alone, and for another user's. |
 | `created_at` | When it was started, queued or not. |
 | `started_at` | When it began to run. `null` while it is queued, and for one cancelled before it ran. |
@@ -161,9 +161,6 @@ Until a backtest finished, its document has the setup only. `results` is `null`,
 | `duration_s` | Seconds it ran, from `started_at`, the wait in the queue left out. |
 | `error` | What went wrong and what to do, for a failed one. |
 | `steps` | The steps of the run in their order, while it runs and after, see below. Empty for a backtest that failed before steps were recorded. |
-
-> [!NOTE]
-> **Available from the next release.** `queue_position`, `sweep_id`, `started_at` and the status `queued` come to app.candlestack.tech with the next release. A reader that ignores fields it does not know, as [The version](#the-version) asks, reads both.
 
 Each step:
 

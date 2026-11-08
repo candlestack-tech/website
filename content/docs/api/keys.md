@@ -7,9 +7,6 @@ order: 1
 updated: 2026-11-08
 ---
 
-> [!NOTE]
-> **Available from the next release.** API keys come to app.candlestack.tech with the next release.
-
 ## Create a key
 
 1. **Open Settings**
