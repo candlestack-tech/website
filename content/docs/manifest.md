@@ -4,7 +4,7 @@ nav: Manifest
 description: The manifest.json you upload with a model says which candles it takes, which columns in which order and how many rows make one sample.
 section: formats
 order: 0
-updated: 2026-11-08
+updated: 2026-11-09
 ---
 
 ## What a manifest is
@@ -323,6 +323,7 @@ A trial run that fails leaves the model `ready`, with its error.
 
 ## Next
 
+- [How a backtest runs](/docs/engine/) What happens to the model's scores, candle by candle
 - [Backtest JSON](/docs/backtest-json/) What a backtest's result document holds
 - [Errors](/docs/api/errors/) Every error of the API and what to do
 - [Tools](/docs/mcp/tools/) The MCP tools that read, check and set a manifest

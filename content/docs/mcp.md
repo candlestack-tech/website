@@ -4,7 +4,7 @@ nav: Overview
 description: Connect claude.ai, ChatGPT, Claude Code, Codex, Cursor, VS Code or any MCP client to CandleStack. The agent works with your models and backtests through the same checks as the app.
 section: mcp
 order: 0
-updated: 2026-11-08
+updated: 2026-11-09
 ---
 
 ## What the server does
@@ -67,3 +67,5 @@ Some things need you, signed in to the app in your browser. No key, no connected
 
 - [Install](/docs/mcp/install/) claude.ai, ChatGPT, Claude Code and Codex with OAuth, Cursor and VS Code with a key
 - [Tools](/docs/mcp/tools/) Every tool with its parameters and an example
+- [How a backtest runs](/docs/engine/) What `start_backtest` runs and what each setting does
+- [Metrics](/docs/metrics/) What the metrics `get_backtest` answers mean
