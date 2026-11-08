@@ -64,6 +64,7 @@ These come from the MCP server and the consent page when claude.ai, ChatGPT or a
 | 400 | [upload-interrupted](/problems/upload-interrupted/) | The upload stopped midway and used the link. Ask for a new one and send the file again. |
 | 408 | [upload-timeout](/problems/upload-timeout/) | The file did not arrive within 2 minutes. Ask for a new link and send it again. |
 | 409 | [upload-in-progress](/problems/upload-in-progress/) | Another upload of yours is running. Wait for it, the link stays unused. |
+| 403 | [upload-link-of-another-user](/problems/upload-link-of-another-user/) | The upload page was opened with another account. Sign in with the account that asked for the link. |
 
 The file of a link is checked as any upload, so it can also answer [model-too-large](/problems/model-too-large/), [storage-full](/problems/storage-full/), [too-many-models](/problems/too-many-models/) or [model-check-failed](/problems/model-check-failed/).
 
@@ -77,7 +78,18 @@ The file of a link is checked as any upload, so it can also answer [model-too-la
 | 409 | [backtest-not-queued](/problems/backtest-not-queued/) | Only a queued backtest can be cancelled. |
 | 422 | [period-out-of-range](/problems/period-out-of-range/) | The period is outside the data. Pick one inside it. |
 | 422 | [too-many-candles](/problems/too-many-candles/) | The period has too many candles for the model's timeframe. Pick a shorter one. |
+| 422 | [warm-up-out-of-range](/problems/warm-up-out-of-range/) | The period starts too early for the candles the model needs before it. Start at `earliest_start` or later. |
+| 422 | [instrument-not-for-model](/problems/instrument-not-for-model/) | The model reads other trading hours than the instrument has. Pick an instrument of its market. |
 | 503 | [source-unavailable](/problems/source-unavailable/) | A data source cannot be reached. Wait `Retry-After` seconds when it is there. |
+| 503 | [backtests-unavailable](/problems/backtests-unavailable/) | The worker that runs the models cannot be reached. Try again later. |
+
+Renaming, downloading and publishing a backtest can also answer these.
+
+| Status | Problem | What to do |
+| --- | --- | --- |
+| 409 | [name-taken](/problems/name-taken/) | You have a backtest with this name already. Pick another. |
+| 409 | [backtest-not-finished](/problems/backtest-not-finished/) | Only a finished backtest can be downloaded or published. Wait until it has finished. |
+| 409 | [no-document](/problems/no-document/) | The backtest is test data without results. Run a new one. |
 
 ## All problem types
 
