@@ -9,7 +9,6 @@ sections:
     name: Agents
   - id: mcp
     name: MCP
-    soon: Coming soon
   - id: api
     name: API
     links:

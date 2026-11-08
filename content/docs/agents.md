@@ -8,7 +8,7 @@ updated: 2026-11-08
 ---
 
 > [!NOTE]
-> **Coming soon.** The MCP server and API keys are being built and are not live yet. This page says what they will do and what works today.
+> **Available from the next release.** The MCP server and API keys are live on stage.candlestack.tech and come to app.candlestack.tech with the next release. This page says what they will do and what works today.
 
 ## What an agent can do
 
@@ -34,11 +34,11 @@ Add one address to your AI client. The agent picks the tools, runs them and expl
 
 `Claude Code` `claude.ai` `ChatGPT` `Cursor` `VS Code`
 
-- Claude Code, Cursor and VS Code will sign in with a key
-- claude.ai and ChatGPT will sign in with your account
+- Claude Code, claude.ai, Cursor and VS Code will sign in with a key
+- ChatGPT will sign in with your account
 - Asks before it deletes or publishes
 
-The install steps come with the server.
+[Install the server](/docs/mcp/install/)
 
 ### For scripts and your own code
 
@@ -61,15 +61,15 @@ Not sure? Start with MCP once it is live. You can script the same steps later.
 ## First backtest from a chat in 2 minutes
 
 > [!NOTE]
-> **Coming soon.** These steps work once the MCP server and API keys are live. Until then, run your backtests in the app.
+> **Available from the next release.** These steps work on app.candlestack.tech once the next release brings the MCP server and API keys there. Until then, run your backtests in the app.
 
 1. **Create a key**
 
-   In the settings of the app, create a key with the `read` and `backtests` scopes. On claude.ai and ChatGPT you will sign in with your account instead.
+   In the settings of the app, create a key with the `read` and `backtests` scopes. On ChatGPT you will sign in with your account instead.
 
 2. **Add the server**
 
-   Add the address of the CandleStack server to your AI client. The address and the steps for each client come with the server.
+   Add the address of the CandleStack server to your AI client, as [Install](/docs/mcp/install/) shows for each client.
 
 3. **Ask**
 
@@ -92,6 +92,10 @@ Deleting your account, your sign-in methods and signing out stay in the app. No 
 ## Next
 
 - [Docs for agents](/docs/agents/docs-for-agents/) Read these docs as Markdown, one page or all at once
+- [The MCP server](/docs/mcp/) The address, sign-in, scopes and what stays in the app
+- [Install](/docs/mcp/install/) Connect Claude Code, Cursor or VS Code
+- [Tools](/docs/mcp/tools/) Every tool with its parameters and an example
+- [The API](/docs/api/) Keys, sign-in and examples for your own code
 - [Problem types](/problems/) Every error of the API and what to do about it
 
-The install steps, the tool reference, the API guide and the use cases come with the server.
+The use cases come with the server.

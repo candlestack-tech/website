@@ -10,6 +10,9 @@ const LANGS: Record<string, Lang> = {
   sh: 'bash',
   shell: 'bash',
   zsh: 'bash',
+  // Close enough for the one-liners in the docs: # comments, strings and -flags
+  powershell: 'bash',
+  pwsh: 'bash',
   python: 'py',
   py: 'py',
   js: 'js',

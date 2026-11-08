@@ -1,4 +1,5 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import { toolsMarkdown, webOnlyMarkdown } from './tools';
 
 // The docs pages in sidebar order, their neighbours and their Markdown versions.
 
@@ -37,25 +38,83 @@ export function isSectionPage(page: DocsPage) {
   return !page.id.includes('/');
 }
 
+// The parts built from the server's tool reference, in place of their markers (tools.ts)
+const GENERATED = new Map<string, () => string>([
+  ['<!-- mcp-tools -->', toolsMarkdown],
+  ['<!-- mcp-web-only -->', webOnlyMarkdown],
+]);
+
 // A line that is only a marker for the HTML page, like <!-- cards --> (the .md versions are plain text, never HTML)
 function isComment(line: string) {
   const t = line.trim();
   return t.startsWith('<!--') && t.endsWith('-->');
 }
 
-// Links and the page as an agent reads them: plain Markdown, absolute addresses, no comment lines
-function plain(body: string) {
-  return body
-    .split('\n')
-    .filter((line) => !isComment(line))
+const FENCE = /^\s*(```|~~~)/;
+const ADDRESS = /^(\s*(?:```|~~~))text address(?: .*)?$/;
+const ITEM = /^\s*[-*] /;
+// A row as lists.ts finds it: **Label**, `name` or [Page](/docs/x/), then the text
+const ROW = /^(\s*[-*] )(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)\s]+\))( \S.*)$/;
+
+// Rows read as one run-on line in plain text ("**Find data** Search..."): a colon after each label
+// tells the label from the text. Only in lists whose items are all rows, as on the page.
+function rowColons(lines: string[]) {
+  const out = [...lines];
+  let i = 0;
+  while (i < out.length) {
+    let j = i;
+    while (j < out.length && ITEM.test(out[j])) j++;
+    if (j > i && out.slice(i, j).every((line) => ROW.test(line))) {
+      for (let k = i; k < j; k++) out[k] = out[k].replace(ROW, '$1$2:$3');
+    }
+    i = Math.max(j, i + 1);
+  }
+  return out;
+}
+
+// Links as an agent follows them: other docs pages to their .md versions, every path absolute
+function links(line: string, pages: Set<string>) {
+  return line.replace(/\]\((\/[^)\s#]*)(#[^)\s]*)?\)/g, (_, path: string, hash = '') => {
+    const id = /^\/docs\/(.+?)\/?$/.exec(path)?.[1];
+    return id && pages.has(id) ? `](${SITE}/docs/${id}.md${hash})` : `](${SITE}${path}${hash})`;
+  });
+}
+
+// The page as an agent reads it: plain Markdown with the generated parts filled in, no marker
+// lines, a colon after each row's label and links that work outside the site. Code stays as it is.
+function plain(body: string, pages: Set<string>) {
+  const lines = body.split('\n').flatMap((line) => GENERATED.get(line.trim())?.().split('\n') ?? [line]);
+  const out: string[] = [];
+  let prose: string[] = [];
+  let fence = '';
+  const flush = () => {
+    out.push(...rowColons(prose).map((line) => links(line, pages)));
+    prose = [];
+  };
+  for (const line of lines) {
+    const mark = FENCE.exec(line)?.[1];
+    if (fence) {
+      out.push(line);
+      if (mark === fence) fence = '';
+    } else if (mark) {
+      flush();
+      fence = mark;
+      // The address box is the page's look only: in plain text it is a text block
+      out.push(ADDRESS.test(line) ? line.replace(ADDRESS, '$1text') : line);
+    } else if (!isComment(line)) {
+      prose.push(line);
+    }
+  }
+  flush();
+  return out
     .join('\n')
-    .replace(/\]\(\//g, `](${SITE}/`)
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
 
-export function toMarkdown(page: DocsPage) {
-  return `# ${page.data.title}\n\n${page.data.description}\n\n${plain(page.body ?? '')}\n`;
+export async function toMarkdown(page: DocsPage) {
+  const pages = new Set((await getCollection('docs')).map((p) => p.id));
+  return `# ${page.data.title}\n\n${page.data.description}\n\n${plain(page.body ?? '', pages)}\n`;
 }
 
 // /llms.txt (llmstxt.org): the title, a summary and one line per page, grouped by section
@@ -74,7 +133,9 @@ export async function llmsIndex() {
 // /llms-full.txt: every page in one file, in sidebar order
 export async function llmsFull() {
   const [nav, pages] = await Promise.all([getDocsNav(), getDocsPages()]);
-  const parts = pages.map((p) => `${toMarkdown(p).trim()}\n\nSource: ${SITE}${pagePath(p)}`);
+  const parts = await Promise.all(
+    pages.map(async (p) => `${(await toMarkdown(p)).trim()}\n\nSource: ${SITE}${pagePath(p)}`),
+  );
   return `# CandleStack docs\n\n> ${nav.summary}\n\n---\n\n${parts.join('\n\n---\n\n')}\n`;
 }
 

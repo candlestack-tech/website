@@ -7,5 +7,5 @@ export const getStaticPaths = (async () => {
   return pages.map((page) => ({ params: { slug: page.id }, props: { page } }));
 }) satisfies GetStaticPaths;
 
-export const GET: APIRoute<{ page: DocsPage }> = ({ props }) =>
-  new Response(toMarkdown(props.page), { headers: { 'Content-Type': 'text/markdown; charset=utf-8' } });
+export const GET: APIRoute<{ page: DocsPage }> = async ({ props }) =>
+  new Response(await toMarkdown(props.page), { headers: { 'Content-Type': 'text/markdown; charset=utf-8' } });

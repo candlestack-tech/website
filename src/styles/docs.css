@@ -737,6 +737,35 @@ html:not(.js) .cb.tabbed .cb-hd {
   border-color: transparent;
 }
 
+/* What a tool does to your data: read only, changes data, destructive */
+.tag .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.tag.ro,
+.tag.rw,
+.tag.de {
+  border-color: transparent;
+}
+
+.tag.ro {
+  color: color-mix(in srgb, var(--accent) 85%, var(--ink));
+  background: var(--accent-soft);
+}
+
+.tag.rw {
+  color: color-mix(in srgb, var(--warn) 85%, var(--ink));
+  background: var(--warn-soft);
+}
+
+.tag.de {
+  color: color-mix(in srgb, var(--down) 85%, var(--ink));
+  background: var(--down-soft);
+}
+
 /* AI client logos from the sprite in ClientLogos.astro, no tile behind them */
 .cl-sprite {
   position: absolute;
@@ -838,6 +867,243 @@ html:not(.js) .cb.tabbed .cb-hd {
   font-size: 14px;
   font-weight: 500;
   color: var(--accent);
+}
+
+/* The server address */
+.srv {
+  margin: 22px 0 0;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--bg);
+  padding: 12px 10px 12px 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 12px;
+  align-items: center;
+}
+
+.srv-k {
+  grid-column: 1 / -1;
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.srv-v {
+  font: 500 16px var(--font-mono);
+  overflow-wrap: anywhere;
+}
+
+/* Client tabs: with JavaScript one client at a time, without it every client under its name */
+.ctab-list {
+  margin: 18px 0 0;
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--rule);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.ctab {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  background: none;
+  height: 42px;
+  padding: 0 12px;
+  font: 500 14.5px var(--font-sans);
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ctab:hover {
+  color: var(--ink);
+}
+
+.ctab.on {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+}
+
+.ctab .cl-logo,
+.ctab-l .cl-logo {
+  width: 16px;
+  height: 16px;
+}
+
+.ctab-l {
+  margin: 36px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+html:not(.js) .ctab-list {
+  display: none;
+}
+
+.js .ctab-l,
+.js .ctab-pane:not(.on) {
+  display: none;
+}
+
+/* Endpoints as row labels: a wider label column, long paths wrap */
+.rows.ep li.r {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.rows.ep .l.mono {
+  font-size: 12.5px;
+  overflow-wrap: anywhere;
+}
+
+/* Tool reference: the legend, the index by area and one entry per tool */
+.tmeta {
+  color: var(--muted);
+}
+
+.legend {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.tidx {
+  margin: 14px 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 28px;
+}
+
+.tidx-g {
+  padding: 12px 0 10px;
+  border-top: 1px solid var(--rule);
+}
+
+.tidx-g .gt {
+  margin-bottom: 6px;
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.md .tidx-g ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.md .tidx-g li a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 13px/24px var(--font-mono);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.md .tidx-g li a:hover {
+  color: var(--accent);
+}
+
+.tdot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  flex: none;
+}
+
+.tdot.ro {
+  background: var(--accent);
+}
+
+.tdot.rw {
+  background: var(--warn);
+}
+
+.tdot.de {
+  background: var(--down);
+}
+
+.tool {
+  margin-top: 48px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule);
+}
+
+.md .tool h3 {
+  margin: 0;
+  font: 600 22px var(--font-mono);
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.tool .tags {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.tool-t {
+  margin-right: 4px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.tool .lbl {
+  margin-top: 22px;
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.md .tool .lbl + * {
+  margin-top: 8px;
+}
+
+.tw {
+  overflow-x: auto;
+}
+
+.pt td.nm {
+  font: 500 13px var(--font-mono);
+  white-space: nowrap;
+}
+
+.pt td.nm small {
+  display: block;
+  margin-top: 2px;
+  font: 400 11.5px var(--font-mono);
+  color: var(--muted);
+}
+
+.pt td.ty {
+  font: 12.5px var(--font-mono);
+  color: var(--muted);
+  white-space: nowrap;
 }
 
 /* Previous and Next, then the date and Edit */
@@ -1089,13 +1355,15 @@ html:not(.js) .cb.tabbed .cb-hd {
   }
 
   .rows li > a,
-  .rows li.r {
+  .rows li.r,
+  .rows.ep li.r {
     grid-template-columns: minmax(0, 1fr);
     gap: 2px;
   }
 
   .pick,
-  .pnav {
+  .pnav,
+  .tidx {
     grid-template-columns: minmax(0, 1fr);
   }
 
