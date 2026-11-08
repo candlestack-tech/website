@@ -90,9 +90,10 @@ export const pagePath = (page: DocsPage) => `/docs/${page.id}/`;
 export const markdownPath = (page: DocsPage) => `/docs/${page.id}.md`;
 export const navLabel = (page: DocsPage) => page.data.nav ?? page.data.title;
 
-// A section's first page has the section's own address, the crumbs stop at the section then
+// A section's first page has the section's own address, the crumbs stop at the section then.
+// Other top-level pages, like manifest.md in Formats, show their own name after the section.
 export function isSectionPage(page: DocsPage) {
-  return !page.id.includes('/');
+  return page.id === page.data.section;
 }
 
 // The use cases a page lists: the first page of the Use cases section lists them all

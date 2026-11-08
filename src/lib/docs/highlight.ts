@@ -20,6 +20,8 @@ const LANGS: Record<string, Lang> = {
   ts: 'js',
   typescript: 'js',
   json: 'json',
+  // JSON with // notes, as the example of the backtest result document
+  jsonc: 'js',
 };
 
 const COMMENT: Record<Lang, string> = {
