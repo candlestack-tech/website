@@ -1,6 +1,7 @@
 # CandleStack website
 
-Project website of CandleStack, a team project at STU FEI: project status, meeting minutes and team.
+Project website of CandleStack, a team project at STU FEI: project status, meeting minutes, team
+and the docs for agents.
 Built with [Astro](https://astro.build) as a static site.
 
 ## Run locally
@@ -38,6 +39,8 @@ never the code. See [`content/README.md`](content/README.md) for the rules.
 | `content/meetings/YYYY-MM-DD.md` | one file per meeting |
 | `content/templates/meeting.md` | template for new meeting minutes |
 | `content/problems/<slug>.md` | one file per error type of the CandleStack API, see below |
+| `content/docs/` | the pages of the docs at `/docs/`, see below |
+| `content/docs-nav.md` | the sections of the docs sidebar |
 
 ### Add meeting minutes
 
@@ -55,6 +58,14 @@ Error responses of the CandleStack API (RFC 9457) have a `type` of
 the status, when the error happens and what the client should do. `/problems/` lists them all.
 See [`content/README.md`](content/README.md) to add one.
 
+### Docs
+
+The docs at `/docs/` explain how agents use CandleStack through the MCP server and the API. Each
+page is a Markdown file in `content/docs/`, and its text is served three ways, all built with the
+site: the page itself, the plain Markdown at `<page>.md` (`/docs/agents.md`), and `/llms.txt`
+(one line per page) and `/llms-full.txt` (every page in one file) for agents. See
+[`content/README.md`](content/README.md) to add a page and for the Markdown shapes the docs style.
+
 ### Update status or team
 
 Edit `content/status.md` or `content/team.md`. In `status.md`, also change `updated` to today's date.
@@ -65,16 +76,23 @@ with the file and field named, so a mistake never reaches the live site.
 ## Project structure
 
 ```text
-content/                 texts: site, status, team, links, meetings, templates, problems
+content/                 texts: site, status, team, links, meetings, templates, problems, docs
 public/                  static files (favicon)
 src/
   content.config.ts      schemas that validate everything in content/
   pages/                 one file per page; meetings/[slug].astro and problems/[slug].astro
-                         render each meeting and problem type
+                         render each meeting and problem type, docs/ each docs page and its .md,
+                         llms.txt.ts and llms-full.txt.ts the files for agents
   layouts/Base.astro     page shell: header, navigation, theme
-  components/            background, hero band, theme toggle, section heading, lock icon
+  layouts/Docs.astro     docs shell: sidebar, page, On this page, Menu drawer on phones
+  components/            head, background, hero band, theme toggle, section heading, lock icon,
+                         the client logos of the docs
   lib/                   content loaders, date format, base-path links, background generator
+  lib/docs/              docs pages and their Markdown versions, the Markdown transform that
+                         builds code blocks, tabs, callouts, rows, steps and cards
+  scripts/docs.ts        Copy, tabs, the Menu drawer and On this page in the browser
   styles/global.css      colors for the light and dark theme, shared styles
+  styles/docs.css        styles of the docs pages
 ```
 
 ## Theme

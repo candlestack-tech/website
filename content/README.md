@@ -11,6 +11,8 @@ All texts of the website live in this folder. No code needs to change to update 
 | `meetings/` | one file per meeting, named by date: `2026-09-23.md` |
 | `templates/meeting.md` | template for new meeting minutes |
 | `problems/` | one file per error type of the CandleStack API, named by its slug: `rate-limited.md` |
+| `docs/` | the pages of the docs at `/docs/`, see below |
+| `docs-nav.md` | the sections of the docs sidebar and the summary line of `/llms.txt` |
 
 ## Add meeting minutes
 
@@ -28,6 +30,40 @@ new slug, add `problems/<slug>.md` with the exact slug as the file name, and fil
 exact title the API sends), `status`, `summary`, `when` and `todo`, plus `fields` for the extra
 members and headers of the response. Copy an existing file as a start. The page appears at
 `/problems/<slug>/` and in the list at `/problems/`.
+
+## Add a docs page
+
+A page is a Markdown file in `docs/`. Its path is its address: `docs/agents.md` is the first page
+of the Agents section at `/docs/agents/`, `docs/agents/docs-for-agents.md` is
+`/docs/agents/docs-for-agents/`. Fill in the block at the top:
+
+| Field | What it is |
+|---|---|
+| `title` | the heading of the page |
+| `nav` | the name in the sidebar, when it differs from the title (optional) |
+| `description` | the line under the title, also the page's line in `/llms.txt` |
+| `section` | the `id` of a section in `docs-nav.md` |
+| `order` | the place in its section, `0` first |
+| `updated` | the date of the last change |
+
+Below the block, write plain Markdown. Agents read the same text: every page is also at
+`<address>.md` (`/docs/agents.md`), and `/llms.txt` and `/llms-full.txt` list and hold all of them.
+So write it to read well as plain text. These shapes get the look of the docs:
+
+| Write | It shows as |
+|---|---|
+| `> [!NOTE]` or `> [!WARNING]`, then the text on the next `>` line | a Note or Warning box; bold text at its start replaces the label |
+| a code fence with `title="Terminal"` after the language | a code block with that label and Copy |
+| a code fence `text prompt` | a prompt to paste into a chat, with Copy |
+| a code fence with `out` after the language | output, in muted text |
+| code fences with `tab="curl"`, `tab="Python"` right after each other | one code block with tabs; the reader's choice is kept |
+| a list whose items all start with `**Label**`, a `` `name` `` or a `[link](/docs/x/)` | rows: the label on the left, the text on the right |
+| a numbered list whose items all start with a bold line of their own | numbered steps |
+| `<!-- cards -->`, cards that start with `###`, then `<!-- /cards -->` | cards side by side, see `docs/agents.md` |
+
+In a card, a line of bold and italic text is the small label and its tag, a line of
+`` `Claude Code` `ChatGPT` `` shows client tags with their logos, a list gets ticks and a link on
+the last line becomes the card's link.
 
 ## Rules
 

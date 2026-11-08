@@ -1,0 +1,21 @@
+---
+import { render } from 'astro:content';
+import Docs from '../../layouts/Docs.astro';
+import { getDocsPages } from '../../lib/docs/pages';
+
+// Every page of content/docs/ at /docs/<path>/, with the pages before and after it in the sidebar
+export async function getStaticPaths() {
+  const pages = await getDocsPages();
+  return pages.map((page, i) => ({
+    params: { slug: page.id },
+    props: { page, prev: pages[i - 1], next: pages[i + 1] },
+  }));
+}
+
+const { page, prev, next } = Astro.props;
+const { Content, headings } = await render(page);
+---
+
+<Docs page={page} headings={headings} prev={prev} next={next}>
+  <Content />
+</Docs>

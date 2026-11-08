@@ -1,0 +1,33 @@
+---
+import { Font } from 'astro:assets';
+import { url } from '../lib/url';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content={description} />
+<link rel="icon" href={url('/favicon.ico')} sizes="32x32" />
+<link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
+<link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
+<Font cssVariable="--font-sans" preload />
+<Font cssVariable="--font-mono" preload />
+<title>{title}</title>
+<script is:inline>
+  // Set the theme before first paint: saved choice, else the system setting.
+  (() => {
+    let saved = null;
+    try {
+      saved = localStorage.getItem('theme');
+    } catch {}
+    const dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  })();
+</script>
+<slot />

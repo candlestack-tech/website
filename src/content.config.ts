@@ -39,6 +39,39 @@ const problems = defineCollection({
   }),
 });
 
+// Pages of the docs at /docs/: content/docs/<section>.md is a section's first page,
+// content/docs/<section>/<page>.md the others. The path is the address: agents/docs-for-agents.md
+// becomes /docs/agents/docs-for-agents/ and /docs/agents/docs-for-agents.md.
+const docs = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './content/docs' }),
+  schema: z.object({
+    title: z.string(),
+    nav: z.string().optional(),
+    description: z.string(),
+    section: z.string(),
+    order: z.number().int().nonnegative(),
+    updated: z.coerce.date(),
+  }),
+});
+
+// The sections of the docs sidebar, in order: content/docs-nav.md
+const docsNav = defineCollection({
+  loader: glob({ pattern: 'docs-nav.md', base: './content' }),
+  schema: z.object({
+    summary: z.string(),
+    sections: z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          soon: z.string().optional(),
+          links: z.array(z.object({ name: z.string(), url: z.string() })).default([]),
+        }),
+      )
+      .min(1),
+  }),
+});
+
 const site = defineCollection({
   loader: glob({ pattern: 'site.md', base: './content' }),
   schema: z.object({
@@ -104,4 +137,4 @@ const links = defineCollection({
   }),
 });
 
-export const collections = { meetings, problems, site, status, team, links };
+export const collections = { meetings, problems, docs, docsNav, site, status, team, links };

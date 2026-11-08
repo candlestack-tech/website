@@ -1,0 +1,227 @@
+---
+import type { MarkdownHeading } from 'astro';
+import '../styles/global.css';
+import '../styles/docs.css';
+import Head from '../components/Head.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import ClientLogos from '../components/docs/ClientLogos.astro';
+import { getSite } from '../lib/content';
+import { icon } from '../lib/docs/icons';
+import {
+  formatDay,
+  getDocsNav,
+  getDocsPages,
+  isSectionPage,
+  markdownPath,
+  navLabel,
+  pagePath,
+  toMarkdown,
+  type DocsPage,
+} from '../lib/docs/pages';
+import { url } from '../lib/url';
+
+// The docs shell from the approved design: the site header, the sidebar, the page and On this page.
+// Under 1180px On this page folds at the top of the page, under 900px the sidebar becomes a Menu drawer.
+
+interface Props {
+  page: DocsPage;
+  headings: MarkdownHeading[];
+  prev?: DocsPage;
+  next?: DocsPage;
+}
+
+const { page, headings, prev, next } = Astro.props;
+const [project, nav, pages] = await Promise.all([getSite(), getDocsNav(), getDocsPages()]);
+
+const section = nav.sections.find((s) => s.id === page.data.section);
+const crumbs = ['Docs', section?.name ?? '', ...(isSectionPage(page) ? [] : [navLabel(page)])];
+const where = crumbs.slice(1);
+// Card titles are not sections of the page
+const toc = headings.filter((h) => h.depth === 2 || (h.depth === 3 && !h.slug.startsWith('card-')));
+const editUrl = `${project.github}/website/edit/main/${page.filePath}`;
+const siteLinks = [
+  { label: 'Status', href: url('/status/') },
+  { label: 'Meetings', href: url('/meetings/') },
+  { label: 'Team', href: url('/team/') },
+];
+// The Markdown of the page for Copy page, as JSON that cannot end the script element early
+const markdown = JSON.stringify(toMarkdown(page)).replace(/</g, '\\u003c');
+const linkOf = (href: string) => (href.startsWith('/') ? url(href) : href);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <Head title={`${page.data.title} · Docs · ${project.name}`} description={page.data.description}>
+      <script is:inline>
+        // Copy buttons, tabs and the Menu drawer need JavaScript: their CSS waits for this class.
+        document.documentElement.classList.add('js');
+      </script>
+      <link rel="alternate" type="text/markdown" href={url(markdownPath(page))} />
+    </Head>
+  </head>
+  <body>
+    <ClientLogos />
+    <header class="top">
+      <div class="top-in">
+        <a class="brand" href={url('/')}>
+          {project.name}
+        </a>
+        <a class="brand-docs" href={url('/docs/agents/')}>
+          Docs
+        </a>
+        <nav class="nav" aria-label="Site">
+          {siteLinks.map((l) => (
+            <a class="site" href={l.href}>
+              {l.label}
+            </a>
+          ))}
+          <a class="on" href={url('/docs/agents/')} aria-current="true">
+            Docs
+          </a>
+          <a href={project.github}>GitHub</a>
+          <ThemeToggle />
+        </nav>
+      </div>
+    </header>
+
+    <div class="mbar">
+      <a class="mbtn" href="#docs-nav" aria-controls="docs-nav" aria-expanded="false">
+        <Fragment set:html={icon('menu', 'mi-open')} />
+        <Fragment set:html={icon('x', 'mi-close')} />
+        <span class="mi-open">Menu</span>
+        <span class="mi-close">Close</span>
+      </a>
+      <span class="where">
+        {where.slice(0, -1).map((w) => `${w} / `)}
+        <b>{where[where.length - 1]}</b>
+      </span>
+    </div>
+
+    <div class="docs">
+      <aside class="side" id="docs-nav" aria-label="Docs">
+        {nav.sections.map((s) => (
+          <>
+            <div class="side-g">{s.name}</div>
+            {pages
+              .filter((p) => p.data.section === s.id)
+              .map((p) => (
+                <a
+                  class:list={['side-l', { on: p.id === page.id }]}
+                  href={url(pagePath(p))}
+                  aria-current={p.id === page.id ? 'page' : undefined}
+                >
+                  {navLabel(p)}
+                </a>
+              ))}
+            {s.links.map((l) => (
+              <a class="side-l" href={linkOf(l.url)}>
+                {l.name}
+              </a>
+            ))}
+            {s.soon && <div class="side-soon">{s.soon}</div>}
+          </>
+        ))}
+        <div class="side-f">
+          <a href={url('/llms.txt')}>llms.txt</a>
+          <a href={url('/llms-full.txt')}>llms-full.txt</a>
+        </div>
+        <div class="side-site">
+          {siteLinks.map((l) => (
+            <a href={l.href}>{l.label}</a>
+          ))}
+          <a href={project.github}>GitHub</a>
+        </div>
+      </aside>
+
+      <main class="pg" id="main">
+        <div class="crumbs">
+          {crumbs.map((c) => (
+            <span>{c}</span>
+          ))}
+        </div>
+        <h1>{page.data.title}</h1>
+        <p class="intro">{page.data.description}</p>
+        <div class="pact">
+          <button type="button" class="btn copy-page" data-copy-page>
+            <Fragment set:html={icon('copy', 'ic-copy') + icon('check', 'ic-done')} />
+            <span>Copy page</span>
+          </button>
+          <a class="btn" href={url(markdownPath(page))}>
+            <Fragment set:html={icon('md')} />
+            View as Markdown
+          </a>
+        </div>
+        {toc.length > 0 && (
+          <details class="toc-m">
+            <summary>
+              On this page
+              <Fragment set:html={icon('down')} />
+            </summary>
+            <nav aria-label="On this page">
+              {toc.map((h) => (
+                <a href={`#${h.slug}`} class:list={{ sub: h.depth === 3 }}>
+                  {h.text}
+                </a>
+              ))}
+            </nav>
+          </details>
+        )}
+        <div class="md">
+          <slot />
+        </div>
+        {(prev || next) && (
+          <nav class="pnav" aria-label="Pages">
+            {prev && (
+              <a class="pv" href={url(pagePath(prev))}>
+                <span class="k">← Previous</span>
+                <span class="v">{prev.data.title}</span>
+              </a>
+            )}
+            {next && (
+              <a class="nx" href={url(pagePath(next))}>
+                <span class="k">Next →</span>
+                <span class="v">{next.data.title}</span>
+              </a>
+            )}
+          </nav>
+        )}
+        <div class="pfoot">
+          <span>Updated {formatDay(page.data.updated)}</span>
+          <a href={editUrl}>
+            <Fragment set:html={icon('edit')} />
+            Edit this page on GitHub
+          </a>
+        </div>
+      </main>
+
+      <aside class="toc" aria-label="On this page">
+        {toc.length > 0 && (
+          <>
+            <div class="toc-t">On this page</div>
+            {toc.map((h) => (
+              <a href={`#${h.slug}`} class:list={{ sub: h.depth === 3 }} data-toc={h.slug}>
+                {h.text}
+              </a>
+            ))}
+          </>
+        )}
+        <div class="toc-x">
+          <a href={url(markdownPath(page))}>
+            <Fragment set:html={icon('md')} />
+            View as Markdown
+          </a>
+          <a href={editUrl}>
+            <Fragment set:html={icon('edit')} />
+            Edit on GitHub
+          </a>
+        </div>
+      </aside>
+    </div>
+
+    <script type="application/json" id="page-md" set:html={markdown} />
+    <script>
+      import '../scripts/docs';
+    </script>
+  </body>
+</html>
