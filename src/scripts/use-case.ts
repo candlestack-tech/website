@@ -32,7 +32,7 @@ function showBar(p: Player) {
   const more = root.querySelector('[data-more]');
   if (more) {
     more.textContent = `${left} more ${left === 1 ? 'step' : 'steps'}`;
-    more.closest('li')?.toggleAttribute('hidden', left === 0);
+    more.closest('.st-more')?.toggleAttribute('hidden', left === 0);
   }
   const prev = root.querySelector<HTMLButtonElement>('[data-go="-1"]');
   const next = root.querySelector<HTMLButtonElement>('[data-go="1"]');
@@ -60,11 +60,32 @@ function go(p: Player, by: number) {
   if (by > 0) p.steps[to].scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'nearest' });
 }
 
+// A control that had the focus and is now disabled or hidden hands it on: Next to Previous and
+// back, Show all to the All steps button, so keyboard users do not lose their place
+function keepFocus(p: Player, before: Element | null) {
+  if (!(before instanceof HTMLElement) || !p.root.contains(before)) return;
+  const gone = (before as HTMLButtonElement).disabled || !before.getClientRects().length;
+  if (!gone) return;
+  const go = before.dataset.go;
+  const to = go ? `[data-go="${go === '1' ? '-1' : '1'}"]` : `.seg [data-mode="${p.all ? 'all' : 'step'}"]`;
+  p.root.querySelector<HTMLElement>(to)?.focus();
+}
+
+// Arrow keys step only while the player is on screen and the reader is not in a code block or table
+function arrowsFor(p: Player, e: KeyboardEvent) {
+  if (p.all || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return false;
+  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return false;
+  if ((e.target as HTMLElement).closest('input, textarea, select, [contenteditable], pre, .tw')) return false;
+  const box = p.root.getBoundingClientRect();
+  return box.bottom > 0 && box.top < innerHeight;
+}
+
 function setupPlayer(root: HTMLElement) {
   const p: Player = { root, steps: [...root.querySelectorAll<HTMLElement>('.st')], current: 0, all: false };
 
   root.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
+    const before = document.activeElement;
     const mode = target.closest<HTMLElement>('[data-mode]')?.dataset.mode;
     const by = target.closest<HTMLElement>('[data-go]')?.dataset.go;
     if (mode) {
@@ -74,13 +95,14 @@ function setupPlayer(root: HTMLElement) {
     } else if (by) {
       go(p, Number(by));
     }
+    keepFocus(p, before);
   });
 
   document.addEventListener('keydown', (e) => {
-    if (p.all || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
-    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-    if ((e.target as HTMLElement).closest('input, textarea, select, [contenteditable]')) return;
+    if (!arrowsFor(p, e)) return;
+    const before = document.activeElement;
     go(p, e.key === 'ArrowRight' ? 1 : -1);
+    keepFocus(p, before);
   });
 }
 

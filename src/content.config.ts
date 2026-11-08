@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { isSafeHref, LINK } from './lib/docs/links';
 
 // All texts live in the top-level content/ folder, see content/README.md.
 // The schemas below validate them at build time.
@@ -63,17 +64,35 @@ const SECRETS: [RegExp, string][] = [
   [/[A-Za-z0-9._%+-]+@(?!example\.(?:com|org)\b)[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/, 'an email address'],
 ];
 
+function checkSecrets(text: string, path: (string | number)[], ctx: z.RefinementCtx) {
+  for (const [re, what] of SECRETS) {
+    if (re.test(text)) ctx.addIssue({ code: 'custom', path, message: `looks like ${what}, remove it` });
+  }
+}
+
+// Every string and every key of the file, the JSON of the answers included
 function findSecrets(value: unknown, path: (string | number)[], ctx: z.RefinementCtx) {
   if (typeof value === 'string') {
-    for (const [re, what] of SECRETS) {
-      if (re.test(value)) ctx.addIssue({ code: 'custom', path, message: `looks like ${what}, remove it` });
-    }
+    checkSecrets(value, path, ctx);
   } else if (Array.isArray(value)) {
     value.forEach((v, i) => findSecrets(v, [...path, i], ctx));
   } else if (value && typeof value === 'object') {
-    for (const [k, v] of Object.entries(value)) findSecrets(v, [...path, k], ctx);
+    for (const [k, v] of Object.entries(value)) {
+      checkSecrets(k, [...path, k], ctx);
+      findSecrets(v, [...path, k], ctx);
+    }
   }
 }
+
+// Text with Markdown links (say, outcome.text, outcome.warning, try): only pages of the site,
+// sections, web addresses and emails, never javascript: or data:
+const text = z.string().superRefine((value, ctx) => {
+  for (const [, , href] of value.matchAll(LINK)) {
+    if (!isSafeHref(href)) {
+      ctx.addIssue({ code: 'custom', message: `the link ${href} must start with /, #, https://, http:// or mailto:` });
+    }
+  }
+});
 
 // A number in a table cell as written: "+18.4 %", "−9.8 %", "1.36", 41
 const cell = z.union([z.string(), z.number()]);
@@ -98,13 +117,14 @@ const useCases = defineCollection({
         .array(
           z
             .object({
-              say: z.string().optional(),
+              say: text.optional(),
               calls: z
                 .array(
                   z.object({
                     tool: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a tool name like list_models'),
                     arguments: z.record(z.string(), z.unknown()).default({}),
                     result: z.string().optional(),
+                    // Required: a call without its answer fails the build
                     answer: z.unknown(),
                     is_error: z.boolean().default(false),
                   }),
@@ -115,7 +135,7 @@ const useCases = defineCollection({
         )
         .min(1),
       outcome: z.object({
-        text: z.string(),
+        text,
         chart: z
           .object({
             title: z.string(),
@@ -151,9 +171,9 @@ const useCases = defineCollection({
             path: ['rows'],
           })
           .optional(),
-        warning: z.string().optional(),
+        warning: text.optional(),
       }),
-      try: z.string().optional(),
+      try: text.optional(),
     })
     .superRefine((data, ctx) => findSecrets(data, [], ctx)),
 });

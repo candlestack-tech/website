@@ -2,6 +2,7 @@ import type { CollectionEntry } from 'astro:content';
 import { formatDay } from '../format';
 import { url } from '../url';
 import { escapeHtml } from './highlight';
+import { isSafeHref, LINK } from './links';
 
 // A recorded session (content/docs/use-cases/<slug>.json) for the player, the .md version and
 // llms-full.txt: counts, the one-line form of a call, the chart's lines and the table's marks.
@@ -61,7 +62,9 @@ export function inline(md: string) {
       if (i % 2) return `<code>${escapeHtml(part.slice(1, -1))}</code>`;
       return escapeHtml(part)
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-        .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, t: string, href: string) => {
+        .replace(LINK, (whole: string, t: string, href: string) => {
+          // href is already escaped; a link that is not safe stays as the text it was written as
+          if (!isSafeHref(href)) return whole;
           const to = href.startsWith('/') ? url(href) : href;
           return `<a href="${to}">${t}</a>`;
         });
@@ -95,10 +98,10 @@ function niceTicks(lo: number, hi: number) {
 
 export const num = (v: number) => String(Number(v.toFixed(2)));
 
-// The color of each series: the Compare colors in order, buy and hold (a benchmark) in grey
+// The color of each series: the four Compare colors in order, buy and hold (a benchmark) in grey (4)
 export function seriesColors(chart: Chart) {
   let next = 0;
-  return chart.series.map((s) => (s.benchmark ? 3 : Math.min(3, next++)));
+  return chart.series.map((s) => (s.benchmark ? 4 : next++));
 }
 
 export function chartGeometry(chart: Chart) {
@@ -153,7 +156,12 @@ export function tableMarks(table: Table) {
 
 // ---- The session as Markdown: the .md version of the page and its part of llms-full.txt ----
 
-const fence = (lang: string, code: string) => `\`\`\`${lang}\n${code}\n\`\`\``;
+// A code fence longer than the longest run of backticks inside, so the code cannot close it
+function fence(lang: string, code: string) {
+  const longest = Math.max(0, ...(code.match(/`+/g) ?? []).map((run) => run.length));
+  const ticks = '`'.repeat(Math.max(3, longest + 1));
+  return `${ticks}${lang}\n${code}\n${ticks}`;
+}
 
 function stepTitle(s: Session, i: number) {
   const step = s.steps[i];

@@ -103,7 +103,7 @@ Each step is what the agent did between two of its messages:
 | `calls[].tool` | the name of the tool, `list_models` |
 | `calls[].arguments` | the arguments as the agent sent them, JSON |
 | `calls[].result` | a few words on what came back, shown on the folded line: `3 models, all 1h` (optional) |
-| `calls[].answer` | what the tool answered, JSON. Cut long answers down: keep the fields the session is about, shorten long lists to their first items. Never change a value |
+| `calls[].answer` | what the tool answered, JSON (required). Cut long answers down: keep the fields the session is about, shorten long lists to their first items. Never change a value |
 | `calls[].is_error` | `true` when the tool answered with an error |
 
 The outcome:
@@ -116,7 +116,8 @@ The outcome:
 | `outcome.warning` | a Warning under the table (optional) |
 
 In `say`, `outcome` texts and `try`, write `` `code` ``, `**bold**` and `[links](/docs/agents/)`. A
-blank line starts a new paragraph.
+blank line starts a new paragraph. A link starts with `/`, `#`, `https://`, `http://` or `mailto:`,
+the build fails on any other.
 
 ### Remove secrets and private data first
 

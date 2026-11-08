@@ -2,6 +2,11 @@
    and the list on the section's first page. From the approved docs design. Colors only through
    the variables of global.css. Without JavaScript every step is open and the controls are hidden. */
 
+/* The prompt keeps its line breaks */
+.md .case-prompt p {
+  white-space: pre-wrap;
+}
+
 /* Buttons of the player */
 .btn.sm {
   height: 30px;
@@ -151,7 +156,8 @@
   background: var(--rule);
 }
 
-.st:last-child::before {
+/* The rail stops at the last step */
+.st:not(:has(~ .st))::before {
   display: none;
 }
 
@@ -457,6 +463,10 @@ html:not(.js) .tc-res {
 
 .c3 {
   --c: var(--s3);
+}
+
+.c4 {
+  --c: var(--bench);
 }
 
 .plot {

@@ -76,7 +76,7 @@ const copy = icon('copy', 'ic-copy') + icon('check', 'ic-done');
 <h2 id="prompt">
   The prompt<a class="hlink" href="#prompt" aria-label="Link to this section"></a>
 </h2>
-<div class="prompt">
+<div class="prompt case-prompt">
   <div class="cb-hd">
     <span class="prompt-l">
       <Fragment set:html={icon('term')} />
@@ -163,20 +163,20 @@ const copy = icon('copy', 'ic-copy') + icon('check', 'ic-done');
         </div>
       </li>
     ))}
-    {steps > 1 && (
-      <li class="st-more step-only">
-        <div class="st-n">
-          <Fragment set:html={icon('down')} />
-        </div>
-        <div class="t">
-          <span data-more>{plural(steps - 1, 'more step')}</span>
-          <button type="button" class="btn sm" data-mode="all">
-            Show all
-          </button>
-        </div>
-      </li>
-    )}
   </ol>
+  {steps > 1 && (
+    <div class="st-more step-only">
+      <div class="st-n">
+        <Fragment set:html={icon('down')} />
+      </div>
+      <div class="t">
+        <span data-more>{plural(steps - 1, 'more step')}</span>
+        <button type="button" class="btn sm" data-mode="all">
+          Show all
+        </button>
+      </div>
+    </div>
+  )}
 </div>
 
 <h2 id="outcome">
