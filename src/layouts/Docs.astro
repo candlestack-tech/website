@@ -7,8 +7,8 @@ import ThemeToggle from '../components/ThemeToggle.astro';
 import ClientLogos from '../components/docs/ClientLogos.astro';
 import { getSite } from '../lib/content';
 import { icon } from '../lib/docs/icons';
+import { formatDay } from '../lib/format';
 import {
-  formatDay,
   getDocsNav,
   getDocsPages,
   isSectionPage,
@@ -45,7 +45,8 @@ const siteLinks = [
   { label: 'Team', href: url('/team/') },
 ];
 // The Markdown of the page for Copy page, as JSON that cannot end the script element early
-const markdown = JSON.stringify(toMarkdown(page)).replace(/</g, '\\u003c');
+const markdown = JSON.stringify(await toMarkdown(page)).replace(/</g, '\\u003c');
+const pagesOf = (section: string) => pages.filter((p) => p.data.section === section);
 const linkOf = (href: string) => (href.startsWith('/') ? url(href) : href);
 ---
 
@@ -103,23 +104,21 @@ const linkOf = (href: string) => (href.startsWith('/') ? url(href) : href);
         {nav.sections.map((s) => (
           <>
             <div class="side-g">{s.name}</div>
-            {pages
-              .filter((p) => p.data.section === s.id)
-              .map((p) => (
-                <a
-                  class:list={['side-l', { on: p.id === page.id }]}
-                  href={url(pagePath(p))}
-                  aria-current={p.id === page.id ? 'page' : undefined}
-                >
-                  {navLabel(p)}
-                </a>
-              ))}
+            {pagesOf(s.id).map((p) => (
+              <a
+                class:list={['side-l', { on: p.id === page.id }]}
+                href={url(pagePath(p))}
+                aria-current={p.id === page.id ? 'page' : undefined}
+              >
+                {navLabel(p)}
+              </a>
+            ))}
             {s.links.map((l) => (
               <a class="side-l" href={linkOf(l.url)}>
                 {l.name}
               </a>
             ))}
-            {s.soon && <div class="side-soon">{s.soon}</div>}
+            {s.soon && !pagesOf(s.id).length && <div class="side-soon">{s.soon}</div>}
           </>
         ))}
         <div class="side-f">

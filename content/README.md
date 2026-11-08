@@ -12,6 +12,7 @@ All texts of the website live in this folder. No code needs to change to update 
 | `templates/meeting.md` | template for new meeting minutes |
 | `problems/` | one file per error type of the CandleStack API, named by its slug: `rate-limited.md` |
 | `docs/` | the pages of the docs at `/docs/`, see below |
+| `docs/use-cases/` | one recorded session per use case, see below |
 | `docs-nav.md` | the sections of the docs sidebar and the summary line of `/llms.txt` |
 
 ## Add meeting minutes
@@ -64,6 +65,74 @@ So write it to read well as plain text. These shapes get the look of the docs:
 In a card, a line of bold and italic text is the small label and its tag, a line of
 `` `Claude Code` `ChatGPT` `` shows client tags with their logos, a list gets ticks and a link on
 the last line becomes the card's link.
+
+## Add a use case
+
+A use case is one real session of an agent with CandleStack: the prompt, every tool call with its
+answer, and the outcome. Each is a JSON file in `docs/use-cases/`, named by its address:
+`docs/use-cases/compare-three-models-nvda.json` is `/docs/use-cases/compare-three-models-nvda/`.
+The page plays the session step by step, and its `.md` version and `/llms-full.txt` hold it as a
+plain transcript. `/docs/use-cases/` lists every use case below the text of `docs/use-cases.md`.
+
+Record the session for real, against the test server, and write down only what happened. Never
+make up a session, a call or an answer. `docs/use-cases/sample-session.json` is made-up test data
+for the player and stays a draft. Copy it as a start, then replace everything in it.
+
+| Field | What it is |
+|---|---|
+| `title` | the heading of the page, also its name in the sidebar |
+| `nav` | a shorter name for the sidebar (optional) |
+| `summary` | the line under the title, also the page's line in `/llms.txt` |
+| `order` | the place in the Use cases section, `1` first (the list page is `0`) |
+| `client` | the client the session ran in, as it is called: `Claude Code`, `claude.ai`, `ChatGPT`, `Cursor`, `VS Code` (these get their logo) |
+| `recorded_at` | the day of the recording, `2026-11-20` |
+| `duration_s` | how long the session took, in seconds (optional) |
+| `updated` | the day of the last change, when it is not the recording day (optional) |
+| `draft` | `true` keeps the page out of the built site, its `.md`, the list and `/llms.txt`. It shows only in `npm run dev` |
+| `prompt` | what was typed into the client, word for word |
+| `steps` | the session in order, see below |
+| `outcome` | the result, see below |
+| `try` | the text under Try it yourself (optional) |
+
+Each step is what the agent did between two of its messages:
+
+| Field | What it is |
+|---|---|
+| `say` | the agent's text at that point (optional when the step has calls). A last step with only `say` is shown as the agent's answer |
+| `calls` | the tool calls of the step, in order (optional) |
+| `calls[].tool` | the name of the tool, `list_models` |
+| `calls[].arguments` | the arguments as the agent sent them, JSON |
+| `calls[].result` | a few words on what came back, shown on the folded line: `3 models, all 1h` (optional) |
+| `calls[].answer` | what the tool answered, JSON. Cut long answers down: keep the fields the session is about, shorten long lists to their first items. Never change a value |
+| `calls[].is_error` | `true` when the tool answered with an error |
+
+The outcome:
+
+| Field | What it is |
+|---|---|
+| `outcome.text` | a short paragraph on the result |
+| `outcome.chart` | a line chart (optional): `title`, `labels` (one per point, shown on hover, like `2 Jan 2025`), `ticks` (the labels under the chart, optional), `base` (a dashed line, like `100`, optional) and up to four `series` of `name` and `values`, one value per label. `benchmark: true` draws a series dashed and grey, for buy and hold |
+| `outcome.table` | a table of the figures (optional): `columns` (each a `name`, the first one is the column of names) and `rows` (each a `name`, an optional `sub` line, `values` for the other columns and `benchmark: true` for buy and hold). A column with `better: "higher"` or `better: "lower"` gets its best value in green and its worst in red. A row named like a series of the chart gets its color |
+| `outcome.warning` | a Warning under the table (optional) |
+
+In `say`, `outcome` texts and `try`, write `` `code` ``, `**bold**` and `[links](/docs/agents/)`. A
+blank line starts a new paragraph.
+
+### Remove secrets and private data first
+
+A recorded session holds things that must never reach the repository. Before you commit, go
+through the whole file and replace them:
+
+- **API keys** (`cs_...`) with `cs_xxxx`.
+- **One-time upload links** (`.../uploads/<token>` and `.../upload/<token>`, also inside the
+  `command` of `create_model_upload`) with `xxxx` in place of the token.
+- **Bearer tokens** and any `Authorization` header with `Bearer xxxx`.
+- **Email addresses** with `name@example.com`, and **names of people** (`display_name`, `author`)
+  with `Sample User`, or leave the field out.
+- File paths from your computer, private model names and anything else you would not show.
+
+The build checks for API keys, upload tokens, bearer tokens and email addresses and fails with the
+field named, but it cannot spot everything. Read the file once more before you open the pull request.
 
 ## Rules
 

@@ -54,6 +54,110 @@ const docs = defineCollection({
   }),
 });
 
+// Strings that must never be committed in a recorded session: an API key, a one-time upload link,
+// a bearer token, an email address. Placeholders like cs_xxxx, uploads/xxxx and @example.com pass.
+const SECRETS: [RegExp, string][] = [
+  [/\bcs_(?!x+\b)[A-Za-z0-9_-]{8,}/, 'an API key (write cs_xxxx instead)'],
+  [/\/uploads?\/(?!x+\b)[A-Za-z0-9_-]{16,}/, 'a one-time upload link (write xxxx in place of its token)'],
+  [/\bBearer\s+(?!x+\b)[A-Za-z0-9._-]{8,}/i, 'a bearer token (write Bearer xxxx instead)'],
+  [/[A-Za-z0-9._%+-]+@(?!example\.(?:com|org)\b)[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/, 'an email address'],
+];
+
+function findSecrets(value: unknown, path: (string | number)[], ctx: z.RefinementCtx) {
+  if (typeof value === 'string') {
+    for (const [re, what] of SECRETS) {
+      if (re.test(value)) ctx.addIssue({ code: 'custom', path, message: `looks like ${what}, remove it` });
+    }
+  } else if (Array.isArray(value)) {
+    value.forEach((v, i) => findSecrets(v, [...path, i], ctx));
+  } else if (value && typeof value === 'object') {
+    for (const [k, v] of Object.entries(value)) findSecrets(v, [...path, k], ctx);
+  }
+}
+
+// A number in a table cell as written: "+18.4 %", "−9.8 %", "1.36", 41
+const cell = z.union([z.string(), z.number()]);
+
+// Use cases: one recorded session per file, content/docs/use-cases/<slug>.json, shown at
+// /docs/use-cases/<slug>/ with the player. content/README.md explains every field to writers.
+const useCases = defineCollection({
+  loader: glob({ pattern: '*.json', base: './content/docs/use-cases' }),
+  schema: z
+    .object({
+      title: z.string(),
+      nav: z.string().optional(),
+      summary: z.string(),
+      order: z.number().int().nonnegative(),
+      client: z.string(),
+      recorded_at: z.coerce.date(),
+      duration_s: z.number().int().positive().optional(),
+      updated: z.coerce.date().optional(),
+      draft: z.boolean().default(false),
+      prompt: z.string(),
+      steps: z
+        .array(
+          z
+            .object({
+              say: z.string().optional(),
+              calls: z
+                .array(
+                  z.object({
+                    tool: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a tool name like list_models'),
+                    arguments: z.record(z.string(), z.unknown()).default({}),
+                    result: z.string().optional(),
+                    answer: z.unknown(),
+                    is_error: z.boolean().default(false),
+                  }),
+                )
+                .default([]),
+            })
+            .refine((s) => s.say || s.calls.length, 'a step needs `say`, `calls` or both'),
+        )
+        .min(1),
+      outcome: z.object({
+        text: z.string(),
+        chart: z
+          .object({
+            title: z.string(),
+            labels: z.array(z.string()).min(2),
+            ticks: z.array(z.string()).optional(),
+            base: z.number().optional(),
+            series: z
+              .array(z.object({ name: z.string(), values: z.array(z.number()), benchmark: z.boolean().default(false) }))
+              .min(1)
+              .max(4),
+          })
+          .refine((c) => c.series.every((s) => s.values.length === c.labels.length), {
+            message: 'every series needs one value per label',
+            path: ['series'],
+          })
+          .optional(),
+        table: z
+          .object({
+            columns: z.array(z.object({ name: z.string(), better: z.enum(['higher', 'lower']).optional() })).min(2),
+            rows: z
+              .array(
+                z.object({
+                  name: z.string(),
+                  sub: z.string().optional(),
+                  values: z.array(cell),
+                  benchmark: z.boolean().default(false),
+                }),
+              )
+              .min(1),
+          })
+          .refine((t) => t.rows.every((r) => r.values.length === t.columns.length - 1), {
+            message: 'every row needs one value per column after the first',
+            path: ['rows'],
+          })
+          .optional(),
+        warning: z.string().optional(),
+      }),
+      try: z.string().optional(),
+    })
+    .superRefine((data, ctx) => findSecrets(data, [], ctx)),
+});
+
 // The sections of the docs sidebar, in order: content/docs-nav.md
 const docsNav = defineCollection({
   loader: glob({ pattern: 'docs-nav.md', base: './content' }),
@@ -137,4 +241,4 @@ const links = defineCollection({
   }),
 });
 
-export const collections = { meetings, problems, docs, docsNav, site, status, team, links };
+export const collections = { meetings, problems, docs, useCases, docsNav, site, status, team, links };
