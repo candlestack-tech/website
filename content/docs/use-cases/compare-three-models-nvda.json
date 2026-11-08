@@ -1,0 +1,851 @@
+{
+  "title": "Compare three models on NVDA",
+  "summary": "The agent picks three models that fit NVDA, runs each on the same half-year with the same settings, compares them and digs into the worst trade.",
+  "order": 2,
+  "client": "Claude Code",
+  "recorded_at": "2026-11-08T12:23:29Z",
+  "duration_s": 96,
+  "prompt": "Compare my three models on NVDA over the second half of 2024, the same settings for each. Which one holds up better, and why?",
+  "steps": [
+    {
+      "say": "I’ll list your models first to see which of them can run on NVDA.",
+      "calls": [
+        {
+          "tool": "list_models",
+          "arguments": {},
+          "result": "3 models, all for US stocks in regular hours",
+          "answer": {
+            "models": [
+              {
+                "id": "mdl_lea7chtsaw",
+                "name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                "framework": "keras",
+                "state": "ready",
+                "starred": true,
+                "timeframe": "30m",
+                "session": "regular",
+                "backtest_count": 19,
+                "best_sharpe": 1.652770660194137,
+                "created_at": "2026-10-26T19:02:44.331515Z"
+              },
+              {
+                "id": "mdl_yvp7hczd2m",
+                "name": "kagi-trend-smoke.onnx",
+                "framework": "onnx",
+                "state": "ready",
+                "starred": false,
+                "timeframe": "1h",
+                "session": "regular",
+                "backtest_count": 2,
+                "best_sharpe": 1.0124445659542072,
+                "created_at": "2026-11-02T19:34:53.301473Z"
+              },
+              {
+                "id": "mdl_vtdfxm2554",
+                "name": "docs-demo-gru.keras",
+                "framework": "keras",
+                "state": "verified",
+                "starred": false,
+                "timeframe": "30m",
+                "session": "regular",
+                "backtest_count": 2,
+                "best_sharpe": 2.9501281946098072,
+                "created_at": "2026-11-08T12:22:18.417687Z"
+              }
+            ],
+            "used_bytes": 5144917,
+            "quota_bytes": 104857600,
+            "file_max_bytes": 52428800
+          }
+        }
+      ]
+    },
+    {
+      "say": "All three are made for US stocks in regular hours, so each can run on NVDA. `docs-demo-gru.keras` reads Windows, that is windows of plain 30m candles. I’ll look at what the other two read.",
+      "calls": [
+        {
+          "tool": "get_model",
+          "arguments": { "model_id": "mdl_lea7chtsaw" },
+          "result": "Renko bricks on 30m candles, 403 candles of warm-up",
+          "answer": {
+            "id": "mdl_lea7chtsaw",
+            "name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+            "framework": "keras",
+            "size_bytes": 4978658,
+            "parameters": 410717,
+            "input_shape": [25, 23],
+            "output_shape": [1],
+            "starred": true,
+            "backtest_count": 19,
+            "best_sharpe": 1.652770660194137,
+            "created_at": "2026-10-26T19:02:44.331515Z",
+            "state": "ready",
+            "manifest_summary": {
+              "representation": {
+                "id": "renko-triples@1",
+                "params": { "atr_at": "brick_start", "atr_window": 14, "atr_multiple": 0.6 }
+              },
+              "timeframe": "30m",
+              "session": "regular",
+              "input_shape": [25, 23],
+              "warm_up": { "candles": 403, "kind": "estimate" }
+            },
+            "checked_at": "2026-10-26T19:02:49.754276Z",
+            "check_failed": null,
+            "check_error": null
+          }
+        },
+        {
+          "tool": "get_model",
+          "arguments": { "model_id": "mdl_yvp7hczd2m" },
+          "result": "Kagi lines on 1h candles, 534 candles of warm-up",
+          "answer": {
+            "id": "mdl_yvp7hczd2m",
+            "name": "kagi-trend-smoke.onnx",
+            "framework": "onnx",
+            "size_bytes": 542,
+            "parameters": 77,
+            "input_shape": [25, 3],
+            "output_shape": [1],
+            "starred": false,
+            "backtest_count": 2,
+            "best_sharpe": 1.0124445659542072,
+            "created_at": "2026-11-02T19:34:53.301473Z",
+            "state": "ready",
+            "manifest_summary": {
+              "representation": { "id": "kagi@1", "params": { "amount": 1.0, "reversal": "atr", "atr_window": 14 } },
+              "timeframe": "1h",
+              "session": "regular",
+              "input_shape": [25, 3],
+              "warm_up": { "candles": 534, "kind": "estimate" }
+            },
+            "checked_at": "2026-11-02T19:34:54.765893Z",
+            "check_failed": null,
+            "check_error": null
+          }
+        }
+      ]
+    },
+    {
+      "say": "One reads Renko bricks on 30m candles, the other Kagi lines on 1h candles. `kagi-trend-smoke.onnx` has 77 parameters, more a smoke test than a trained model. I’ll read your defaults for the settings you did not name.",
+      "calls": [
+        {
+          "tool": "get_backtest_defaults",
+          "arguments": {},
+          "result": "long only, threshold 0.05, stop loss 7 %, fees 0.1 %",
+          "answer": {
+            "timeframe": "30m",
+            "period_start": "2021-01-04",
+            "period_end": "2024-12-31",
+            "direction": "long",
+            "threshold": 0.05,
+            "stop_loss_pct": 7,
+            "fees_pct": 0.1,
+            "slippage_pct": 0.02,
+            "benchmark": "bh"
+          }
+        }
+      ]
+    },
+    {
+      "say": "I’ll keep your defaults except the threshold, which I set to 0 for all three. Each model gives its predictions on its own scale, so one cut at 0.05 would filter each of them differently. The period is 1 July to 31 December 2024. Checking the three setups first.",
+      "calls": [
+        {
+          "tool": "validate_backtest",
+          "arguments": {
+            "model": { "id": "mdl_lea7chtsaw" },
+            "data": { "instrument": { "id": "stock:NVDA" }, "period": { "start": 1719792000, "end": 1735689600 } },
+            "decision": { "rule": { "name": "threshold", "limit": 0 }, "long_only": true },
+            "execution": { "stop_loss": 0.07, "fee_bps": 10, "slippage_bps": 2 },
+            "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }]
+          },
+          "result": "starts now, 403 candles of warm-up",
+          "answer": {
+            "model": {
+              "id": "mdl_lea7chtsaw",
+              "name": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+              "framework": "keras"
+            },
+            "instrument": {
+              "id": "stock:NVDA",
+              "market": "stock",
+              "symbol": "NVDA",
+              "name": "NVIDIA Corporation Common Stock",
+              "exchange": "NASDAQ",
+              "source": "alpaca",
+              "feed": "sip",
+              "currency": "USD"
+            },
+            "timeframe": "30m",
+            "session": "regular",
+            "period": { "start": 1719792000, "end": 1735689600 },
+            "warm_up": { "candles": 403, "kind": "estimate", "load_start": 1715779800 },
+            "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }],
+            "starts": "now",
+            "queue_position": null
+          }
+        },
+        {
+          "tool": "validate_backtest",
+          "arguments": {
+            "model": { "id": "mdl_yvp7hczd2m" },
+            "data": { "instrument": { "id": "stock:NVDA" }, "period": { "start": 1719792000, "end": 1735689600 } },
+            "decision": { "rule": { "name": "threshold", "limit": 0 }, "long_only": true },
+            "execution": { "stop_loss": 0.07, "fee_bps": 10, "slippage_bps": 2 },
+            "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }]
+          },
+          "result": "starts now, 534 candles of warm-up, 1h",
+          "answer": {
+            "model": { "id": "mdl_yvp7hczd2m", "name": "kagi-trend-smoke.onnx", "framework": "onnx" },
+            "instrument": {
+              "id": "stock:NVDA",
+              "market": "stock",
+              "symbol": "NVDA",
+              "name": "NVIDIA Corporation Common Stock",
+              "exchange": "NASDAQ",
+              "source": "alpaca",
+              "feed": "sip",
+              "currency": "USD"
+            },
+            "timeframe": "1h",
+            "session": "regular",
+            "period": { "start": 1719792000, "end": 1735689600 },
+            "warm_up": { "candles": 534, "kind": "estimate", "load_start": 1710181800 },
+            "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }],
+            "starts": "now",
+            "queue_position": null
+          }
+        },
+        {
+          "tool": "validate_backtest",
+          "arguments": {
+            "model": { "id": "mdl_vtdfxm2554" },
+            "data": { "instrument": { "id": "stock:NVDA" }, "period": { "start": 1719792000, "end": 1735689600 } },
+            "decision": { "rule": { "name": "threshold", "limit": 0 }, "long_only": true },
+            "execution": { "stop_loss": 0.07, "fee_bps": 10, "slippage_bps": 2 },
+            "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }]
+          },
+          "result": "starts now, 24 candles of warm-up",
+          "answer": {
+            "model": { "id": "mdl_vtdfxm2554", "name": "docs-demo-gru.keras", "framework": "keras" },
+            "instrument": {
+              "id": "stock:NVDA",
+              "market": "stock",
+              "symbol": "NVDA",
+              "name": "NVIDIA Corporation Common Stock",
+              "exchange": "NASDAQ",
+              "source": "alpaca",
+              "feed": "sip",
+              "currency": "USD"
+            },
+            "timeframe": "30m",
+            "session": "regular",
+            "period": { "start": 1719792000, "end": 1735689600 },
+            "warm_up": { "candles": 24, "kind": "exact", "load_start": 1719498600 },
+            "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }],
+            "starts": "now",
+            "queue_position": null
+          }
+        }
+      ]
+    },
+    {
+      "say": "All three fit. Starting them, they run one after another.",
+      "calls": [
+        {
+          "tool": "start_backtest",
+          "arguments": {
+            "model": { "id": "mdl_lea7chtsaw" },
+            "data": { "instrument": { "id": "stock:NVDA" }, "period": { "start": 1719792000, "end": 1735689600 } },
+            "decision": { "rule": { "name": "threshold", "limit": 0 }, "long_only": true },
+            "execution": { "stop_loss": 0.07, "fee_bps": 10, "slippage_bps": 2 },
+            "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }]
+          },
+          "result": "Rare Aldebaran, running",
+          "answer": {
+            "id": "bt_bbidauiosg",
+            "number": 24,
+            "name": "Rare Aldebaran",
+            "status": "running",
+            "ended": false,
+            "queue_position": null,
+            "error": null,
+            "created_at": "2026-11-08T12:24:00.653921Z",
+            "started_at": "2026-11-08T12:24:00.663924Z",
+            "finished_at": null,
+            "duration_s": null,
+            "steps": [
+              { "id": "candles", "state": "pending", "duration_s": null },
+              { "id": "queue", "state": "pending", "duration_s": null },
+              { "id": "model", "state": "pending", "duration_s": null },
+              { "id": "trades", "state": "pending", "duration_s": null }
+            ],
+            "url": "https://stage.candlestack.tech/backtests/bt_bbidauiosg"
+          }
+        },
+        {
+          "tool": "start_backtest",
+          "arguments": {
+            "model": { "id": "mdl_yvp7hczd2m" },
+            "data": { "instrument": { "id": "stock:NVDA" }, "period": { "start": 1719792000, "end": 1735689600 } },
+            "decision": { "rule": { "name": "threshold", "limit": 0 }, "long_only": true },
+            "execution": { "stop_loss": 0.07, "fee_bps": 10, "slippage_bps": 2 },
+            "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }]
+          },
+          "result": "Midnight Orion, queued 1",
+          "answer": {
+            "id": "bt_4d7qqfgnj3",
+            "number": 25,
+            "name": "Midnight Orion",
+            "status": "queued",
+            "ended": false,
+            "queue_position": 1,
+            "error": null,
+            "created_at": "2026-11-08T12:24:00.989604Z",
+            "started_at": null,
+            "finished_at": null,
+            "duration_s": null,
+            "steps": [
+              { "id": "candles", "state": "pending", "duration_s": null },
+              { "id": "queue", "state": "pending", "duration_s": null },
+              { "id": "model", "state": "pending", "duration_s": null },
+              { "id": "trades", "state": "pending", "duration_s": null }
+            ],
+            "url": "https://stage.candlestack.tech/backtests/bt_4d7qqfgnj3"
+          }
+        },
+        {
+          "tool": "start_backtest",
+          "arguments": {
+            "model": { "id": "mdl_vtdfxm2554" },
+            "data": { "instrument": { "id": "stock:NVDA" }, "period": { "start": 1719792000, "end": 1735689600 } },
+            "decision": { "rule": { "name": "threshold", "limit": 0 }, "long_only": true },
+            "execution": { "stop_loss": 0.07, "fee_bps": 10, "slippage_bps": 2 },
+            "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }]
+          },
+          "result": "Midnight Nova, queued 2",
+          "answer": {
+            "id": "bt_nkfzxfmtoq",
+            "number": 26,
+            "name": "Midnight Nova",
+            "status": "queued",
+            "ended": false,
+            "queue_position": 2,
+            "error": null,
+            "created_at": "2026-11-08T12:24:01.365207Z",
+            "started_at": null,
+            "finished_at": null,
+            "duration_s": null,
+            "steps": [
+              { "id": "candles", "state": "pending", "duration_s": null },
+              { "id": "queue", "state": "pending", "duration_s": null },
+              { "id": "model", "state": "pending", "duration_s": null },
+              { "id": "trades", "state": "pending", "duration_s": null }
+            ],
+            "url": "https://stage.candlestack.tech/backtests/bt_nkfzxfmtoq"
+          }
+        }
+      ]
+    },
+    {
+      "say": "Waiting for each to end.",
+      "calls": [
+        {
+          "tool": "wait_for_backtest",
+          "arguments": { "backtest_id": "bt_bbidauiosg", "timeout_s": 60 },
+          "result": "finished",
+          "answer": {
+            "id": "bt_bbidauiosg",
+            "number": 24,
+            "name": "Rare Aldebaran",
+            "status": "finished",
+            "ended": true,
+            "queue_position": null,
+            "error": null,
+            "created_at": "2026-11-08T12:24:00.653921Z",
+            "started_at": "2026-11-08T12:24:00.663924Z",
+            "finished_at": "2026-11-08T12:24:06.467058Z",
+            "duration_s": 5.803134,
+            "steps": [
+              { "id": "candles", "state": "done", "duration_s": 1.03 },
+              { "id": "queue", "state": "done", "duration_s": 0.236 },
+              { "id": "model", "state": "done", "duration_s": 4.478 },
+              { "id": "trades", "state": "done", "duration_s": 0.024 }
+            ],
+            "url": "https://stage.candlestack.tech/backtests/bt_bbidauiosg"
+          }
+        },
+        {
+          "tool": "wait_for_backtest",
+          "arguments": { "backtest_id": "bt_4d7qqfgnj3", "timeout_s": 60 },
+          "result": "finished",
+          "answer": {
+            "id": "bt_4d7qqfgnj3",
+            "number": 25,
+            "name": "Midnight Orion",
+            "status": "finished",
+            "ended": true,
+            "queue_position": null,
+            "error": null,
+            "created_at": "2026-11-08T12:24:00.989604Z",
+            "started_at": "2026-11-08T12:24:06.483494Z",
+            "finished_at": "2026-11-08T12:24:08.021418Z",
+            "duration_s": 1.537924,
+            "steps": [
+              { "id": "candles", "state": "done", "duration_s": 0.045 },
+              { "id": "queue", "state": "done", "duration_s": 0.381 },
+              { "id": "model", "state": "done", "duration_s": 1.068 },
+              { "id": "trades", "state": "done", "duration_s": 0.02 }
+            ],
+            "url": "https://stage.candlestack.tech/backtests/bt_4d7qqfgnj3"
+          }
+        },
+        {
+          "tool": "wait_for_backtest",
+          "arguments": { "backtest_id": "bt_nkfzxfmtoq", "timeout_s": 60 },
+          "result": "finished",
+          "answer": {
+            "id": "bt_nkfzxfmtoq",
+            "number": 26,
+            "name": "Midnight Nova",
+            "status": "finished",
+            "ended": true,
+            "queue_position": null,
+            "error": null,
+            "created_at": "2026-11-08T12:24:01.365207Z",
+            "started_at": "2026-11-08T12:24:08.034313Z",
+            "finished_at": "2026-11-08T12:24:15.129653Z",
+            "duration_s": 7.09534,
+            "steps": [
+              { "id": "candles", "state": "done", "duration_s": 0.02 },
+              { "id": "queue", "state": "done", "duration_s": 0.422 },
+              { "id": "model", "state": "done", "duration_s": 6.615 },
+              { "id": "trades", "state": "done", "duration_s": 0.023 }
+            ],
+            "url": "https://stage.candlestack.tech/backtests/bt_nkfzxfmtoq"
+          }
+        }
+      ]
+    },
+    {
+      "say": "All three finished. Comparing them side by side.",
+      "calls": [
+        {
+          "tool": "compare_backtests",
+          "arguments": { "ids": ["bt_bbidauiosg", "bt_4d7qqfgnj3", "bt_nkfzxfmtoq"] },
+          "result": "Kagi best on return, Sharpe and drawdown, all three lost",
+          "answer": {
+            "backtests": [
+              {
+                "id": "bt_bbidauiosg",
+                "number": 24,
+                "name": "Rare Aldebaran",
+                "status": "finished",
+                "error": null,
+                "setup": {
+                  "instrument": "stock:NVDA",
+                  "model": "BLESK_ATR06_R8_OHLC_LAM08_EOD_SPLIT_ATR_NO-VOL_OPT1_8_M25x23.keras",
+                  "reads": "renko-triples@1",
+                  "input": [25, 23],
+                  "timeframe": "30m",
+                  "period": { "start": 1719792000, "end": 1735689600 }
+                },
+                "candles": 1646
+              },
+              {
+                "id": "bt_4d7qqfgnj3",
+                "number": 25,
+                "name": "Midnight Orion",
+                "status": "finished",
+                "error": null,
+                "setup": {
+                  "instrument": "stock:NVDA",
+                  "model": "kagi-trend-smoke.onnx",
+                  "reads": "kagi@1",
+                  "input": [25, 3],
+                  "timeframe": "1h",
+                  "period": { "start": 1719792000, "end": 1735689600 }
+                },
+                "candles": 887
+              },
+              {
+                "id": "bt_nkfzxfmtoq",
+                "number": 26,
+                "name": "Midnight Nova",
+                "status": "finished",
+                "error": null,
+                "setup": {
+                  "instrument": "stock:NVDA",
+                  "model": "docs-demo-gru.keras",
+                  "reads": "candles@1",
+                  "input": [25, 5],
+                  "timeframe": "30m",
+                  "period": { "start": 1719792000, "end": 1735689600 }
+                },
+                "candles": 1646
+              }
+            ],
+            "metrics": [
+              {
+                "key": "total_return",
+                "label": "Total return",
+                "better": "higher",
+                "values": [-0.15279703709857206, -0.12323116914847765, -0.42038574848024113],
+                "marks": [null, "best", "worst"]
+              },
+              {
+                "key": "max_drawdown",
+                "label": "Max drawdown",
+                "better": "lower",
+                "values": [-0.31274816666568483, -0.28741935289775367, -0.4570995139223334],
+                "marks": [null, "best", "worst"]
+              },
+              {
+                "key": "sharpe",
+                "label": "Sharpe",
+                "better": "higher",
+                "values": [-0.4234338988907055, -0.4080280995800253, -1.859239528987404],
+                "marks": [null, "best", "worst"]
+              },
+              {
+                "key": "sortino",
+                "label": "Sortino",
+                "better": "higher",
+                "values": [-0.5760972111282414, -0.5311760909519817, -2.2951569461660912],
+                "marks": [null, "best", "worst"]
+              },
+              {
+                "key": "win_rate",
+                "label": "Win rate",
+                "better": "higher",
+                "values": [0.4868421052631579, 0.3469387755102041, 0.36607142857142855],
+                "marks": ["best", "worst", null]
+              },
+              {
+                "key": "avg_trade_return",
+                "label": "Avg. trade",
+                "better": "higher",
+                "values": [-0.0007011975018729597, -0.0014448336465197806, -0.004307805330350091],
+                "marks": ["best", null, "worst"]
+              },
+              {
+                "key": "best_trade_return",
+                "label": "Best trade",
+                "better": "higher",
+                "values": [0.12236712853966403, 0.23773170772685093, 0.13065221601180516],
+                "marks": ["worst", "best", null]
+              },
+              {
+                "key": "worst_trade_return",
+                "label": "Worst trade",
+                "better": "higher",
+                "values": [-0.14792234647090857, -0.14297511847363942, -0.1336452336990998],
+                "marks": ["worst", null, "best"]
+              },
+              {
+                "key": "fees_paid",
+                "label": "Fees paid",
+                "better": "lower",
+                "values": [0.30419761559531056, 0.09802723038170223, 0.22374126707007083],
+                "marks": ["worst", "best", null]
+              },
+              {
+                "key": "num_trades",
+                "label": "Trades",
+                "better": "none",
+                "values": [152.0, 49.0, 112.0],
+                "marks": [null, null, null]
+              },
+              {
+                "key": "exposure",
+                "label": "Time in market",
+                "better": "none",
+                "values": [0.724179829890644, 0.5411499436302142, 0.8614823815309842],
+                "marks": [null, null, null]
+              },
+              {
+                "key": "buy_and_hold_return",
+                "label": "Buy and hold",
+                "better": "none",
+                "values": [0.11375353400964561, 0.10211470418826618, 0.11375353400964561],
+                "marks": [null, null, null]
+              }
+            ],
+            "differs": ["model", "reads", "input", "timeframe"]
+          }
+        }
+      ]
+    },
+    {
+      "say": "All three lost money while NVDA rose +11.4 %. The Renko model’s worst trade lost 14.8 % although the stop loss is 7 %. I’ll read its trades to see why.",
+      "calls": [
+        {
+          "tool": "get_backtest",
+          "arguments": { "backtest_id": "bt_bbidauiosg", "trades_per_page": 200 },
+          "result": "152 trades, the 33rd is the worst",
+          "answer": {
+            "backtest": {
+              "id": "bt_bbidauiosg",
+              "number": 24,
+              "name": "Rare Aldebaran",
+              "status": "finished",
+              "author": { "id": "usr_4w63b3f3vi", "name": "you", "mine": true },
+              "public": false,
+              "queue_position": null,
+              "error": null,
+              "created_at": "2026-11-08T12:24:00.653921Z",
+              "finished_at": "2026-11-08T12:24:06.467058Z",
+              "duration_s": 5.803134,
+              "url": "https://stage.candlestack.tech/backtests/bt_bbidauiosg"
+            },
+            "candles": 1646,
+            "data_changed": false,
+            "metrics": {
+              "total_return": -0.15279703709857206,
+              "max_drawdown": -0.31274816666568483,
+              "sharpe": -0.4234338988907055,
+              "sortino": -0.5760972111282414,
+              "num_trades": 152,
+              "win_rate": 0.4868421052631579,
+              "avg_trade_return": -0.0007011975018729597,
+              "best_trade_return": 0.12236712853966403,
+              "worst_trade_return": -0.14792234647090857,
+              "exposure": 0.724179829890644,
+              "fees_paid": 0.30419761559531056,
+              "buy_and_hold_return": 0.11375353400964561
+            },
+            "benchmark_returns": { "bh": 0.11375353400964561 },
+            "trades": {
+              "page": 1,
+              "per_page": 200,
+              "pages": 1,
+              "count": 152,
+              "total": 152,
+              "complete": true,
+              "items": [
+                {
+                  "open_ts": 1719849600,
+                  "close_ts": 1719939600,
+                  "side": 1,
+                  "open_price": 123.47469,
+                  "close_price": 122.555484,
+                  "trade_return": -0.009437044741719806,
+                  "fees": 0.001992555510769049,
+                  "exit_reason": "signal",
+                  "candles_held": 15
+                },
+                {
+                  "open_ts": 1720013400,
+                  "close_ts": 1720015200,
+                  "side": 1,
+                  "open_price": 121.344264,
+                  "close_price": 121.885618,
+                  "trade_return": 0.0024568455745051865,
+                  "fees": 0.0020044613068813865,
+                  "exit_reason": "signal",
+                  "candles_held": 1
+                }
+              ]
+            },
+            "equity": { "points": 200, "rows": 1646, "resolution": "candle" }
+          }
+        }
+      ]
+    },
+    {
+      "say": "The worst one is the 33rd trade, which closed with `exit_reason` `gap`. Here is the page that starts with it.",
+      "calls": [
+        {
+          "tool": "get_backtest",
+          "arguments": { "backtest_id": "bt_bbidauiosg", "trades_page": 5, "trades_per_page": 8 },
+          "result": "bought 2 Aug 2024, sold at the open on 5 Aug, −14.8 %",
+          "answer": {
+            "backtest": {
+              "id": "bt_bbidauiosg",
+              "number": 24,
+              "name": "Rare Aldebaran",
+              "status": "finished",
+              "author": { "id": "usr_4w63b3f3vi", "name": "you", "mine": true },
+              "public": false,
+              "queue_position": null,
+              "error": null,
+              "created_at": "2026-11-08T12:24:00.653921Z",
+              "finished_at": "2026-11-08T12:24:06.467058Z",
+              "duration_s": 5.803134,
+              "url": "https://stage.candlestack.tech/backtests/bt_bbidauiosg"
+            },
+            "candles": 1646,
+            "data_changed": false,
+            "metrics": {
+              "total_return": -0.15279703709857206,
+              "max_drawdown": -0.31274816666568483,
+              "sharpe": -0.4234338988907055,
+              "sortino": -0.5760972111282414,
+              "num_trades": 152,
+              "win_rate": 0.4868421052631579,
+              "avg_trade_return": -0.0007011975018729597,
+              "best_trade_return": 0.12236712853966403,
+              "worst_trade_return": -0.14792234647090857,
+              "exposure": 0.724179829890644,
+              "fees_paid": 0.30419761559531056,
+              "buy_and_hold_return": 0.11375353400964561
+            },
+            "benchmark_returns": { "bh": 0.11375353400964561 },
+            "trades": {
+              "page": 5,
+              "per_page": 8,
+              "pages": 19,
+              "count": 152,
+              "total": 152,
+              "complete": true,
+              "items": [
+                {
+                  "open_ts": 1722614400,
+                  "close_ts": 1722864600,
+                  "side": 1,
+                  "open_price": 107.551506,
+                  "close_price": 91.841628,
+                  "trade_return": -0.14792234647090857,
+                  "fees": 0.0018539315851142059,
+                  "exit_reason": "gap",
+                  "candles_held": 8
+                },
+                {
+                  "open_ts": 1722952800,
+                  "close_ts": 1722956400,
+                  "side": 1,
+                  "open_price": 103.18063199999999,
+                  "close_price": 104.979,
+                  "trade_return": 0.015411888231117058,
+                  "fees": 0.0020174293175486656,
+                  "exit_reason": "signal",
+                  "candles_held": 2
+                }
+              ]
+            },
+            "equity": { "points": 200, "rows": 1646, "resolution": "candle" }
+          }
+        }
+      ]
+    },
+    {
+      "say": "None of the three holds up in this half-year, and two of them are close.\n\n**`kagi-trend-smoke.onnx` lost the least**: −12.3 %, a Sharpe of −0.41 and the smallest fall, 28.7 % ([#25 Midnight Orion](https://stage.candlestack.tech/backtests/bt_4d7qqfgnj3)). The Renko model is almost level with it: −15.3 %, Sharpe −0.42, a fall of 31.3 % ([#24 Rare Aldebaran](https://stage.candlestack.tech/backtests/bt_bbidauiosg)). `docs-demo-gru.keras` lost 42.0 % ([#26 Midnight Nova](https://stage.candlestack.tech/backtests/bt_nkfzxfmtoq)), although its best Sharpe so far is 2.95. Buy and hold of NVDA made +11.4 %.\n\nWhy the Kagi model comes out ahead: it traded least. The Renko model’s trades were better on average, −0.07 % against −0.14 %, and it won 49 % of them against 35 %, but it traded 152 times against 49 and paid fees of 30 % of the capital against 10 %. Its worst trade, −14.8 %, came on 5 August 2024 when NVDA opened far below the stop loss, and the engine sold at that open. A stop loss does not protect against a gap.\n\nLimits: one stock, one half-year, long only. The Kagi model reads 1h candles and the other two 30m, so the timeframe differs too, and the Kagi model is a 77-parameter smoke test. The gap between the top two is too small to call a winner. Run the three over other periods and stocks, a sweep does that in one call, before you choose."
+    }
+  ],
+  "outcome": {
+    "text": "All three lost money while NVDA rose +11.4 %. The Kagi model lost the least, −12.3 % with a Sharpe of −0.41, just ahead of the Renko model at −15.3 %. The Renko model’s trades were better on average, but it traded three times as often and its fees ate the edge.",
+    "chart": {
+      "title": "Equity, NVDA, 1 Jul to 31 Dec 2024",
+      "labels": [
+        "1 Jul 2024",
+        "6 Jul 2024",
+        "10 Jul 2024",
+        "15 Jul 2024",
+        "19 Jul 2024",
+        "24 Jul 2024",
+        "29 Jul 2024",
+        "2 Aug 2024",
+        "7 Aug 2024",
+        "12 Aug 2024",
+        "16 Aug 2024",
+        "21 Aug 2024",
+        "25 Aug 2024",
+        "30 Aug 2024",
+        "4 Sep 2024",
+        "8 Sep 2024",
+        "13 Sep 2024",
+        "17 Sep 2024",
+        "22 Sep 2024",
+        "27 Sep 2024",
+        "1 Oct 2024",
+        "6 Oct 2024",
+        "10 Oct 2024",
+        "15 Oct 2024",
+        "20 Oct 2024",
+        "24 Oct 2024",
+        "29 Oct 2024",
+        "2 Nov 2024",
+        "7 Nov 2024",
+        "12 Nov 2024",
+        "16 Nov 2024",
+        "21 Nov 2024",
+        "25 Nov 2024",
+        "30 Nov 2024",
+        "5 Dec 2024",
+        "9 Dec 2024",
+        "14 Dec 2024",
+        "18 Dec 2024",
+        "23 Dec 2024",
+        "28 Dec 2024",
+        "31 Dec 2024"
+      ],
+      "ticks": ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan"],
+      "base": 100,
+      "series": [
+        {
+          "name": "Renko, BLESK model",
+          "values": [
+            100.0, 99.7, 107.1, 104.5, 94.5, 94.4, 89.1, 85.2, 75.4, 77.4, 87.5, 87.6, 88.9, 83.3, 78.5, 75.3, 86.2,
+            85.0, 86.2, 86.6, 84.6, 90.5, 92.6, 93.8, 87.9, 85.5, 85.7, 80.9, 85.5, 86.4, 85.7, 86.7, 84.3, 85.2, 89.0,
+            87.4, 86.8, 84.5, 86.6, 87.2, 84.7
+          ]
+        },
+        {
+          "name": "Kagi, kagi-trend-smoke",
+          "values": [
+            100.0, 97.4, 99.3, 94.4, 91.2, 87.9, 88.7, 85.5, 74.7, 75.2, 88.4, 91.4, 89.2, 81.7, 81.7, 79.5, 90.1, 88.4,
+            85.4, 89.6, 87.2, 92.3, 96.5, 98.9, 97.2, 96.2, 96.9, 93.5, 99.4, 100.2, 97.2, 97.1, 89.9, 90.8, 95.3, 93.6,
+            91.4, 87.2, 85.4, 87.6, 87.7
+          ]
+        },
+        {
+          "name": "Windows, docs-demo-gru",
+          "values": [
+            100.0, 98.2, 101.7, 97.5, 88.2, 88.2, 83.5, 69.1, 60.1, 60.8, 69.2, 71.8, 72.7, 66.8, 61.8, 58.1, 66.3,
+            64.2, 63.6, 68.0, 62.6, 65.6, 70.5, 71.9, 70.6, 71.0, 72.2, 68.7, 72.5, 71.1, 68.3, 69.8, 62.4, 61.9, 64.6,
+            62.0, 60.4, 56.1, 57.8, 58.7, 58.0
+          ]
+        },
+        {
+          "name": "Buy and hold NVDA",
+          "values": [
+            100.0, 104.3, 111.4, 107.1, 97.8, 98.3, 93.8, 87.9, 86.2, 86.8, 102.0, 105.5, 107.2, 97.5, 89.6, 85.3, 98.8,
+            95.9, 96.3, 102.8, 97.4, 103.6, 111.8, 114.6, 114.4, 115.7, 116.6, 112.3, 120.8, 120.5, 117.7, 121.0, 112.7,
+            114.7, 120.4, 115.6, 111.3, 107.0, 111.9, 113.7, 111.4
+          ],
+          "benchmark": true
+        }
+      ]
+    },
+    "table": {
+      "columns": [
+        { "name": "Model" },
+        { "name": "Return", "better": "higher" },
+        { "name": "Sharpe", "better": "higher" },
+        { "name": "Max drawdown", "better": "higher" },
+        { "name": "Trades" },
+        { "name": "Fees paid", "better": "lower" }
+      ],
+      "rows": [
+        {
+          "name": "Renko, BLESK model",
+          "sub": "#24 Rare Aldebaran · 30m",
+          "values": ["−15.3 %", "−0.42", "−31.3 %", 152, "30.4 %"]
+        },
+        {
+          "name": "Kagi, kagi-trend-smoke",
+          "sub": "#25 Midnight Orion · 1h",
+          "values": ["−12.3 %", "−0.41", "−28.7 %", 49, "9.8 %"]
+        },
+        {
+          "name": "Windows, docs-demo-gru",
+          "sub": "#26 Midnight Nova · 30m",
+          "values": ["−42.0 %", "−1.86", "−45.7 %", 112, "22.4 %"]
+        },
+        { "name": "Buy and hold NVDA", "values": ["+11.4 %", "", "", "", ""], "benchmark": true }
+      ]
+    },
+    "warning": "One stock, one half-year, long only. The Kagi model reads 1h candles and is a 77-parameter smoke test. The top two are too close to call a winner."
+  },
+  "try": "Recorded on the test server. The MCP server comes to app.candlestack.tech with the next release. The backtest links on this page go to the test server and open only for the team.\n\nConnect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt with your own models and instrument. The session used `list_models`, `get_model`, `get_backtest_defaults`, `validate_backtest`, `start_backtest`, `wait_for_backtest`, `compare_backtests` and `get_backtest`, see [Tools](/docs/mcp/tools/)."
+}

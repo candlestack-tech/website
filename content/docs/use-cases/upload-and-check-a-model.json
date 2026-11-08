@@ -1,0 +1,628 @@
+{
+  "title": "Upload a model and check it",
+  "nav": "Upload and check a model",
+  "summary": "The agent uploads a Keras model through a one-time link, gives it its manifest after a dry run, waits for the trial run and backtests it on NVDA.",
+  "order": 1,
+  "client": "Claude Code",
+  "recorded_at": "2026-11-08T12:22:09Z",
+  "duration_s": 80,
+  "prompt": "Upload my GRU model, model.keras in research/models/team/gru/seed1, as docs-demo-gru.keras. Give it the manifest.json from the same folder, check it first, then run one small backtest and tell me how it did.",
+  "steps": [
+    {
+      "say": "I’ll check who I act for and what the key may do, then make a one-time upload link for the file.",
+      "calls": [
+        {
+          "tool": "get_me",
+          "arguments": {},
+          "result": "you, scopes read, backtests and models",
+          "answer": {
+            "id": "usr_4w63b3f3vi",
+            "display_name": "you",
+            "email": "name@example.com",
+            "created_at": "2026-10-17T07:18:01.369819Z",
+            "scopes": ["read", "backtests", "models"]
+          }
+        },
+        {
+          "tool": "create_model_upload",
+          "arguments": { "file_name": "docs-demo-gru.keras", "size_bytes": 165717 },
+          "result": "one-time link for 15 minutes",
+          "answer": {
+            "id": "upl_bxo4uuo4lv",
+            "name": "docs-demo-gru.keras",
+            "size_bytes": 165717,
+            "expires_at": "2026-11-08T12:37:10.078452Z",
+            "command": "curl --fail-with-body -T docs-demo-gru.keras https://stage.candlestack.tech/api/v1/uploads/xxxx",
+            "url": "https://stage.candlestack.tech/api/v1/uploads/xxxx",
+            "page_url": "https://stage.candlestack.tech/upload/xxxx",
+            "next_steps": "Ask the user to upload docs-demo-gru.keras before 12:37 UTC: either run the command in the folder the file is in, or open the page and drop the file there. Then call get_model_upload with id upl_bxo4uuo4lv."
+          }
+        }
+      ]
+    },
+    {
+      "say": "The command uploads a file named `docs-demo-gru.keras` from the folder it runs in. The file on disk is `model.keras`, so I copied it under that name to a temporary folder and ran the command there. It answered `201` with the new model `mdl_vtdfxm2554` in the state `needs_setup`. I’ll confirm through the link’s status.",
+      "calls": [
+        {
+          "tool": "get_model_upload",
+          "arguments": { "upload_id": "upl_bxo4uuo4lv" },
+          "result": "done, model mdl_vtdfxm2554",
+          "answer": {
+            "id": "upl_bxo4uuo4lv",
+            "name": "docs-demo-gru.keras",
+            "status": "done",
+            "expires_at": "2026-11-08T12:37:10.078452Z",
+            "model_id": "mdl_vtdfxm2554",
+            "problem": null,
+            "error": null
+          }
+        }
+      ]
+    },
+    {
+      "say": "The upload is done. The model needs its manifest before it can run, so I’ll try `manifest.json` from the same folder as a dry run first. The 25 rows of each example input are cut to 2 here.",
+      "calls": [
+        {
+          "tool": "validate_manifest",
+          "arguments": {
+            "model_id": "mdl_vtdfxm2554",
+            "manifest": {
+              "version": 1,
+              "input": {
+                "timeframe": "30m",
+                "session": "regular",
+                "representation": { "id": "candles@1" },
+                "features": [
+                  { "name": "open", "id": "open@1", "norm": { "id": "none@1" } },
+                  { "name": "high", "id": "high@1", "norm": { "id": "none@1" } },
+                  { "name": "low", "id": "low@1", "norm": { "id": "none@1" } },
+                  { "name": "close", "id": "close@1", "norm": { "id": "none@1" } },
+                  { "name": "volume", "id": "volume@1", "norm": { "id": "none@1" } }
+                ],
+                "window": { "length": 25, "last": "closed" }
+              },
+              "signature": {
+                "input": { "shape": [25, 5], "dtype": "float32" },
+                "output": { "shape": [1], "dtype": "float32", "meaning": "score" }
+              },
+              "example": {
+                "input": [
+                  [
+                    [99.900002, 100.199997, 99.699997, 100.0, 100000.0],
+                    [100.099998, 100.400604, 99.899597, 100.200203, 101000.0]
+                  ],
+                  [
+                    [99.900002, 100.199997, 99.699997, 100.0, 100000.0],
+                    [99.700401, 99.999802, 99.500801, 99.800201, 101000.0]
+                  ]
+                ],
+                "output": [[0.00138283], [0.00168982]]
+              },
+              "about": {
+                "issue": "candlestack-tech/candlestack#260",
+                "protocol": "v2",
+                "architecture": "gru",
+                "seed": "1",
+                "learning_rate": "0.00025",
+                "trained_on": "30 S&P 500 stocks of the #259 dataset (notes/259-dataset-protocol.md)",
+                "period": "train 2016-2022, early stopping on 2023",
+                "target": "ln(close[t+13] / close[t]), the log return one session ahead",
+                "note": "Window-relative scaling and a train-only Normalization are layers inside the model; the example input is synthetic, not market data"
+              }
+            }
+          },
+          "result": "valid, no problems",
+          "answer": { "valid": true, "problems": [], "more_problems": 0, "unknown_blocks": [] }
+        }
+      ]
+    },
+    {
+      "say": "Every check passed. I’ll set the same manifest and look at the model.",
+      "calls": [
+        {
+          "tool": "set_manifest",
+          "arguments": {
+            "model_id": "mdl_vtdfxm2554",
+            "manifest": {
+              "version": 1,
+              "input": {
+                "timeframe": "30m",
+                "session": "regular",
+                "representation": { "id": "candles@1" },
+                "features": [
+                  { "name": "open", "id": "open@1", "norm": { "id": "none@1" } },
+                  { "name": "high", "id": "high@1", "norm": { "id": "none@1" } },
+                  { "name": "low", "id": "low@1", "norm": { "id": "none@1" } },
+                  { "name": "close", "id": "close@1", "norm": { "id": "none@1" } },
+                  { "name": "volume", "id": "volume@1", "norm": { "id": "none@1" } }
+                ],
+                "window": { "length": 25, "last": "closed" }
+              },
+              "signature": {
+                "input": { "shape": [25, 5], "dtype": "float32" },
+                "output": { "shape": [1], "dtype": "float32", "meaning": "score" }
+              },
+              "example": {
+                "input": [
+                  [
+                    [99.900002, 100.199997, 99.699997, 100.0, 100000.0],
+                    [100.099998, 100.400604, 99.899597, 100.200203, 101000.0]
+                  ],
+                  [
+                    [99.900002, 100.199997, 99.699997, 100.0, 100000.0],
+                    [99.700401, 99.999802, 99.500801, 99.800201, 101000.0]
+                  ]
+                ],
+                "output": [[0.00138283], [0.00168982]]
+              },
+              "about": {
+                "issue": "candlestack-tech/candlestack#260",
+                "protocol": "v2",
+                "architecture": "gru",
+                "seed": "1",
+                "learning_rate": "0.00025",
+                "trained_on": "30 S&P 500 stocks of the #259 dataset (notes/259-dataset-protocol.md)",
+                "period": "train 2016-2022, early stopping on 2023",
+                "target": "ln(close[t+13] / close[t]), the log return one session ahead",
+                "note": "Window-relative scaling and a train-only Normalization are layers inside the model; the example input is synthetic, not market data"
+              }
+            }
+          },
+          "result": "ready, 30m candles, 24 candles of warm-up",
+          "answer": {
+            "id": "mdl_vtdfxm2554",
+            "name": "docs-demo-gru.keras",
+            "framework": "keras",
+            "size_bytes": 165717,
+            "parameters": 32801,
+            "input_shape": [25, 5],
+            "output_shape": [1],
+            "starred": false,
+            "backtest_count": 0,
+            "best_sharpe": null,
+            "created_at": "2026-11-08T12:22:18.417687Z",
+            "state": "ready",
+            "manifest_summary": {
+              "representation": { "id": "candles@1", "params": {} },
+              "timeframe": "30m",
+              "session": "regular",
+              "input_shape": [25, 5],
+              "warm_up": { "candles": 24, "kind": "exact" }
+            },
+            "checked_at": null,
+            "check_failed": null,
+            "check_error": null
+          }
+        },
+        {
+          "tool": "get_model",
+          "arguments": { "model_id": "mdl_vtdfxm2554" },
+          "result": "ready, trial run not ended yet",
+          "answer": {
+            "id": "mdl_vtdfxm2554",
+            "name": "docs-demo-gru.keras",
+            "state": "ready",
+            "checked_at": null,
+            "check_failed": null,
+            "check_error": null
+          }
+        }
+      ]
+    },
+    {
+      "say": "The trial run of the manifest’s example is still going. Meanwhile I’ll read your backtest defaults, so the run starts as the app would start it.",
+      "calls": [
+        {
+          "tool": "get_backtest_defaults",
+          "arguments": {},
+          "result": "30m, long only, threshold 0.05, stop loss 7 %",
+          "answer": {
+            "timeframe": "30m",
+            "period_start": "2021-01-04",
+            "period_end": "2024-12-31",
+            "direction": "long",
+            "threshold": 0.05,
+            "stop_loss_pct": 7,
+            "fees_pct": 0.1,
+            "slippage_pct": 0.02,
+            "benchmark": "bh"
+          }
+        },
+        {
+          "tool": "get_model",
+          "arguments": { "model_id": "mdl_vtdfxm2554" },
+          "result": "verified, the trial run passed",
+          "answer": {
+            "id": "mdl_vtdfxm2554",
+            "name": "docs-demo-gru.keras",
+            "state": "verified",
+            "checked_at": "2026-11-08T12:22:36.588212Z",
+            "check_failed": null,
+            "check_error": null
+          }
+        }
+      ]
+    },
+    {
+      "say": "The model is `verified`. A small run: NVDA in the first half of 2024, on the model’s 30m candles in regular hours, with your defaults. That is long only, threshold 0.05, stop loss 7 %, fees 0.1 % (10 basis points) and slippage 0.02 % (2 basis points), compared with buy and hold. I’ll check the setup first.",
+      "calls": [
+        {
+          "tool": "validate_backtest",
+          "arguments": {
+            "model": { "id": "mdl_vtdfxm2554" },
+            "data": { "instrument": { "id": "stock:NVDA" }, "period": { "start": 1704153600, "end": 1719792000 } },
+            "decision": { "rule": { "name": "threshold", "limit": 0.05 }, "long_only": true },
+            "execution": { "stop_loss": 0.07, "fee_bps": 10, "slippage_bps": 2 },
+            "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }]
+          },
+          "result": "starts now, 24 candles of warm-up",
+          "answer": {
+            "model": { "id": "mdl_vtdfxm2554", "name": "docs-demo-gru.keras", "framework": "keras" },
+            "instrument": {
+              "id": "stock:NVDA",
+              "market": "stock",
+              "symbol": "NVDA",
+              "name": "NVIDIA Corporation Common Stock",
+              "exchange": "NASDAQ",
+              "source": "alpaca",
+              "feed": "sip",
+              "currency": "USD"
+            },
+            "timeframe": "30m",
+            "session": "regular",
+            "period": { "start": 1704153600, "end": 1719792000 },
+            "warm_up": { "candles": 24, "kind": "exact", "load_start": 1703777400 },
+            "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }],
+            "starts": "now",
+            "queue_position": null
+          }
+        }
+      ]
+    },
+    {
+      "say": "The setup is fine. Starting it.",
+      "calls": [
+        {
+          "tool": "start_backtest",
+          "arguments": {
+            "model": { "id": "mdl_vtdfxm2554" },
+            "data": { "instrument": { "id": "stock:NVDA" }, "period": { "start": 1704153600, "end": 1719792000 } },
+            "decision": { "rule": { "name": "threshold", "limit": 0.05 }, "long_only": true },
+            "execution": { "stop_loss": 0.07, "fee_bps": 10, "slippage_bps": 2 },
+            "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }]
+          },
+          "result": "Serene Apogee, running",
+          "answer": {
+            "id": "bt_6teiemwazy",
+            "number": 22,
+            "name": "Serene Apogee",
+            "status": "running",
+            "ended": false,
+            "queue_position": null,
+            "error": null,
+            "created_at": "2026-11-08T12:22:51.335326Z",
+            "started_at": "2026-11-08T12:22:51.348160Z",
+            "finished_at": null,
+            "duration_s": null,
+            "steps": [
+              { "id": "candles", "state": "pending", "duration_s": null },
+              { "id": "queue", "state": "pending", "duration_s": null },
+              { "id": "model", "state": "pending", "duration_s": null },
+              { "id": "trades", "state": "pending", "duration_s": null }
+            ],
+            "url": "https://stage.candlestack.tech/backtests/bt_6teiemwazy"
+          }
+        },
+        {
+          "tool": "wait_for_backtest",
+          "arguments": { "backtest_id": "bt_6teiemwazy", "timeout_s": 60 },
+          "result": "finished in 9 s",
+          "answer": {
+            "id": "bt_6teiemwazy",
+            "number": 22,
+            "name": "Serene Apogee",
+            "status": "finished",
+            "ended": true,
+            "queue_position": null,
+            "error": null,
+            "created_at": "2026-11-08T12:22:51.335326Z",
+            "started_at": "2026-11-08T12:22:51.348160Z",
+            "finished_at": "2026-11-08T12:23:00.016331Z",
+            "duration_s": 8.668171,
+            "steps": [
+              { "id": "candles", "state": "done", "duration_s": 1.259 },
+              { "id": "queue", "state": "done", "duration_s": 0.48 },
+              { "id": "model", "state": "done", "duration_s": 6.834 },
+              { "id": "trades", "state": "done", "duration_s": 0.116 }
+            ],
+            "url": "https://stage.candlestack.tech/backtests/bt_6teiemwazy"
+          }
+        },
+        {
+          "tool": "get_backtest",
+          "arguments": { "backtest_id": "bt_6teiemwazy", "trades_per_page": 5 },
+          "result": "0 trades, buy and hold +157.7 %",
+          "answer": {
+            "backtest": {
+              "id": "bt_6teiemwazy",
+              "number": 22,
+              "name": "Serene Apogee",
+              "status": "finished",
+              "author": { "id": "usr_4w63b3f3vi", "name": "you", "mine": true },
+              "public": false,
+              "queue_position": null,
+              "error": null,
+              "created_at": "2026-11-08T12:22:51.335326Z",
+              "finished_at": "2026-11-08T12:23:00.016331Z",
+              "duration_s": 8.668171,
+              "url": "https://stage.candlestack.tech/backtests/bt_6teiemwazy"
+            },
+            "candles": 1612,
+            "data_changed": false,
+            "metrics": {
+              "total_return": 0.0,
+              "max_drawdown": 0.0,
+              "sharpe": null,
+              "sortino": null,
+              "num_trades": 0,
+              "win_rate": null,
+              "avg_trade_return": null,
+              "best_trade_return": null,
+              "worst_trade_return": null,
+              "exposure": 0.0,
+              "fees_paid": 0.0,
+              "buy_and_hold_return": 1.5768425460636517
+            },
+            "benchmark_returns": { "bh": 1.5768425460636517 },
+            "trades": { "page": 1, "per_page": 5, "pages": 0, "count": 0, "total": 0, "complete": true, "items": [] },
+            "equity": { "points": 199, "rows": 1612, "resolution": "candle" }
+          }
+        }
+      ]
+    },
+    {
+      "say": "No trades at all in 1,612 candles. The manifest says why: the model predicts the log return one session ahead, and its example outputs are 0.0014 and 0.0017. A threshold of 0.05 asks for a predicted rise of about 5 %, which this model almost never gives. I’ll run the same setup once more with the threshold at 0, where any positive prediction means long. Everything else stays the same.",
+      "calls": [
+        {
+          "tool": "start_backtest",
+          "arguments": {
+            "model": { "id": "mdl_vtdfxm2554" },
+            "data": { "instrument": { "id": "stock:NVDA" }, "period": { "start": 1704153600, "end": 1719792000 } },
+            "decision": { "rule": { "name": "threshold", "limit": 0 }, "long_only": true },
+            "execution": { "stop_loss": 0.07, "fee_bps": 10, "slippage_bps": 2 },
+            "benchmarks": [{ "id": "bh", "kind": "buy_and_hold", "instrument": "stock:NVDA" }]
+          },
+          "result": "Vast Galaxy, running",
+          "answer": {
+            "id": "bt_5vwx4qnfza",
+            "number": 23,
+            "name": "Vast Galaxy",
+            "status": "running",
+            "ended": false,
+            "queue_position": null,
+            "error": null,
+            "created_at": "2026-11-08T12:23:15.515788Z",
+            "started_at": "2026-11-08T12:23:15.522123Z",
+            "finished_at": null,
+            "duration_s": null,
+            "steps": [
+              { "id": "candles", "state": "pending", "duration_s": null },
+              { "id": "queue", "state": "pending", "duration_s": null },
+              { "id": "model", "state": "pending", "duration_s": null },
+              { "id": "trades", "state": "pending", "duration_s": null }
+            ],
+            "url": "https://stage.candlestack.tech/backtests/bt_5vwx4qnfza"
+          }
+        },
+        {
+          "tool": "wait_for_backtest",
+          "arguments": { "backtest_id": "bt_5vwx4qnfza", "timeout_s": 60 },
+          "result": "finished in 7 s",
+          "answer": {
+            "id": "bt_5vwx4qnfza",
+            "number": 23,
+            "name": "Vast Galaxy",
+            "status": "finished",
+            "ended": true,
+            "queue_position": null,
+            "error": null,
+            "created_at": "2026-11-08T12:23:15.515788Z",
+            "started_at": "2026-11-08T12:23:15.522123Z",
+            "finished_at": "2026-11-08T12:23:22.403496Z",
+            "duration_s": 6.881373,
+            "steps": [
+              { "id": "candles", "state": "done", "duration_s": 0.021 },
+              { "id": "queue", "state": "done", "duration_s": 0.37 },
+              { "id": "model", "state": "done", "duration_s": 6.441 },
+              { "id": "trades", "state": "done", "duration_s": 0.026 }
+            ],
+            "url": "https://stage.candlestack.tech/backtests/bt_5vwx4qnfza"
+          }
+        },
+        {
+          "tool": "get_backtest",
+          "arguments": { "backtest_id": "bt_5vwx4qnfza", "trades_per_page": 3 },
+          "result": "+95.6 %, Sharpe 2.95, 103 trades",
+          "answer": {
+            "backtest": {
+              "id": "bt_5vwx4qnfza",
+              "number": 23,
+              "name": "Vast Galaxy",
+              "status": "finished",
+              "author": { "id": "usr_4w63b3f3vi", "name": "you", "mine": true },
+              "public": false,
+              "queue_position": null,
+              "error": null,
+              "created_at": "2026-11-08T12:23:15.515788Z",
+              "finished_at": "2026-11-08T12:23:22.403496Z",
+              "duration_s": 6.881373,
+              "url": "https://stage.candlestack.tech/backtests/bt_5vwx4qnfza"
+            },
+            "candles": 1612,
+            "data_changed": false,
+            "metrics": {
+              "total_return": 0.9561176568549286,
+              "max_drawdown": -0.22762650687213093,
+              "sharpe": 2.9501281946098072,
+              "sortino": 5.736710224453443,
+              "num_trades": 103,
+              "win_rate": 0.39805825242718446,
+              "avg_trade_return": 0.007243972413065269,
+              "best_trade_return": 0.19717250972597267,
+              "worst_trade_return": -0.07211581400000008,
+              "exposure": 0.9050868486352357,
+              "fees_paid": 0.20695308224078654,
+              "buy_and_hold_return": 1.5768425460636517
+            },
+            "benchmark_returns": { "bh": 1.5768425460636517 },
+            "trades": {
+              "page": 1,
+              "per_page": 3,
+              "pages": 35,
+              "count": 103,
+              "total": 103,
+              "complete": true,
+              "items": [
+                {
+                  "open_ts": 1704209400,
+                  "close_ts": 1704216600,
+                  "side": 1,
+                  "open_price": 47.539506,
+                  "close_price": 47.970403999999995,
+                  "trade_return": 0.007054934268774033,
+                  "fees": 0.002009063998267041,
+                  "exit_reason": "signal",
+                  "candles_held": 4
+                },
+                {
+                  "open_ts": 1704218400,
+                  "close_ts": 1704225600,
+                  "side": 1,
+                  "open_price": 47.95959,
+                  "close_price": 47.880422,
+                  "trade_return": -0.003649072312753159,
+                  "fees": 0.001998349276964211,
+                  "exit_reason": "signal",
+                  "candles_held": 4
+                },
+                {
+                  "open_ts": 1704227400,
+                  "close_ts": 1704306600,
+                  "side": 1,
+                  "open_price": 47.75955,
+                  "close_price": 47.480502,
+                  "trade_return": -0.007836925850431924,
+                  "fees": 0.001994157231380949,
+                  "exit_reason": "signal",
+                  "candles_held": 9
+                }
+              ]
+            },
+            "equity": { "points": 199, "rows": 1612, "resolution": "candle" }
+          }
+        }
+      ]
+    },
+    {
+      "say": "`docs-demo-gru.keras` is uploaded, has its manifest and passed the trial run, so it is `verified` and ready for backtests.\n\nWith your default threshold of 0.05 it made no trades on NVDA in the first half of 2024 ([#22 Serene Apogee](https://stage.candlestack.tech/backtests/bt_6teiemwazy)), because its predictions are far smaller than 0.05. At threshold 0 ([#23 Vast Galaxy](https://stage.candlestack.tech/backtests/bt_5vwx4qnfza)) it made **+95.6 %** with a Sharpe of 2.95 and a largest fall of 22.8 %, in 103 trades. Buy and hold of NVDA made +157.7 % in the same months.\n\nThe model was in the market 91 % of the time, long only, so most of its gain is NVDA’s own rise. One stock in one strong half-year says little about the model. Try a falling market and a few other stocks before trusting it, and set a threshold that fits its scale, around 0.001 rather than 0.05."
+    }
+  ],
+  "outcome": {
+    "text": "The model is uploaded and `verified`. With the default threshold of 0.05 it made no trades, since its predictions are about 0.0015. At threshold 0 it made +95.6 % on NVDA in the first half of 2024 with a Sharpe of 2.95, while buy and hold made +157.7 %.",
+    "chart": {
+      "title": "Equity, NVDA, 2 Jan to 1 Jul 2024",
+      "labels": [
+        "2 Jan 2024",
+        "5 Jan 2024",
+        "10 Jan 2024",
+        "16 Jan 2024",
+        "19 Jan 2024",
+        "24 Jan 2024",
+        "29 Jan 2024",
+        "1 Feb 2024",
+        "7 Feb 2024",
+        "12 Feb 2024",
+        "15 Feb 2024",
+        "21 Feb 2024",
+        "26 Feb 2024",
+        "29 Feb 2024",
+        "5 Mar 2024",
+        "8 Mar 2024",
+        "14 Mar 2024",
+        "19 Mar 2024",
+        "22 Mar 2024",
+        "27 Mar 2024",
+        "2 Apr 2024",
+        "5 Apr 2024",
+        "10 Apr 2024",
+        "16 Apr 2024",
+        "19 Apr 2024",
+        "24 Apr 2024",
+        "29 Apr 2024",
+        "2 May 2024",
+        "7 May 2024",
+        "10 May 2024",
+        "15 May 2024",
+        "21 May 2024",
+        "24 May 2024",
+        "30 May 2024",
+        "4 Jun 2024",
+        "7 Jun 2024",
+        "12 Jun 2024",
+        "17 Jun 2024",
+        "21 Jun 2024",
+        "27 Jun 2024",
+        "28 Jun 2024"
+      ],
+      "ticks": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      "base": 100,
+      "series": [
+        {
+          "name": "Threshold 0",
+          "values": [
+            100.0, 102.4, 112.5, 113.0, 113.1, 119.3, 115.9, 118.0, 128.7, 137.1, 133.3, 123.7, 141.9, 140.2, 148.5,
+            156.6, 155.1, 150.1, 153.9, 151.5, 148.5, 147.6, 147.0, 147.7, 137.4, 137.4, 145.8, 141.6, 151.1, 148.0,
+            155.7, 154.0, 172.3, 186.2, 189.1, 193.5, 201.4, 212.1, 203.7, 197.7, 195.6
+          ]
+        },
+        {
+          "name": "Threshold 0.05",
+          "values": [
+            100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0,
+            100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0,
+            100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0
+          ]
+        },
+        {
+          "name": "Buy and hold NVDA",
+          "values": [
+            100.0, 102.8, 113.4, 117.4, 123.2, 130.4, 129.4, 131.6, 143.6, 154.7, 152.4, 140.7, 166.7, 165.6, 176.9,
+            182.7, 185.2, 181.4, 196.6, 188.4, 186.6, 183.1, 181.4, 182.7, 171.1, 171.1, 181.9, 176.9, 189.0, 187.7,
+            197.5, 195.3, 218.7, 236.4, 239.8, 252.6, 262.3, 276.5, 265.3, 260.1, 257.7
+          ],
+          "benchmark": true
+        }
+      ]
+    },
+    "table": {
+      "columns": [
+        { "name": "Backtest" },
+        { "name": "Return", "better": "higher" },
+        { "name": "Sharpe", "better": "higher" },
+        { "name": "Max drawdown", "better": "higher" },
+        { "name": "Trades" }
+      ],
+      "rows": [
+        { "name": "Threshold 0", "sub": "#23 Vast Galaxy · NVDA · 30m", "values": ["+95.6 %", "2.95", "−22.8 %", 103] },
+        {
+          "name": "Threshold 0.05",
+          "sub": "#22 Serene Apogee · NVDA · 30m",
+          "values": ["+0.0 %", "none", "+0.0 %", 0]
+        },
+        { "name": "Buy and hold NVDA", "values": ["+157.7 %", "", "", ""], "benchmark": true }
+      ]
+    },
+    "warning": "One stock in one rising half-year. The model was long 91 % of the time, so this run mostly shows NVDA’s rise, not the model’s skill."
+  },
+  "try": "Recorded on the test server. The MCP server comes to app.candlestack.tech with the next release. The backtest links on this page go to the test server and open only for the team.\n\nConnect CandleStack to your client with [Install](/docs/mcp/install/), then paste the prompt with your own file and manifest. The session used `get_me`, `create_model_upload`, `get_model_upload`, `validate_manifest`, `set_manifest`, `get_model`, `get_backtest_defaults`, `validate_backtest`, `start_backtest`, `wait_for_backtest` and `get_backtest`, see [Tools](/docs/mcp/tools/). The fields of a manifest are in its [JSON Schema](https://raw.githubusercontent.com/candlestack-tech/candlestack/main/docs/manifest.schema.json)."
+}
