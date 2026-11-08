@@ -9,6 +9,12 @@
   --down: #b42318;
   --decor: #1c1917;
   --grid: rgb(28 25 23 / 0.045);
+  --keyword: #1d5fd1;
+  --shadow: rgb(0 0 0 / 0.08);
+  --on-accent: #fafaf9;
+  /* Brand colors of the AI client logos in the docs, as their brand pages give them */
+  --logo-openai: #000;
+  --logo-cursor: #26251e;
   color-scheme: light;
 }
 
@@ -23,7 +29,21 @@
   --down: #f0616d;
   --decor: #e6e8ea;
   --grid: rgb(230 232 234 / 0.045);
+  --keyword: #5b9cf6;
+  --shadow: rgb(0 0 0 / 0.5);
+  --on-accent: #0d0f11;
+  --logo-openai: #fff;
+  --logo-cursor: #edecec;
   color-scheme: dark;
+}
+
+/* Surfaces mixed from the theme colors, so they follow the theme */
+:root {
+  --surface: color-mix(in srgb, var(--ink) 4%, var(--bg));
+  --surface2: color-mix(in srgb, var(--ink) 8%, var(--bg));
+  --code: color-mix(in srgb, var(--ink) 3%, var(--bg));
+  --accent-soft: color-mix(in srgb, var(--accent) 11%, var(--bg));
+  --warn-soft: color-mix(in srgb, var(--warn) 11%, var(--bg));
 }
 
 *,

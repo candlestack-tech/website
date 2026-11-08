@@ -1,5 +1,7 @@
 // @ts-check
+import { satteri } from '@astrojs/markdown-satteri';
 import { defineConfig, fontProviders } from 'astro/config';
+import { docsMarkdown } from './src/lib/docs/markdown';
 
 // Unicode ranges of the fontsource "latin" and "latin-ext" subsets (latin-ext covers Slovak letters)
 const LATIN =
@@ -31,6 +33,13 @@ function fontsource(pkg) {
 // https://astro.build/config
 export default defineConfig({
   site: 'https://candlestack.tech',
+  // /docs/ opens the first page of the docs
+  redirects: { '/docs': '/docs/agents/' },
+  // The docs color their own code and build their pieces from plain Markdown (src/lib/docs/markdown.ts)
+  markdown: {
+    syntaxHighlight: false,
+    processor: satteri({ hastPlugins: [docsMarkdown] }),
+  },
   build: {
     // CSS is small, inlining it removes the render-blocking request
     inlineStylesheets: 'always',
