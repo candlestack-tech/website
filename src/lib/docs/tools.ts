@@ -3,9 +3,10 @@ import reference from '../../data/mcp-tools.json';
 import { h, text, type Element, type Node } from './hast';
 
 // The tool reference of the MCP server: src/data/mcp-tools.json, vendored from candlestack's
-// docs/mcp-tools.json (`npm run mcp-tools`, CI fails when it is older). Two markers in a docs page
-// stand for the parts built from it, as HTML on the page and as Markdown in its .md version:
+// docs/mcp-tools.json (`npm run mcp-tools`, CI fails when it is older). Three markers in a docs
+// page stand for the parts built from it, as HTML on the page and as Markdown in its .md version:
 //   <!-- mcp-tools -->     the legend, the index and one entry per tool
+//   <!-- mcp-prompts -->   the server's prompts, with their arguments
 //   <!-- mcp-web-only -->  the API endpoints that have no tool on purpose, with the reason
 
 const SOURCE = 'https://github.com/candlestack-tech/candlestack/blob/main/docs/mcp-tools.json';
@@ -28,8 +29,17 @@ const Tool = z.object({
   endpoints: z.array(z.string()),
 });
 
+const Prompt = z.object({
+  name: z.string(),
+  title: z.string(),
+  description: z.string(),
+  arguments: z.array(z.object({ name: z.string(), description: z.string().optional(), required: z.boolean() })),
+});
+
+// A reference of a release before the server had prompts has none
 const Reference = z.object({
   tools: z.array(Tool),
+  prompts: z.array(Prompt).default([]),
   webOnly: z.array(z.object({ endpoint: z.string(), reason: z.string() })),
 });
 
@@ -39,7 +49,7 @@ const parsed = Reference.safeParse(reference);
 if (!parsed.success) {
   throw new Error(`src/data/mcp-tools.json does not have the shape the docs expect: ${parsed.error.message}`);
 }
-const { tools, webOnly } = parsed.data;
+const { tools, prompts, webOnly } = parsed.data;
 
 // The ids of the tool entries: On this page leaves them out, the index of the page lists them
 export const toolIds = new Set(tools.map((t) => t.name));
@@ -187,6 +197,22 @@ export function toolsMarkdown() {
   ].join('\n\n');
 }
 
+type Prompt = z.infer<typeof Prompt>;
+
+// A prompt's arguments in one line: "backtest (required), model, instrument"
+function promptArguments(prompt: Prompt) {
+  if (!prompt.arguments.length) return 'No arguments.';
+  const list = prompt.arguments.map((a) => (a.required ? `${a.name} (required)` : a.name));
+  return `Arguments: ${list.join(', ')}.`;
+}
+
+const description = (prompt: Prompt) => prompt.description.split(/\s+/).join(' ');
+
+export function promptsMarkdown() {
+  if (!prompts.length) return '';
+  return prompts.map((p) => `- \`${p.name}\` ${description(p)} ${promptArguments(p)}`).join('\n');
+}
+
 // Endpoints with the same reason share one line
 function webOnlyGroups() {
   const byReason = new Map<string, string[]>();
@@ -307,6 +333,22 @@ export function toolsHast(): Node[] {
     h('h2', {}, [text('All tools')]),
     index(),
     ...tools.map(toolEntry),
+  ];
+}
+
+export function promptsHast(): Node[] {
+  if (!prompts.length) return [];
+  return [
+    h(
+      'ul',
+      { className: ['rows'] },
+      prompts.map((p) =>
+        h('li', { className: ['r'] }, [
+          h('span', { className: ['l', 'mono'] }, [text(p.name)]),
+          h('span', { className: ['t'] }, [text(`${description(p)} ${promptArguments(p)}`)]),
+        ]),
+      ),
+    ),
   ];
 }
 

@@ -2,7 +2,7 @@ import { codeBlocks, resetTabIds } from './blocks';
 import { clone, elements, h, isBlank, isElement, raw, text, textOf, type Element, type Node, type Root } from './hast';
 import { clientLogo, icon } from './icons';
 import { rows, steps } from './lists';
-import { toolsHast, webOnlyHast } from './tools';
+import { promptsHast, toolsHast, webOnlyHast } from './tools';
 
 // Turns the plain Markdown of content/docs/ into the pieces of the docs design. Pages stay plain
 // Markdown that reads well as it is (the .md versions are the source), the shapes below get their
@@ -241,6 +241,7 @@ function transform(nodes: Node[], slug: Slug): Node[] {
 // The parts built from the server's tool reference (tools.ts), by their marker
 const GENERATED = new Map<string, () => Node[]>([
   ['<!-- mcp-tools -->', toolsHast],
+  ['<!-- mcp-prompts -->', promptsHast],
   ['<!-- mcp-web-only -->', webOnlyHast],
 ]);
 const MARKERS = new Set(['<!-- cards -->', '<!-- /cards -->', '<!-- tabs -->', '<!-- /tabs -->', ...GENERATED.keys()]);

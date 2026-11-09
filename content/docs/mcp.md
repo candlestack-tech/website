@@ -57,6 +57,15 @@ A key or a connected app can do only what its scopes allow. Give it the fewest y
 
 A tool that needs a scope the key or app lacks answers `missing-scope`. `get_me` shows the scopes of the key or app.
 
+## Docs and prompts
+
+The agent reads these docs through the server, so it answers from them instead of guessing. This works in clients that cannot open links, such as ChatGPT.
+
+- `get_docs` Without a page it lists every page of these docs. With a page it answers the page as Markdown, in parts or by section when the page is long. The pages come from this website as published, so they never differ from what you read here.
+- **Prompts** Plans for common tasks, which your client offers as commands. Each tells the agent which tools to call in which order and which pages to read.
+
+<!-- mcp-prompts -->
+
 ## What stays in the web app
 
 Some things need you, signed in to the app in your browser. No key, no connected app and so no agent can manage keys or connected apps, delete your account, change your name or sign-in methods, or sign out. The endpoints for monitoring and the app's own images have no tool either. This list comes from the server, with the reason for each endpoint.
