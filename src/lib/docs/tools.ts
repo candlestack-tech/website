@@ -17,6 +17,8 @@ const Tool = z.object({
   name: z.string(),
   title: z.string(),
   description: z.string(),
+  // What the description a model reads with every turn leaves out, shown on this page only
+  details: z.string().optional(),
   annotations: z.object({
     readOnlyHint: z.boolean(),
     destructiveHint: z.boolean(),
@@ -83,9 +85,11 @@ function groups() {
   return order.map((name) => ({ name, tools: tools.filter((t) => group(t) === name) })).filter((g) => g.tools.length);
 }
 
-// The description a model reads, without the link back to this page that the server adds
+// The description a model reads, then the details the server keeps for this page; an older
+// reference ends the description with a link back to this page, which is left out
 function paragraphs(tool: Tool) {
-  return tool.description
+  return [tool.description, tool.details ?? '']
+    .join('\n\n')
     .split(/\n\s*\n/)
     .map((p) => p.trim())
     .filter((p) => p && !p.startsWith(`Docs: ${TOOLS_PAGE}`));
