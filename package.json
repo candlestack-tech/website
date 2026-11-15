@@ -19,7 +19,7 @@
     "@astrojs/markdown-satteri": "0.4.5",
     "@fontsource-variable/geist": "^5.3.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
-    "astro": "^7.4.2"
+    "astro": "^7.4.7"
   },
   "allowScripts": {
     "esbuild": true
