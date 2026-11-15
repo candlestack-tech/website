@@ -16,7 +16,7 @@
     "mcp-tools": "node scripts/mcp-tools.mjs"
   },
   "dependencies": {
-    "@astrojs/markdown-satteri": "0.4.5",
+    "@astrojs/markdown-satteri": "0.4.7",
     "@fontsource-variable/geist": "^5.3.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
     "astro": "^7.4.7"
@@ -26,9 +26,9 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
-    "knip": "^6.43.0",
-    "oxlint": "^1.90.0",
-    "oxlint-tsgolint": "^7.0.2004",
+    "knip": "^6.44.2",
+    "oxlint": "^1.92.0",
+    "oxlint-tsgolint": "^7.0.2006",
     "prettier": "^3.9.10",
     "prettier-plugin-astro": "^1.1.2",
     "typescript": "^6.0.3"
